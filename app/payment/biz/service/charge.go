@@ -19,9 +19,9 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/cloudwego/biz-demo/gomall/app/payment/biz/dal/mysql"
-	"github.com/cloudwego/biz-demo/gomall/app/payment/biz/model"
-	payment "github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/payment"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/payment/biz/dal/mysql"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/payment/biz/model"
+	payment "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/payment"
 	"github.com/cloudwego/kitex/pkg/kerrors"
 	creditcard "github.com/durango/go-credit-card"
 	"github.com/google/uuid"

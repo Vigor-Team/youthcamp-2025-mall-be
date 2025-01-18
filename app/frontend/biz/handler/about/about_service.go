@@ -17,9 +17,9 @@ package about
 import (
 	"context"
 
-	"github.com/cloudwego/biz-demo/gomall/app/frontend/biz/service"
-	"github.com/cloudwego/biz-demo/gomall/app/frontend/biz/utils"
-	common "github.com/cloudwego/biz-demo/gomall/app/frontend/hertz_gen/frontend/common"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/frontend/biz/service"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/frontend/biz/utils"
+	common "github.com/Vigor-Team/youthcamp-2025-mall-be/app/frontend/hertz_gen/frontend/common"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 )

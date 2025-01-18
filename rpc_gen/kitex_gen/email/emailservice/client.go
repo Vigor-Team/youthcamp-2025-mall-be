@@ -4,7 +4,7 @@ package emailservice
 
 import (
 	"context"
-	email "github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/email"
+	email "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/email"
 	client "github.com/cloudwego/kitex/client"
 	callopt "github.com/cloudwego/kitex/client/callopt"
 )

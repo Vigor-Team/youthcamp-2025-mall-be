@@ -17,11 +17,11 @@ package service
 import (
 	"context"
 
-	"github.com/cloudwego/biz-demo/gomall/app/frontend/hertz_gen/frontend/cart"
-	common "github.com/cloudwego/biz-demo/gomall/app/frontend/hertz_gen/frontend/common"
-	"github.com/cloudwego/biz-demo/gomall/app/frontend/infra/rpc"
-	frontendutils "github.com/cloudwego/biz-demo/gomall/app/frontend/utils"
-	rpccart "github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/cart"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/frontend/hertz_gen/frontend/cart"
+	common "github.com/Vigor-Team/youthcamp-2025-mall-be/app/frontend/hertz_gen/frontend/common"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/frontend/infra/rpc"
+	frontendutils "github.com/Vigor-Team/youthcamp-2025-mall-be/app/frontend/utils"
+	rpccart "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/cart"
 	"github.com/cloudwego/hertz/pkg/app"
 )
 

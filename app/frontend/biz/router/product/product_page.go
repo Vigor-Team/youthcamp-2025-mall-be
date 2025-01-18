@@ -17,7 +17,7 @@
 package product
 
 import (
-	product "github.com/cloudwego/biz-demo/gomall/app/frontend/biz/handler/product"
+	product "github.com/Vigor-Team/youthcamp-2025-mall-be/app/frontend/biz/handler/product"
 	"github.com/cloudwego/hertz/pkg/app/server"
 )
 

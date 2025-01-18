@@ -17,7 +17,7 @@ package serversuite
 import (
 	"os"
 
-	"github.com/cloudwego/biz-demo/gomall/common/mtl"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/common/mtl"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	"github.com/cloudwego/kitex/pkg/transmeta"

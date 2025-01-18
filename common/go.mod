@@ -1,4 +1,4 @@
-module github.com/cloudwego/biz-demo/gomall/common
+module github.com/Vigor-Team/youthcamp-2025-mall-be/common
 
 go 1.21
 

@@ -17,7 +17,7 @@
 package about
 
 import (
-	about "github.com/cloudwego/biz-demo/gomall/app/frontend/biz/handler/about"
+	about "github.com/Vigor-Team/youthcamp-2025-mall-be/app/frontend/biz/handler/about"
 	"github.com/cloudwego/hertz/pkg/app/server"
 )
 

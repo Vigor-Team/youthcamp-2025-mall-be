@@ -17,7 +17,7 @@
 package cart
 
 import (
-	cart "github.com/cloudwego/biz-demo/gomall/app/frontend/biz/handler/cart"
+	cart "github.com/Vigor-Team/youthcamp-2025-mall-be/app/frontend/biz/handler/cart"
 	"github.com/cloudwego/hertz/pkg/app/server"
 )
 

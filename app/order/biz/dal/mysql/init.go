@@ -18,8 +18,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/cloudwego/biz-demo/gomall/app/order/biz/model"
-	"github.com/cloudwego/biz-demo/gomall/app/order/conf"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/biz/model"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/conf"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"

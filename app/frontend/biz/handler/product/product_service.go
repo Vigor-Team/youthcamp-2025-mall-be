@@ -16,10 +16,11 @@ package product
 
 import (
 	"context"
+	"github.com/cloudwego/hertz/pkg/common/hlog"
 
-	"github.com/cloudwego/biz-demo/gomall/app/frontend/biz/service"
-	"github.com/cloudwego/biz-demo/gomall/app/frontend/biz/utils"
-	product "github.com/cloudwego/biz-demo/gomall/app/frontend/hertz_gen/frontend/product"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/frontend/biz/service"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/frontend/biz/utils"
+	product "github.com/Vigor-Team/youthcamp-2025-mall-be/app/frontend/hertz_gen/frontend/product"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 )
@@ -40,6 +41,7 @@ func GetProduct(ctx context.Context, c *app.RequestContext) {
 		utils.SendErrResponse(ctx, c, consts.StatusOK, err)
 		return
 	}
+	hlog.CtxInfof(ctx, "GetProduct: %v", resp)
 	c.HTML(consts.StatusOK, "product", utils.WarpResponse(ctx, c, resp))
 }
 

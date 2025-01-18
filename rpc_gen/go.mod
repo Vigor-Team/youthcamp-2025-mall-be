@@ -1,4 +1,4 @@
-module github.com/cloudwego/biz-demo/gomall/rpc_gen
+module github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen
 
 go 1.21
 

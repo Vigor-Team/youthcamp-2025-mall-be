@@ -17,8 +17,8 @@ package email
 import (
 	"context"
 
-	"github.com/cloudwego/biz-demo/gomall/app/email/infra/mq"
-	"github.com/cloudwego/biz-demo/gomall/app/email/infra/notify"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/email/infra/mq"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/email/infra/notify"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/cloudwego/kitex/server"
 	"github.com/nats-io/nats.go"
@@ -26,7 +26,7 @@ import (
 	"go.opentelemetry.io/otel/propagation"
 	"google.golang.org/protobuf/proto"
 
-	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/email"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/email"
 )
 
 func ConsumerInit() {

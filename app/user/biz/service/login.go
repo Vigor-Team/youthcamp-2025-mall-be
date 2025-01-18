@@ -17,9 +17,9 @@ package service
 import (
 	"context"
 
-	"github.com/cloudwego/biz-demo/gomall/app/user/biz/dal/mysql"
-	"github.com/cloudwego/biz-demo/gomall/app/user/biz/model"
-	user "github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/user"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/user/biz/dal/mysql"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/user/biz/model"
+	user "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/user"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"golang.org/x/crypto/bcrypt"
 )

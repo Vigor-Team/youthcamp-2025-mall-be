@@ -17,7 +17,7 @@
 package checkout
 
 import (
-	"github.com/cloudwego/biz-demo/gomall/app/frontend/middleware"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/frontend/middleware"
 	"github.com/cloudwego/hertz/pkg/app"
 )
 

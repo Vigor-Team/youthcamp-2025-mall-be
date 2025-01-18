@@ -17,9 +17,9 @@ package utils
 import (
 	"context"
 
-	"github.com/cloudwego/biz-demo/gomall/app/frontend/infra/rpc"
-	frontendutils "github.com/cloudwego/biz-demo/gomall/app/frontend/utils"
-	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/cart"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/frontend/infra/rpc"
+	frontendutils "github.com/Vigor-Team/youthcamp-2025-mall-be/app/frontend/utils"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/cart"
 
 	"github.com/cloudwego/hertz/pkg/app"
 )

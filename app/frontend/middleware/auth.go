@@ -18,7 +18,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/cloudwego/biz-demo/gomall/app/frontend/utils"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/frontend/utils"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/hertz-contrib/sessions"
 )

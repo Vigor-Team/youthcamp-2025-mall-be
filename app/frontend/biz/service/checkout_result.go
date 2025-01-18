@@ -19,7 +19,7 @@ import (
 
 	"github.com/cloudwego/hertz/pkg/common/utils"
 
-	common "github.com/cloudwego/biz-demo/gomall/app/frontend/hertz_gen/frontend/common"
+	common "github.com/Vigor-Team/youthcamp-2025-mall-be/app/frontend/hertz_gen/frontend/common"
 	"github.com/cloudwego/hertz/pkg/app"
 )
 

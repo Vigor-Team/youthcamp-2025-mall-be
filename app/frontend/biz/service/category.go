@@ -17,9 +17,9 @@ package service
 import (
 	"context"
 
-	category "github.com/cloudwego/biz-demo/gomall/app/frontend/hertz_gen/frontend/category"
-	"github.com/cloudwego/biz-demo/gomall/app/frontend/infra/rpc"
-	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/product"
+	category "github.com/Vigor-Team/youthcamp-2025-mall-be/app/frontend/hertz_gen/frontend/category"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/frontend/infra/rpc"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/product"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/utils"
 )

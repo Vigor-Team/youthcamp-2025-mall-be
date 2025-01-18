@@ -18,13 +18,14 @@ package main
 
 import (
 	"context"
+	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"os"
 
-	"github.com/cloudwego/biz-demo/gomall/app/frontend/biz/router"
-	"github.com/cloudwego/biz-demo/gomall/app/frontend/conf"
-	"github.com/cloudwego/biz-demo/gomall/app/frontend/infra/mtl"
-	"github.com/cloudwego/biz-demo/gomall/app/frontend/infra/rpc"
-	"github.com/cloudwego/biz-demo/gomall/app/frontend/middleware"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/frontend/biz/router"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/frontend/conf"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/frontend/infra/mtl"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/frontend/infra/rpc"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/frontend/middleware"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/app/middlewares/server/recovery"
 	"github.com/cloudwego/hertz/pkg/app/server"
@@ -55,6 +56,7 @@ func main() {
 		hertzotelprovider.WithEnableMetrics(false),
 	)
 	defer p.Shutdown(context.Background())
+
 	tracer, cfg := hertzoteltracing.NewServerTracer(hertzoteltracing.WithCustomResponseHandler(func(ctx context.Context, c *app.RequestContext) {
 		c.Header("shop-trace-id", oteltrace.SpanFromContext(ctx).SpanContext().TraceID().String())
 	}))
@@ -69,6 +71,7 @@ func main() {
 	),
 		tracer,
 	)
+
 	h.LoadHTMLGlob("template/*")
 	h.Delims("{{", "}}")
 
@@ -77,6 +80,7 @@ func main() {
 
 	// add a ping route to test
 	h.GET("/ping", func(c context.Context, ctx *app.RequestContext) {
+		hlog.CtxInfof(c, "ping")
 		ctx.JSON(consts.StatusOK, utils.H{"ping": "pong"})
 	})
 
@@ -120,6 +124,7 @@ func registerMiddleware(h *server.Hertz) {
 	if err != nil {
 		panic(err)
 	}
+
 	store.Options(sessions.Options{MaxAge: 86400, Path: "/"})
 	rs, err := redis.GetRedisStore(store)
 	if err == nil {

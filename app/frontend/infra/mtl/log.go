@@ -15,12 +15,15 @@
 package mtl
 
 import (
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/frontend/conf"
+	"gopkg.in/natefinch/lumberjack.v2"
 	"os"
 	"time"
 
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/cloudwego/kitex/server"
 	hertzzap "github.com/hertz-contrib/logger/zap"
+	hertobszap "github.com/hertz-contrib/obs-opentelemetry/logging/zap"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
@@ -30,7 +33,14 @@ func initLog() {
 	var output zapcore.WriteSyncer
 	if os.Getenv("GO_ENV") != "online" {
 		opts = append(opts, hertzzap.WithCoreEnc(zapcore.NewConsoleEncoder(zap.NewDevelopmentEncoderConfig())))
-		output = os.Stdout
+		output = &zapcore.BufferedWriteSyncer{
+			WS: zapcore.AddSync(&lumberjack.Logger{
+				Filename:   conf.GetConf().Hertz.LogFileName,
+				MaxSize:    conf.GetConf().Hertz.LogMaxSize,
+				MaxBackups: conf.GetConf().Hertz.LogMaxBackups,
+				MaxAge:     conf.GetConf().Hertz.LogMaxAge,
+			}),
+		}
 	} else {
 		opts = append(opts, hertzzap.WithCoreEnc(zapcore.NewJSONEncoder(zap.NewProductionEncoderConfig())))
 		// async log
@@ -42,7 +52,7 @@ func initLog() {
 			output.Sync() //nolint:errcheck
 		})
 	}
-	log := hertzzap.NewLogger(opts...)
+	log := hertobszap.NewLogger(hertobszap.WithLogger(hertzzap.NewLogger(opts...)))
 	hlog.SetLogger(log)
 	hlog.SetLevel(hlog.LevelInfo)
 	hlog.SetOutput(output)

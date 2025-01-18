@@ -18,10 +18,10 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/cloudwego/biz-demo/gomall/common/mtl"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/common/mtl"
 
-	"github.com/cloudwego/biz-demo/gomall/app/cart/biz/model"
-	"github.com/cloudwego/biz-demo/gomall/app/cart/conf"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/cart/biz/model"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/cart/conf"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/plugin/opentelemetry/tracing"

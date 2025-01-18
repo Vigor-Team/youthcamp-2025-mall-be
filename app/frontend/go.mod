@@ -1,17 +1,17 @@
-module github.com/cloudwego/biz-demo/gomall/app/frontend
+module github.com/Vigor-Team/youthcamp-2025-mall-be/app/frontend
 
 go 1.21
 
 replace (
 	github.com/apache/thrift => github.com/apache/thrift v0.13.0
-	github.com/cloudwego/biz-demo/gomall/common => ../../common
-	github.com/cloudwego/biz-demo/gomall/rpc_gen => ../../rpc_gen
+	github.com/Vigor-Team/youthcamp-2025-mall-be/common => ../../common
+	github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen => ../../rpc_gen
 )
 
 require (
-	github.com/cloudwego/biz-demo/gomall/common v0.0.0-00010101000000-000000000000
-	github.com/cloudwego/biz-demo/gomall/rpc_gen v0.0.0-00010101000000-000000000000
-	github.com/cloudwego/hertz v0.7.3
+	github.com/Vigor-Team/youthcamp-2025-mall-be/common v0.0.0-00010101000000-000000000000
+	github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen v0.0.0-00010101000000-000000000000
+	github.com/cloudwego/hertz v0.9.0
 	github.com/cloudwego/kitex v0.11.3
 	github.com/hashicorp/consul/api v1.26.1
 	github.com/hertz-contrib/cors v0.1.0
@@ -19,6 +19,7 @@ require (
 	github.com/hertz-contrib/logger/accesslog v0.0.0-20231211035138-acc7b4e2984b
 	github.com/hertz-contrib/logger/zap v1.1.0
 	github.com/hertz-contrib/monitor-prometheus v0.1.2
+	github.com/hertz-contrib/obs-opentelemetry/logging/zap v0.0.0-20241217053230-ebef6a5390bd
 	github.com/hertz-contrib/obs-opentelemetry/provider v0.2.3
 	github.com/hertz-contrib/obs-opentelemetry/tracing v0.3.1
 	github.com/hertz-contrib/pprof v0.1.1

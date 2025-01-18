@@ -17,7 +17,7 @@
 package category
 
 import (
-	category "github.com/cloudwego/biz-demo/gomall/app/frontend/biz/handler/category"
+	category "github.com/Vigor-Team/youthcamp-2025-mall-be/app/frontend/biz/handler/category"
 	"github.com/cloudwego/hertz/pkg/app/server"
 )
 
