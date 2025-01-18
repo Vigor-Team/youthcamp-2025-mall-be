@@ -1,11 +1,11 @@
 syntax = "proto3";
 
-package frontend.category;
+package gateway.category;
 
 import "api.proto";
-import "frontend/common.proto";
+import "gateway/common.proto";
 
-option go_package = "/frontend/category";
+option go_package = "/gateway/category";
 
 message CategoryReq {
   string category = 1 [(api.path) = "category"];

@@ -1,11 +1,11 @@
 syntax = 'proto3';
 
-package frontend.common;
+package gateway.common;
 
 import "api.proto";
-import "frontend/common.proto";
+import "gateway/common.proto";
 
-option go_package = "frontend/home";
+option go_package = "gateway/home";
 
 service HomeService {
   rpc Home(common.Empty) returns (Empty) { option (api.get) = "/"; }

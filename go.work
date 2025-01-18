@@ -4,7 +4,7 @@ use (
 	./app/cart
 	./app/checkout
 	./app/email
-	./app/frontend
+	./app/gateway
 	./app/order
 	./app/payment
 	./app/product

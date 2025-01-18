@@ -1,11 +1,11 @@
 syntax = "proto3";
 
-package frontend.checkout;
+package gateway.checkout;
 
 import "api.proto";
-import "frontend/common.proto";
+import "gateway/common.proto";
 
-option go_package = "/frontend/checkout";
+option go_package = "/gateway/checkout";
 
 message CheckoutReq {
   string email = 1 [(api.form) = "email"];

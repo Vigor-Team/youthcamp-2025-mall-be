@@ -1,11 +1,11 @@
 syntax = "proto3";
 
-package frontend.cart;
+package gateway.cart;
 
 import "api.proto";
-import "frontend/common.proto";
+import "gateway/common.proto";
 
-option go_package = "/frontend/cart";
+option go_package = "/gateway/cart";
 
 message AddCartReq {
   uint32 product_id = 1 [(api.form) = "productId"];

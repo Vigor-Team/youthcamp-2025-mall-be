@@ -8,7 +8,7 @@ This is a teaching project for newbie using CloudWeGo
 |---------------|----|
 | cwgo          | -  |
 | kitex         | -  |
-| [bootstrap](https://getbootstrap.com/docs/5.3/getting-started/introduction/) | Bootstrap is a powerful, feature-packed frontend toolkit. Build anything—from prototype to production—in minutes.  |
+| [bootstrap](https://getbootstrap.com/docs/5.3/getting-started/introduction/) | Bootstrap is a powerful, feature-packed gateway toolkit. Build anything—from prototype to production—in minutes.  |
 | Hertz         | -  |
 | MySQL         | -  |
 | Redis         | -  |

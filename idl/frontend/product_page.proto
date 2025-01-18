@@ -1,11 +1,11 @@
 syntax = "proto3";
 
-package frontend.product;
+package gateway.product;
 
 import "api.proto";
-import "frontend/common.proto";
+import "gateway/common.proto";
 
-option go_package = "frontend/product";
+option go_package = "gateway/product";
 
 message ProductReq {
   uint32 id = 1 [(api.query) = "id"];

@@ -26,15 +26,15 @@ gen-client: ## gen client code of {svc}. example: make gen-client svc=product
 gen-server: ## gen service code of {svc}. example: make gen-server svc=product
 	@cd app/${svc} && cwgo server --type RPC --service ${svc} --module github.com/Vigor-Team/youthcamp-2025-mall-be/app/${svc} --pass "-use github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen"  -I ../../idl  --idl ../../idl/${svc}.proto
 
-.PHONY: gen-frontend
-gen-frontend:
-	@cd app/frontend && cwgo server -I ../../idl --type HTTP --service frontend --module github.com/Vigor-Team/youthcamp-2025-mall-be/app/frontend --idl ../../idl/frontend/checkout_page.proto
+.PHONY: gen-gateway
+gen-gateway:
+	@cd app/gateway && cwgo server -I ../../idl --type HTTP --service gateway --module github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway --idl ../../idl/gateway/checkout_page.proto
 
 ##@ Build
 
-.PHONY: watch-frontend
-watch-frontend:
-	@cd app/frontend && air
+.PHONY: watch-gateway
+watch-gateway:
+	@cd app/gateway && air
 
 .PHONY: tidy
 tidy: ## run `go mod tidy` for all go module
