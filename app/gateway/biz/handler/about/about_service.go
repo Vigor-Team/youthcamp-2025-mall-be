@@ -31,15 +31,15 @@ func About(ctx context.Context, c *app.RequestContext) {
 	var req common.Empty
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		utils.SendErrResponse(ctx, c, consts.StatusOK, err)
+		utils.ErrorResponse(c, consts.StatusOK, err.Error())
 		return
 	}
 
 	resp, err := service.NewAboutService(ctx, c).Run(&req)
 	if err != nil {
-		utils.SendErrResponse(ctx, c, consts.StatusOK, err)
+		utils.ErrorResponse(c, consts.StatusOK, err.Error())
 		return
 	}
 
-	c.HTML(consts.StatusOK, "about", utils.WarpResponse(ctx, c, resp))
+	c.Set("data", resp)
 }

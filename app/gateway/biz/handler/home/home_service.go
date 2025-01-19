@@ -31,16 +31,15 @@ func Home(ctx context.Context, c *app.RequestContext) {
 	var req common.Empty
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		utils.SendErrResponse(ctx, c, consts.StatusOK, err)
+		utils.ErrorResponse(c, consts.StatusOK, err.Error())
 		return
 	}
 
 	// resp, err :=
 	resp, err := service.NewHomeService(ctx, c).Run(&req)
 	if err != nil {
-		utils.SendErrResponse(ctx, c, consts.StatusOK, err)
+		utils.ErrorResponse(c, consts.StatusOK, err.Error())
 		return
 	}
-
-	c.HTML(consts.StatusOK, "home", utils.WarpResponse(ctx, c, resp))
+	c.Set("data", resp)
 }

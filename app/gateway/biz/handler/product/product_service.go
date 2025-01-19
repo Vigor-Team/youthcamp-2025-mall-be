@@ -20,29 +20,30 @@ import (
 
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/biz/service"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/biz/utils"
+	common "github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/hertz_gen/gateway/common"
 	product "github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/hertz_gen/gateway/product"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 )
 
 // GetProduct .
-// @router /product [GET]
+// @router /products/:productId [GET]
 func GetProduct(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req product.ProductReq
+	var req product.GetProductReq
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		utils.SendErrResponse(ctx, c, consts.StatusOK, err)
+		utils.ErrorResponse(c, consts.StatusOK, err.Error())
 		return
 	}
 
 	resp, err := service.NewGetProductService(ctx, c).Run(&req)
 	if err != nil {
-		utils.SendErrResponse(ctx, c, consts.StatusOK, err)
+		utils.ErrorResponse(c, consts.StatusOK, err.Error())
 		return
 	}
 	hlog.CtxInfof(ctx, "GetProduct: %v", resp)
-	c.HTML(consts.StatusOK, "product", utils.WarpResponse(ctx, c, resp))
+	c.Set("data", resp)
 }
 
 // SearchProducs .
@@ -52,14 +53,75 @@ func SearchProducs(ctx context.Context, c *app.RequestContext) {
 	var req product.SearchProductsReq
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		utils.SendErrResponse(ctx, c, consts.StatusOK, err)
+		utils.ErrorResponse(c, consts.StatusOK, err.Error())
 		return
 	}
 
 	resp, err := service.NewSearchProducsService(ctx, c).Run(&req)
 	if err != nil {
-		utils.SendErrResponse(ctx, c, consts.StatusOK, err)
+		utils.ErrorResponse(c, consts.StatusOK, err.Error())
 		return
 	}
-	c.HTML(consts.StatusOK, "search", utils.WarpResponse(ctx, c, resp))
+	c.Set("data", resp)
+}
+
+// ListProducts .
+// @router /products [GET]
+func ListProducts(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req common.Empty
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		return
+	}
+
+	resp, err := service.NewListProductsService(ctx, c).Run(&req)
+
+	if err != nil {
+		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		return
+	}
+
+	c.Set("data", resp)
+}
+
+// ListCategories .
+// @router /categories [GET]
+func ListCategories(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req common.Empty
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		return
+	}
+
+	resp, err := service.NewListCategoriesService(ctx, c).Run(&req)
+
+	if err != nil {
+		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		return
+	}
+	c.Set("data", resp)
+}
+
+// GetCategory .
+// @router /categories/:categoryId [GET]
+func GetCategory(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req product.GetCategoryReq
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		return
+	}
+
+	resp, err := service.NewGetCategoryService(ctx, c).Run(&req)
+
+	if err != nil {
+		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		return
+	}
+	c.Set("data", resp)
 }

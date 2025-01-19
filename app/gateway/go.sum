@@ -223,6 +223,8 @@ github.com/go-stack/stack v1.8.0/go.mod h1:v0f6uXyyMGvRgIKkXu+yp6POWl0qKG85gN/me
 github.com/goccy/go-json v0.9.4/go.mod h1:6MelG93GURQebXPDq3khkgXZkazVtN9CRI+MGFi0w8I=
 github.com/gogo/protobuf v1.1.1/go.mod h1:r8qH/GZQm5c6nD/R0oafs1akxWv10x8SbQlK7atdtwQ=
 github.com/gogo/protobuf v1.3.2/go.mod h1:P1XiOD3dCwIKUDQYPy72D8LYyHL2YPYrpS2s69NZV8Q=
+github.com/golang-jwt/jwt/v4 v4.4.1 h1:pC5DB52sCeK48Wlb9oPcdhnjkz1TKt1D/P7WKJ0kUcQ=
+github.com/golang-jwt/jwt/v4 v4.4.1/go.mod h1:m21LjoU+eqJr34lmDMbreY2eSTRJ1cv77w39/MY0Ch0=
 github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0/go.mod h1:E/TSTwGwJL78qG/PmXZO1EjYhfJinVAhrmmHX6Z8B9k=
 github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b/go.mod h1:SBH7ygxi8pfUlaOkMMuAQtPIUF8ecWP5IEl/CR7VP2Q=
 github.com/golang/groupcache v0.0.0-20190702054246-869f871628b6/go.mod h1:cIg4eruTrX1D+g88fzRXU5OdNfaM+9IcxsU14FzY7Hc=
@@ -372,6 +374,8 @@ github.com/hertz-contrib/cors v0.1.0 h1:PQ5mATygSMzTlYtfyMyHjobYoJeHKe2Qt3tcAOgb
 github.com/hertz-contrib/cors v0.1.0/go.mod h1:VPReoq+Rvu/lZOfpp5CcX3x4mpZUc3EpSXBcVDcbvOc=
 github.com/hertz-contrib/gzip v0.0.3 h1:x+XamFkUYhPPqMzGWejPh1wdDiwkIpHkgRVIg74Xvt4=
 github.com/hertz-contrib/gzip v0.0.3/go.mod h1:5rQsvQp1qBmt2TYATbbofNAJBSws2Wwst4EdiHLbx4w=
+github.com/hertz-contrib/jwt v1.0.2 h1:sAW3wqgBDsbPKr5JWJRObY61jg1NqYkUCg+o8UXLsaI=
+github.com/hertz-contrib/jwt v1.0.2/go.mod h1:3zUSK+44dcw/9z/89JZ+mA0FoyhmVN7Hx+f46ucVV4I=
 github.com/hertz-contrib/logger/accesslog v0.0.0-20231211035138-acc7b4e2984b h1:RoBp+TurP+46VZl31VMV+6wO2SlNlXwyVwjc93s5/tI=
 github.com/hertz-contrib/logger/accesslog v0.0.0-20231211035138-acc7b4e2984b/go.mod h1:vB3TNAD0IvvDhfY1SWSeCaAVbWleDKEuQ4zOK70hb64=
 github.com/hertz-contrib/logger/zap v1.1.0 h1:4efINiIDJrXEtAFeEdDJvc3Hye0VFxp+0X4BwaZgxNs=
@@ -1023,6 +1027,8 @@ gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15/go.mod h1:Co6ibVJAznAaIkqp8
 gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c h1:Hei/4ADfdWqJk1ZMxUNpqntNwaWcugrBjAiHlqqRiVk=
 gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c/go.mod h1:JHkPIbrfpd72SG/EVd6muEfDQjcINNoR0C8j2r3qZ4Q=
 gopkg.in/errgo.v2 v2.1.0/go.mod h1:hNsd1EY+bozCKY1Ytp96fpM3vjJbqLJn88ws8XvfDNI=
+gopkg.in/natefinch/lumberjack.v2 v2.2.1 h1:bBRl1b0OH9s/DuPhuXpNl+VtCaJXFZ5/uEFST95x9zc=
+gopkg.in/natefinch/lumberjack.v2 v2.2.1/go.mod h1:YD8tP3GAjkrDg1eZH7EGmyESg/lsYskCTPBJVb9jqSc=
 gopkg.in/validator.v2 v2.0.1 h1:xF0KWyGWXm/LM2G1TrEjqOu4pa6coO9AlWSf3msVfDY=
 gopkg.in/validator.v2 v2.0.1/go.mod h1:lIUZBlB3Im4s/eYp39Ry/wkR02yOPhZ9IwIRBjuPuG8=
 gopkg.in/yaml.v2 v2.2.1/go.mod h1:hI93XBmqTisBFMUTm0b8Fm+jr3Dg1NNxqwp+5A1VGuI=

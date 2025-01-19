@@ -17,12 +17,14 @@
 package product
 
 import (
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/middleware"
 	"github.com/cloudwego/hertz/pkg/app"
 )
 
 func rootMw() []app.HandlerFunc {
-	// your code...
-	return nil
+	var mws []app.HandlerFunc
+	mws = append(mws, middleware.GetJwtMd().MiddlewareFunc())
+	return mws
 }
 
 func _getproductMw() []app.HandlerFunc {
@@ -31,6 +33,31 @@ func _getproductMw() []app.HandlerFunc {
 }
 
 func _searchproducsMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _categoriesMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _listcategoriesMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _getcategoryMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _listproductsMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _productsMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }

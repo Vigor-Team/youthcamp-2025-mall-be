@@ -3,9 +3,9 @@ module github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway
 go 1.21
 
 replace (
-	github.com/apache/thrift => github.com/apache/thrift v0.13.0
 	github.com/Vigor-Team/youthcamp-2025-mall-be/common => ../../common
 	github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen => ../../rpc_gen
+	github.com/apache/thrift => github.com/apache/thrift v0.13.0
 )
 
 require (
@@ -16,6 +16,7 @@ require (
 	github.com/hashicorp/consul/api v1.26.1
 	github.com/hertz-contrib/cors v0.1.0
 	github.com/hertz-contrib/gzip v0.0.3
+	github.com/hertz-contrib/jwt v1.0.2
 	github.com/hertz-contrib/logger/accesslog v0.0.0-20231211035138-acc7b4e2984b
 	github.com/hertz-contrib/logger/zap v1.1.0
 	github.com/hertz-contrib/monitor-prometheus v0.1.2
@@ -36,6 +37,7 @@ require (
 	go.opentelemetry.io/otel/trace v1.25.0
 	go.uber.org/zap v1.27.0
 	google.golang.org/protobuf v1.33.0
+	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 	gopkg.in/validator.v2 v2.0.1
 	gopkg.in/yaml.v2 v2.4.0
 	gorm.io/driver/mysql v1.5.2
@@ -74,6 +76,7 @@ require (
 	github.com/go-logr/logr v1.4.1 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-sql-driver/mysql v1.7.1 // indirect
+	github.com/golang-jwt/jwt/v4 v4.4.1 // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/gomodule/redigo v1.8.9 // indirect
 	github.com/google/pprof v0.0.0-20240727154555-813a5fbdbec8 // indirect

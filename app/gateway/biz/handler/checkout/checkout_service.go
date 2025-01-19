@@ -22,7 +22,6 @@ import (
 	checkout "github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/hertz_gen/gateway/checkout"
 	common "github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/hertz_gen/gateway/common"
 	"github.com/cloudwego/hertz/pkg/app"
-	hertzUtils "github.com/cloudwego/hertz/pkg/common/utils"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 )
 
@@ -33,17 +32,17 @@ func Checkout(ctx context.Context, c *app.RequestContext) {
 	var req checkout.CheckoutReq
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.HTML(consts.StatusOK, "checkout", utils.WarpResponse(ctx, c, hertzUtils.H{"warning": err}))
+		utils.ErrorResponse(c, consts.StatusOK, err.Error())
 		return
 	}
 
 	resp, err := service.NewCheckoutService(ctx, c).Run(&req)
 	if err != nil {
-		utils.SendErrResponse(ctx, c, consts.StatusOK, err)
+		utils.ErrorResponse(c, consts.StatusOK, err.Error())
 		return
 	}
 
-	c.HTML(consts.StatusOK, "checkout", utils.WarpResponse(ctx, c, resp))
+	c.Set("data", resp)
 }
 
 // CheckoutWaiting .
@@ -53,17 +52,17 @@ func CheckoutWaiting(ctx context.Context, c *app.RequestContext) {
 	var req checkout.CheckoutReq
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.HTML(consts.StatusOK, "waiting", utils.WarpResponse(ctx, c, hertzUtils.H{"warning": err}))
+		utils.ErrorResponse(c, consts.StatusOK, err.Error())
 		return
 	}
 
 	resp, err := service.NewCheckoutWaitingService(ctx, c).Run(&req)
 	if err != nil {
-		c.HTML(consts.StatusOK, "waiting", utils.WarpResponse(ctx, c, hertzUtils.H{"error": err}))
+		utils.ErrorResponse(c, consts.StatusOK, err.Error())
 		return
 	}
 
-	c.HTML(consts.StatusOK, "waiting", utils.WarpResponse(ctx, c, resp))
+	c.Set("data", resp)
 }
 
 // CheckoutResult .
@@ -73,15 +72,15 @@ func CheckoutResult(ctx context.Context, c *app.RequestContext) {
 	var req common.Empty
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.HTML(consts.StatusOK, "waiting", utils.WarpResponse(ctx, c, hertzUtils.H{"warning": err}))
+		utils.ErrorResponse(c, consts.StatusOK, err.Error())
 		return
 	}
 
 	resp, err := service.NewCheckoutResultService(ctx, c).Run(&req)
 	if err != nil {
-		c.HTML(consts.StatusOK, "waiting", utils.WarpResponse(ctx, c, hertzUtils.H{"error": err}))
+		utils.ErrorResponse(c, consts.StatusOK, err.Error())
 		return
 	}
 
-	c.HTML(consts.StatusOK, "result", utils.WarpResponse(ctx, c, resp))
+	c.Set("data", resp)
 }

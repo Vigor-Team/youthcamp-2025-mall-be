@@ -35,7 +35,12 @@ func NewRegisterService(ctx context.Context) *RegisterService {
 func (s *RegisterService) Run(req *user.RegisterReq) (resp *user.RegisterResp, err error) {
 	// Finish your business logic.
 	if req.Password != req.ConfirmPassword {
-		err = errors.New("Password must be the same as ConfirmPassword")
+		err = errors.New("password must be the same as confirmPassword")
+		return
+	}
+	userInfo, _ := model.GetByEmail(mysql.DB, s.ctx, req.Email)
+	if userInfo != nil {
+		err = errors.New("user already exists")
 		return
 	}
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
@@ -45,6 +50,7 @@ func (s *RegisterService) Run(req *user.RegisterReq) (resp *user.RegisterResp, e
 	newUser := &model.User{
 		Email:          req.Email,
 		PasswordHashed: string(hashedPassword),
+		Role:           "user",
 	}
 	if err = model.Create(mysql.DB, s.ctx, newUser); err != nil {
 		return

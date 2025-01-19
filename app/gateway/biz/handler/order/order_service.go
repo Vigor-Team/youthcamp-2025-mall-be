@@ -32,7 +32,7 @@ func OrderList(ctx context.Context, c *app.RequestContext) {
 	var req common.Empty
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		utils.SendErrResponse(ctx, c, consts.StatusOK, err)
+		utils.ErrorResponse(c, consts.StatusOK, err.Error())
 		return
 	}
 
@@ -42,5 +42,5 @@ func OrderList(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	c.HTML(consts.StatusOK, "order", utils.WarpResponse(ctx, c, resp))
+	c.Set("data", resp)
 }

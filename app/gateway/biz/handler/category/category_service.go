@@ -31,15 +31,15 @@ func Category(ctx context.Context, c *app.RequestContext) {
 	var req category.CategoryReq
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		utils.SendErrResponse(ctx, c, consts.StatusOK, err)
+		utils.ErrorResponse(c, consts.StatusOK, err.Error())
 		return
 	}
 
 	resp, err := service.NewCategoryService(ctx, c).Run(&req)
 	if err != nil {
-		utils.SendErrResponse(ctx, c, consts.StatusOK, err)
+		utils.ErrorResponse(c, consts.StatusOK, err.Error())
 		return
 	}
 
-	c.HTML(consts.StatusOK, "category", resp)
+	c.Set("data", resp)
 }

@@ -16,41 +16,48 @@ package service
 
 import (
 	"context"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/middleware"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/types"
+	"github.com/cloudwego/hertz/pkg/common/hlog"
+	"github.com/hertz-contrib/jwt"
 
 	auth "github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/hertz_gen/gateway/auth"
-	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/infra/rpc"
-	gatewayutils "github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/utils"
-	rpcuser "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/user"
 	"github.com/cloudwego/hertz/pkg/app"
-	"github.com/hertz-contrib/sessions"
 )
 
 type LoginService struct {
 	RequestContext *app.RequestContext
 	Context        context.Context
+	jwtMd          *jwt.HertzJWTMiddleware
 }
 
-func NewLoginService(Context context.Context, RequestContext *app.RequestContext) *LoginService {
-	return &LoginService{RequestContext: RequestContext, Context: Context}
+func NewLoginService(Context context.Context, RequestContext *app.RequestContext, jwtMd *jwt.HertzJWTMiddleware) *LoginService {
+	return &LoginService{RequestContext: RequestContext, Context: Context, jwtMd: jwtMd}
 }
 
-func (h *LoginService) Run(req *auth.LoginReq) (resp string, err error) {
-	res, err := rpc.UserClient.Login(h.Context, &rpcuser.LoginReq{Email: req.Email, Password: req.Password})
+func (h *LoginService) Run(req *auth.LoginReq) (resp *types.Token, err error) {
+	authRes, err := h.jwtMd.Authenticator(h.Context, h.RequestContext)
 	if err != nil {
-		return
+		hlog.CtxErrorf(h.Context, "login error: %v", err)
+		return nil, err
 	}
-
-	session := sessions.Default(h.RequestContext)
-	session.Set("user_id", res.UserId)
-	err = session.Save()
-	gatewayutils.MustHandleError(err)
-	redirect := "/"
-	if gatewayutils.ValidateNext(req.Next) {
-		redirect = req.Next
-	}
+	userId := authRes.(int32)
+	accessToken, _, err := h.jwtMd.TokenGenerator(userId)
 	if err != nil {
-		return "", err
+		hlog.CtxErrorf(h.Context, "accessToken gen error: %v", err)
+		return nil, err
 	}
-
-	return redirect, nil
+	refreshToken, _, err := h.jwtMd.TokenGenerator(map[string]interface{}{
+		middleware.IdentityKey: userId,
+		middleware.RefreshKey:  true,
+	})
+	if err != nil {
+		hlog.CtxErrorf(h.Context, "refreshToken gen error: %v", err)
+		return nil, err
+	}
+	resp = &types.Token{
+		AccessToken:  accessToken,
+		RefreshToken: refreshToken,
+	}
+	return
 }

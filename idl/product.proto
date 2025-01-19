@@ -8,6 +8,7 @@ service ProductCatalogService {
   rpc ListProducts(ListProductsReq) returns (ListProductsResp) {}
   rpc GetProduct(GetProductReq) returns (GetProductResp) {}
   rpc SearchProducts(SearchProductsReq) returns (SearchProductsResp) {}
+  rpc GetCategories(common.Empty) returns (GetCategoriesResp) {}
 }
 
 message ListProductsReq{

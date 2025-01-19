@@ -37,3 +37,10 @@ func (s *UserServiceImpl) Login(ctx context.Context, req *user.LoginReq) (resp *
 
 	return resp, err
 }
+
+// UserInfo implements the UserServiceImpl interface.
+func (s *UserServiceImpl) UserInfo(ctx context.Context, req *user.UserInfoReq) (resp *user.UserInfoResp, err error) {
+	resp, err = service.NewUserInfoService(ctx).Run(req)
+
+	return resp, err
+}

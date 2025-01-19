@@ -24,16 +24,31 @@ import (
 	"github.com/cloudwego/hertz/pkg/app"
 )
 
-// SendErrResponse  pack error response
-func SendErrResponse(ctx context.Context, c *app.RequestContext, code int, err error) {
-	// todo edit custom code
-	c.String(code, err.Error())
+const (
+	defaultSuccessCode = 0
+	defaultSuccessMsg  = "success"
+)
+
+type GlobalResponse struct {
+	Code int    `json:"code"`
+	Msg  string `json:"msg"`
+	Data any    `json:"data"`
 }
 
-// SendSuccessResponse  pack success response
-func SendSuccessResponse(ctx context.Context, c *app.RequestContext, code int, data interface{}) {
-	// todo edit custom code
-	c.JSON(code, data)
+func ErrorResponse(c *app.RequestContext, code int, message string) {
+	c.JSON(code, GlobalResponse{
+		Code: code,
+		Msg:  message,
+		Data: nil,
+	})
+}
+
+func SuccessResponse(c *app.RequestContext, code int, data interface{}) {
+	c.JSON(code, GlobalResponse{
+		Code: defaultSuccessCode,
+		Msg:  defaultSuccessMsg,
+		Data: data,
+	})
 }
 
 func WarpResponse(ctx context.Context, c *app.RequestContext, content map[string]any) map[string]any {

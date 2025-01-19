@@ -21,7 +21,6 @@ import (
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/infra/rpc"
 	rpcproduct "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/product"
 	"github.com/cloudwego/hertz/pkg/app"
-	"github.com/cloudwego/hertz/pkg/common/utils"
 )
 
 type GetProductService struct {
@@ -33,12 +32,10 @@ func NewGetProductService(Context context.Context, RequestContext *app.RequestCo
 	return &GetProductService{RequestContext: RequestContext, Context: Context}
 }
 
-func (h *GetProductService) Run(req *product.ProductReq) (resp map[string]any, err error) {
-	p, err := rpc.ProductClient.GetProduct(h.Context, &rpcproduct.GetProductReq{Id: req.GetId()})
+func (h *GetProductService) Run(req *product.GetProductReq) (resp *rpcproduct.GetProductResp, err error) {
+	p, err := rpc.ProductClient.GetProduct(h.Context, &rpcproduct.GetProductReq{Id: req.GetProductId()})
 	if err != nil {
 		return nil, err
 	}
-	return utils.H{
-		"item": p.Product,
-	}, nil
+	return p, err
 }

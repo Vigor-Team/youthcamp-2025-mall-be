@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package gateway.product;
+
+import "api.proto";
+import "gateway/common.proto";
+
+option go_package = "gateway/product";
+
+message GetProductReq {
+  uint32 productId = 1 [(api.path) = "productId"];
+}
+
+message SearchProductsReq {
+  string q = 1 [(api.query) = "q"];
+}
+
+message GetCategoryReq {
+  uint32 categoryId = 1 [(api.path) = "categoryId"];
+}
+
+service ProductService {
+  rpc GetProduct(GetProductReq) returns (common.Empty) {
+    option (api.get) = "/products/:productId";
+  }
+  rpc SearchProducs(SearchProductsReq) returns (common.Empty) {
+    option (api.get) = "/search";
+  }
+  rpc ListProducts(common.Empty) returns (common.Empty) {
+    option (api.get) = "/products";
+  }
+  rpc ListCategories(common.Empty) returns (common.Empty) {
+    option (api.get) = "/categories";
+  }
+  rpc GetCategory(GetCategoryReq) returns (common.Empty) {
+    option (api.get) = "/categories/:categoryId";
+  }
+}

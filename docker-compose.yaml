@@ -68,4 +68,11 @@ services:
     volumes:
       - ./deploy/config/promtail.yml:/etc/promtail/config.yml
       - ./app/gateway/log:/logs/gateway
+      - ./app/cart/log:/logs/cart
+      - ./app/checkout/log:/logs/checkout
+      - ./app/email/log:/logs/email
+      - ./app/order/log:/logs/order
+      - ./app/payment/log:/logs/payment
+      - ./app/product/log:/logs/product
+      - ./app/user/log:/logs/user
     command: -config.file=/etc/promtail/config.yml

@@ -16,13 +16,13 @@ package service
 
 import (
 	"context"
+	"github.com/cloudwego/hertz/pkg/common/hlog"
 
 	common "github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/hertz_gen/gateway/common"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/infra/rpc"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/product"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/utils"
-	"github.com/cloudwego/kitex/pkg/klog"
 )
 
 type HomeService struct {
@@ -38,7 +38,7 @@ func (h *HomeService) Run(req *common.Empty) (res map[string]any, err error) {
 	ctx := h.Context
 	p, err := rpc.ProductClient.ListProducts(ctx, &product.ListProductsReq{})
 	if err != nil {
-		klog.Error(err)
+		hlog.Error(err)
 	}
 	var cartNum int
 	return utils.H{

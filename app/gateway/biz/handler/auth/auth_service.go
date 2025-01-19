@@ -16,6 +16,7 @@ package auth
 
 import (
 	"context"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/middleware"
 
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/biz/service"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/biz/utils"
@@ -27,13 +28,13 @@ import (
 )
 
 // Register .
-// @router /auth/register [POST]
+// @router /api/v1/auth/register [POST]
 func Register(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req auth.RegisterReq
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		utils.SendErrResponse(ctx, c, consts.StatusOK, err)
+		utils.ErrorResponse(c, consts.StatusOK, err.Error())
 		return
 	}
 
@@ -42,7 +43,6 @@ func Register(ctx context.Context, c *app.RequestContext) {
 		c.HTML(consts.StatusOK, "sign-up", hertzUtils.H{"error": err})
 		return
 	}
-	c.Redirect(consts.StatusFound, []byte("/"))
 }
 
 // Login .
@@ -52,17 +52,16 @@ func Login(ctx context.Context, c *app.RequestContext) {
 	var req auth.LoginReq
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		utils.SendErrResponse(ctx, c, consts.StatusOK, err)
+		utils.ErrorResponse(c, consts.StatusOK, err.Error())
 		return
 	}
 
-	resp, err := service.NewLoginService(ctx, c).Run(&req)
+	resp, err := service.NewLoginService(ctx, c, middleware.GetJwtMd()).Run(&req)
 	if err != nil {
-		utils.SendErrResponse(ctx, c, consts.StatusOK, err)
+		utils.ErrorResponse(c, consts.StatusOK, err.Error())
 		return
 	}
-
-	c.Redirect(consts.StatusFound, []byte(resp))
+	c.Set("data", resp)
 }
 
 // Logout .
@@ -72,16 +71,53 @@ func Logout(ctx context.Context, c *app.RequestContext) {
 	var req common.Empty
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		utils.SendErrResponse(ctx, c, consts.StatusOK, err)
+		utils.ErrorResponse(c, consts.StatusOK, err.Error())
 		return
 	}
 
 	_, err = service.NewLogoutService(ctx, c).Run(&req)
 	if err != nil {
-		utils.SendErrResponse(ctx, c, consts.StatusOK, err)
+		utils.ErrorResponse(c, consts.StatusOK, err.Error())
 		return
 	}
-	redirect := "/"
+}
 
-	c.Redirect(consts.StatusFound, []byte(redirect))
+// Me .
+// @router /api/v1/me [GET]
+func Me(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req common.Empty
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		return
+	}
+
+	resp, err := service.NewMeService(ctx, c).Run(&req)
+
+	if err != nil {
+		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		return
+	}
+	c.Set("data", resp)
+}
+
+// Refresh .
+// @router /api/v1/refresh [POST]
+func Refresh(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req common.Empty
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		return
+	}
+
+	resp, err := service.NewRefreshService(ctx, c).Run(&req)
+
+	if err != nil {
+		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		return
+	}
+	c.Set("data", resp)
 }
