@@ -24,6 +24,7 @@ var (
 func GetJwtMd() *jwt.HertzJWTMiddleware {
 	once.Do(func() {
 		jwtMd, _ = initJwtMd()
+		_ = jwtMd.MiddlewareInit()
 	})
 	return jwtMd
 }
