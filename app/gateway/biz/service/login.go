@@ -16,7 +16,6 @@ package service
 
 import (
 	"context"
-	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/middleware"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/types"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/hertz-contrib/jwt"
@@ -42,22 +41,13 @@ func (h *LoginService) Run(req *auth.LoginReq) (resp *types.Token, err error) {
 		return nil, err
 	}
 	userId := authRes.(int32)
-	accessToken, _, err := h.jwtMd.TokenGenerator(userId)
+	token, _, err := h.jwtMd.TokenGenerator(userId)
 	if err != nil {
 		hlog.CtxErrorf(h.Context, "accessToken gen error: %v", err)
 		return nil, err
 	}
-	refreshToken, _, err := h.jwtMd.TokenGenerator(map[string]interface{}{
-		middleware.IdentityKey: userId,
-		middleware.RefreshKey:  true,
-	})
-	if err != nil {
-		hlog.CtxErrorf(h.Context, "refreshToken gen error: %v", err)
-		return nil, err
-	}
 	resp = &types.Token{
-		AccessToken:  accessToken,
-		RefreshToken: refreshToken,
+		Token: token,
 	}
 	return
 }

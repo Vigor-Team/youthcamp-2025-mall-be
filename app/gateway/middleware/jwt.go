@@ -15,7 +15,6 @@ import (
 
 var (
 	IdentityKey        = "id"
-	RefreshKey         = "refresh"
 	accessTokenExpire  = time.Hour
 	refreshTokenExpire = time.Hour * 24 * 7
 	once               sync.Once
@@ -32,23 +31,22 @@ func GetJwtMd() *jwt.HertzJWTMiddleware {
 func initJwtMd() (middleware *jwt.HertzJWTMiddleware, err error) {
 	middleware, err = jwt.New(&jwt.HertzJWTMiddleware{
 		Realm:       "test zone",
-		Key:         []byte("secret key"),
+		Key:         []byte("youthcamp2025mallbe"),
 		Timeout:     accessTokenExpire,
 		MaxRefresh:  refreshTokenExpire,
 		IdentityKey: IdentityKey,
 		PayloadFunc: func(data interface{}) jwt.MapClaims {
-			if v, ok := data.(*types.User); ok {
+			if userId, ok := data.(int32); ok {
 				return jwt.MapClaims{
-					IdentityKey: v.ID,
+					IdentityKey: userId,
 				}
 			}
 			return jwt.MapClaims{}
 		},
 		IdentityHandler: func(ctx context.Context, c *app.RequestContext) interface{} {
 			claims := jwt.ExtractClaims(ctx, c)
-			return &types.User{
-				ID: claims[IdentityKey].(uint32),
-			}
+			userId := int32(claims[IdentityKey].(float64))
+			return userId
 		},
 		Authenticator: func(ctx context.Context, c *app.RequestContext) (interface{}, error) {
 			var loginVals auth.LoginReq
@@ -61,24 +59,17 @@ func initJwtMd() (middleware *jwt.HertzJWTMiddleware, err error) {
 
 			res, err := rpc.UserClient.Login(ctx, &rpcuser.LoginReq{Email: loginVals.Email, Password: loginVals.Password})
 			if err != nil {
-				return nil, jwt.ErrFailedAuthentication
+				return nil, err
 			}
 			return res.UserId, nil
 		},
-		Authorizator: func(data interface{}, ctx context.Context, c *app.RequestContext) bool {
-			// todo check permission
-			return true
-		},
 		Unauthorized: func(ctx context.Context, c *app.RequestContext, code int, message string) {
-			utils.ErrorResponse(c, code, message)
+			utils.ErrorResponse(c, int32(code), message)
 		},
 		LoginResponse: func(ctx context.Context, c *app.RequestContext, code int, token string, expire time.Time) {
-			utils.SuccessResponse(c, code, token)
+			utils.SuccessResponse(c, &types.Token{Token: token})
 		},
-		LogoutResponse: func(ctx context.Context, c *app.RequestContext, code int) {
-			utils.SuccessResponse(c, code, nil)
-		},
-		TokenLookup:   "header: Authorization",
+		TokenLookup:   "header: Authorization, query: token, cookie: jwt",
 		TokenHeadName: "Bearer",
 		TimeFunc:      time.Now,
 	})

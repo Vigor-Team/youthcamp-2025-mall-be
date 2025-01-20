@@ -17,6 +17,8 @@
 package auth
 
 import (
+	"context"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/middleware"
 	"github.com/cloudwego/hertz/pkg/app"
 )
 
@@ -31,13 +33,17 @@ func _authMw() []app.HandlerFunc {
 }
 
 func _loginMw() []app.HandlerFunc {
-	// your code...
-	return nil
+	var mws []app.HandlerFunc
+	mws = append(mws, func(c context.Context, ctx *app.RequestContext) {
+		middleware.GetJwtMd().LoginHandler(c, ctx)
+	})
+	return mws
 }
 
 func _logoutMw() []app.HandlerFunc {
-	// your code...
-	return nil
+	var mws []app.HandlerFunc
+	mws = append(mws, middleware.GetJwtMd().MiddlewareFunc())
+	return mws
 }
 
 func _registerMw() []app.HandlerFunc {
@@ -56,7 +62,9 @@ func _v1Mw() []app.HandlerFunc {
 }
 
 func _meMw() []app.HandlerFunc {
-	// your code...
+	//var mws []app.HandlerFunc
+	//mws = append(mws, middleware.GetJwtMd().MiddlewareFunc())
+	//return mws
 	return nil
 }
 

@@ -16,12 +16,11 @@ package auth
 
 import (
 	"context"
-	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/middleware"
-
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/biz/service"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/biz/utils"
 	auth "github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/hertz_gen/gateway/auth"
 	common "github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/hertz_gen/gateway/common"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/middleware"
 	"github.com/cloudwego/hertz/pkg/app"
 	hertzUtils "github.com/cloudwego/hertz/pkg/common/utils"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
@@ -48,20 +47,20 @@ func Register(ctx context.Context, c *app.RequestContext) {
 // Login .
 // @router /auth/login [POST]
 func Login(ctx context.Context, c *app.RequestContext) {
-	var err error
-	var req auth.LoginReq
-	err = c.BindAndValidate(&req)
-	if err != nil {
-		utils.ErrorResponse(c, consts.StatusOK, err.Error())
-		return
-	}
-
-	resp, err := service.NewLoginService(ctx, c, middleware.GetJwtMd()).Run(&req)
-	if err != nil {
-		utils.ErrorResponse(c, consts.StatusOK, err.Error())
-		return
-	}
-	c.Set("data", resp)
+	//var err error
+	//var req auth.LoginReq
+	//err = c.BindAndValidate(&req)
+	//if err != nil {
+	//	utils.ErrorResponse(c, consts.StatusOK, err.Error())
+	//	return
+	//}
+	//
+	//resp, err := service.NewLoginService(ctx, c, middleware.GetJwtMd()).Run(&req)
+	//if err != nil {
+	//	utils.ErrorResponse(c, consts.StatusOK, err.Error())
+	//	return
+	//}
+	//utils.SuccessResponse(c, resp)
 }
 
 // Logout .
@@ -85,39 +84,22 @@ func Logout(ctx context.Context, c *app.RequestContext) {
 // Me .
 // @router /api/v1/me [GET]
 func Me(ctx context.Context, c *app.RequestContext) {
-	var err error
-	var req common.Empty
-	err = c.BindAndValidate(&req)
-	if err != nil {
-		utils.ErrorResponse(c, consts.StatusOK, err.Error())
-		return
-	}
-
-	resp, err := service.NewMeService(ctx, c).Run(&req)
+	resp, err := service.NewMeService(ctx, c).Run()
 
 	if err != nil {
 		utils.ErrorResponse(c, consts.StatusOK, err.Error())
 		return
 	}
-	c.Set("data", resp)
+	utils.SuccessResponse(c, resp)
 }
 
 // Refresh .
-// @router /api/v1/refresh [POST]
+// @router /api/v1/refresh [GET]
 func Refresh(ctx context.Context, c *app.RequestContext) {
-	var err error
-	var req common.Empty
-	err = c.BindAndValidate(&req)
+	resp, err := service.NewRefreshService(ctx, c, middleware.GetJwtMd()).Run()
 	if err != nil {
 		utils.ErrorResponse(c, consts.StatusOK, err.Error())
 		return
 	}
-
-	resp, err := service.NewRefreshService(ctx, c).Run(&req)
-
-	if err != nil {
-		utils.ErrorResponse(c, consts.StatusOK, err.Error())
-		return
-	}
-	c.Set("data", resp)
+	utils.SuccessResponse(c, resp)
 }

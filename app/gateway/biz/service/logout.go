@@ -19,7 +19,6 @@ import (
 
 	common "github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/hertz_gen/gateway/common"
 	"github.com/cloudwego/hertz/pkg/app"
-	"github.com/hertz-contrib/sessions"
 )
 
 type LogoutService struct {
@@ -32,8 +31,5 @@ func NewLogoutService(Context context.Context, RequestContext *app.RequestContex
 }
 
 func (h *LogoutService) Run(req *common.Empty) (resp *common.Empty, err error) {
-	session := sessions.Default(h.RequestContext)
-	session.Clear()
-	session.Save() //nolint:errcheck
 	return
 }

@@ -16,7 +16,7 @@ package service
 
 import (
 	"context"
-
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/user/biz/consts"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/user/biz/dal/mysql"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/user/biz/model"
 	user "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/user"
@@ -37,11 +37,13 @@ func (s *LoginService) Run(req *user.LoginReq) (resp *user.LoginResp, err error)
 	klog.Infof("LoginReq:%+v", req)
 	userRow, err := model.GetByEmail(mysql.DB, s.ctx, req.Email)
 	if err != nil {
-		return
+		klog.CtxErrorf(s.ctx, "login error: %v", err)
+		return nil, consts.ErrUserNotFound
 	}
 	err = bcrypt.CompareHashAndPassword([]byte(userRow.PasswordHashed), []byte(req.Password))
 	if err != nil {
-		return
+		klog.CtxErrorf(s.ctx, "login error: %v", err)
+		return nil, consts.ErrPassword
 	}
 	return &user.LoginResp{UserId: int32(userRow.ID)}, nil
 }

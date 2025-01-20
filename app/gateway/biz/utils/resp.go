@@ -16,6 +16,7 @@ package utils
 
 import (
 	"context"
+	"net/http"
 
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/infra/rpc"
 	gatewayutils "github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/utils"
@@ -30,21 +31,21 @@ const (
 )
 
 type GlobalResponse struct {
-	Code int    `json:"code"`
+	Code int32  `json:"code"`
 	Msg  string `json:"msg"`
 	Data any    `json:"data"`
 }
 
-func ErrorResponse(c *app.RequestContext, code int, message string) {
-	c.JSON(code, GlobalResponse{
+func ErrorResponse(c *app.RequestContext, code int32, message string) {
+	c.JSON(http.StatusOK, GlobalResponse{
 		Code: code,
 		Msg:  message,
 		Data: nil,
 	})
 }
 
-func SuccessResponse(c *app.RequestContext, code int, data interface{}) {
-	c.JSON(code, GlobalResponse{
+func SuccessResponse(c *app.RequestContext, data interface{}) {
+	c.JSON(http.StatusOK, GlobalResponse{
 		Code: defaultSuccessCode,
 		Msg:  defaultSuccessMsg,
 		Data: data,

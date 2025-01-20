@@ -1,6 +1,10 @@
 package types
 
 type Token struct {
-	AccessToken  string `json:"accessToken"`
-	RefreshToken string `json:"refreshToken"`
+	Token string `json:"token"`
+}
+
+type UserInfo struct {
+	Email string `json:"email"`
+	Role  string `json:"role"`
 }

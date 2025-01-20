@@ -23,7 +23,7 @@ service ProductService {
   rpc GetProduct(GetProductReq) returns (common.Empty) {
     option (api.get) = "/products/:productId";
   }
-  rpc SearchProducs(SearchProductsReq) returns (common.Empty) {
+  rpc SearchProducts(SearchProductsReq) returns (common.Empty) {
     option (api.get) = "/search";
   }
   rpc ListProducts(common.Empty) returns (common.Empty) {

@@ -33,6 +33,6 @@ service AuthService {
     option (api.get) = "/api/v1/me";
   }
   rpc refresh(common.Empty) returns (common.Empty) {
-    option (api.post) = "/api/v1/refresh";
+    option (api.get) = "/api/v1/refresh";
   }
 }
