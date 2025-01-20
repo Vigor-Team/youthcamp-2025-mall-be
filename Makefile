@@ -89,9 +89,4 @@ open-jaeger: ## open `jaeger ui` in the default browser
 open-prometheus: ## open `prometheus ui` in the default browser
 	@open "http://localhost:9090"
 
-.PHONY: gen-user
-gen-user:
-	@cd rpc_gen && cwgo client --type RPC --service user --module github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen --I ../idl --idl ../idl/user.proto
-	@cd app/user && cwgo server --type RPC --service user --module github.com/Vigor-Team/youthcamp-2025-mall-be/app/user --pass "-use github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen" -I ../../idl --idl ../../idl/user.proto
-
 
