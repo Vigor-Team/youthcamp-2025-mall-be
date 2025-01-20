@@ -25,7 +25,7 @@ import (
 )
 
 // About .
-// @router /about [POST]
+// @router /about [GET]
 func About(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req common.Empty
