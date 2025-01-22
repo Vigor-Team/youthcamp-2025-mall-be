@@ -9,6 +9,6 @@ option go_package = "/gateway/about";
 
 service AboutService {
   rpc About(common.Empty) returns (common.Empty) {
-    option (api.post) = "/about";
+    option (api.get) = "/about";
   }
 }
