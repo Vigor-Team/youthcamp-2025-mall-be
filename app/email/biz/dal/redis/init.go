@@ -17,7 +17,7 @@ package redis
 import (
 	"context"
 
-	"github.com/cloudwego/biz-demo/gomall/app/email/conf"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/email/conf"
 	"github.com/redis/go-redis/v9"
 )
 

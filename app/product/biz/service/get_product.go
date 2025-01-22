@@ -17,10 +17,10 @@ package service
 import (
 	"context"
 
-	"github.com/cloudwego/biz-demo/gomall/app/product/biz/dal/mysql"
-	"github.com/cloudwego/biz-demo/gomall/app/product/biz/dal/redis"
-	"github.com/cloudwego/biz-demo/gomall/app/product/biz/model"
-	product "github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/product"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/biz/dal/mysql"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/biz/dal/redis"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/biz/model"
+	product "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/product"
 	"github.com/cloudwego/kitex/pkg/kerrors"
 )
 

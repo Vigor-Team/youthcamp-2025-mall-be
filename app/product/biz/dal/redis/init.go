@@ -17,8 +17,8 @@ package redis
 import (
 	"context"
 
-	"github.com/cloudwego/biz-demo/gomall/app/product/conf"
-	"github.com/cloudwego/biz-demo/gomall/common/mtl"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/conf"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/common/mtl"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/redis/go-redis/extra/redisotel/v9"
 	"github.com/redis/go-redis/extra/redisprometheus/v9"

@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package gateway.order;
+
+import "api.proto";
+import "gateway/common.proto";
+
+option go_package = "/gateway/order";
+
+service OrderService {
+  rpc OrderList(common.Empty) returns (common.Empty) {
+    option (api.get) = "/order";
+  }
+}

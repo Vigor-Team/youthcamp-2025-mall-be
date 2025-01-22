@@ -17,9 +17,9 @@ package service
 import (
 	"context"
 
-	"github.com/cloudwego/biz-demo/gomall/app/cart/biz/dal/mysql"
-	"github.com/cloudwego/biz-demo/gomall/app/cart/biz/model"
-	cart "github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/cart"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/cart/biz/dal/mysql"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/cart/biz/model"
+	cart "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/cart"
 	"github.com/cloudwego/kitex/pkg/kerrors"
 )
 

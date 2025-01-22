@@ -17,8 +17,8 @@ package main
 import (
 	"context"
 
-	"github.com/cloudwego/biz-demo/gomall/app/payment/biz/service"
-	payment "github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/payment"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/payment/biz/service"
+	payment "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/payment"
 )
 
 // PaymentServiceImpl implements the last service interface defined in the IDL.

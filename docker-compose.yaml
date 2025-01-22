@@ -1,4 +1,3 @@
-version: '3'
 services:
   mysql:
     image: 'mysql:latest'
@@ -68,5 +67,12 @@ services:
     image: grafana/promtail:2.9.2
     volumes:
       - ./deploy/config/promtail.yml:/etc/promtail/config.yml
-      - ./app/frontend/log:/logs/frontend
+      - ./app/gateway/log:/logs/gateway
+      - ./app/cart/log:/logs/cart
+      - ./app/checkout/log:/logs/checkout
+      - ./app/email/log:/logs/email
+      - ./app/order/log:/logs/order
+      - ./app/payment/log:/logs/payment
+      - ./app/product/log:/logs/product
+      - ./app/user/log:/logs/user
     command: -config.file=/etc/promtail/config.yml

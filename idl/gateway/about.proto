@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package gateway.about;
+
+import "api.proto";
+import "gateway/common.proto";
+
+option go_package = "/gateway/about";
+
+service AboutService {
+  rpc About(common.Empty) returns (common.Empty) {
+    option (api.get) = "/about";
+  }
+}

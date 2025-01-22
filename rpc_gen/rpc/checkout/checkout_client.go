@@ -2,9 +2,9 @@ package checkout
 
 import (
 	"context"
-	checkout "github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/checkout"
+	checkout "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/checkout"
 
-	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/checkout/checkoutservice"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/checkout/checkoutservice"
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/client/callopt"
 )

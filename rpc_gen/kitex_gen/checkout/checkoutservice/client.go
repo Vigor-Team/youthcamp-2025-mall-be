@@ -4,7 +4,7 @@ package checkoutservice
 
 import (
 	"context"
-	checkout "github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/checkout"
+	checkout "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/checkout"
 	client "github.com/cloudwego/kitex/client"
 	callopt "github.com/cloudwego/kitex/client/callopt"
 )

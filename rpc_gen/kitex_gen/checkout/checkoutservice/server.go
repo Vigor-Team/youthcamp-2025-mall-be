@@ -2,7 +2,7 @@
 package checkoutservice
 
 import (
-	checkout "github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/checkout"
+	checkout "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/checkout"
 	server "github.com/cloudwego/kitex/server"
 )
 

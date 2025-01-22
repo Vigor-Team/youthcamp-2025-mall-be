@@ -18,7 +18,7 @@ import (
 	"context"
 	"testing"
 
-	order "github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/order"
+	order "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/order"
 )
 
 func TestMarkOrderPaid_Run(t *testing.T) {

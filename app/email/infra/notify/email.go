@@ -15,7 +15,7 @@
 package notify
 
 import (
-	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/email"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/email"
 	"github.com/kr/pretty"
 )
 
