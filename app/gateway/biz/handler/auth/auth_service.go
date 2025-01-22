@@ -47,20 +47,20 @@ func Register(ctx context.Context, c *app.RequestContext) {
 // Login .
 // @router /auth/login [POST]
 func Login(ctx context.Context, c *app.RequestContext) {
-	//var err error
-	//var req auth.LoginReq
-	//err = c.BindAndValidate(&req)
-	//if err != nil {
-	//	utils.ErrorResponse(c, consts.StatusOK, err.Error())
-	//	return
-	//}
-	//
-	//resp, err := service.NewLoginService(ctx, c, middleware.GetJwtMd()).Run(&req)
-	//if err != nil {
-	//	utils.ErrorResponse(c, consts.StatusOK, err.Error())
-	//	return
-	//}
-	//utils.SuccessResponse(c, resp)
+	var err error
+	var req auth.LoginReq
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		return
+	}
+
+	resp, err := service.NewLoginService(ctx, c, middleware.GetJwtMd()).Run(&req)
+	if err != nil {
+		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		return
+	}
+	utils.SuccessResponse(c, resp)
 }
 
 // Logout .
