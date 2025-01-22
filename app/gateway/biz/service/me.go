@@ -25,12 +25,12 @@ func (h *MeService) Run() (resp *types.UserInfo, err error) {
 	if err != nil {
 		return nil, err
 	}
-	userId, ok := claims["id"].(int32)
+	userId, ok := claims["id"].(float64)
 	fmt.Println("userId", userId)
 	if !ok {
 		return nil, err
 	}
-	res, err := rpc.UserClient.UserInfo(h.Context, &rpcuser.UserInfoReq{UserId: userId})
+	res, err := rpc.UserClient.UserInfo(h.Context, &rpcuser.UserInfoReq{UserId: int32(userId)})
 	if err != nil {
 		return nil, err
 	}

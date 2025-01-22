@@ -5,7 +5,6 @@ import (
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/biz/utils"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/hertz_gen/gateway/auth"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/infra/rpc"
-	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/types"
 	rpcuser "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/user"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/hertz-contrib/jwt"
@@ -68,7 +67,7 @@ func initJwtMd() (middleware *jwt.HertzJWTMiddleware, err error) {
 			utils.ErrorResponse(c, int32(code), message)
 		},
 		LoginResponse: func(ctx context.Context, c *app.RequestContext, code int, token string, expire time.Time) {
-			utils.SuccessResponse(c, &types.Token{Token: token})
+			//utils.SuccessResponse(c, &types.Token{Token: token})
 		},
 		TokenLookup:   "header: Authorization, query: token, cookie: jwt",
 		TokenHeadName: "Bearer",
