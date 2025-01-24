@@ -30,6 +30,7 @@ type Product struct {
 	Description string     `json:"description"`
 	Picture     string     `json:"picture"`
 	Price       float32    `json:"price"`
+	Quantity    uint32     `json:"quantity" gorm:"not null;default:0"`
 	Categories  []Category `json:"categories" gorm:"many2many:product_category"`
 }
 
