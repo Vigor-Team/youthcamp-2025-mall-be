@@ -46,9 +46,9 @@ func GetProduct(ctx context.Context, c *app.RequestContext) {
 	c.Set("data", resp)
 }
 
-// SearchProducs .
+// SearchProducts .
 // @router /search [GET]
-func SearchProducs(ctx context.Context, c *app.RequestContext) {
+func SearchProducts(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req product.SearchProductsReq
 	err = c.BindAndValidate(&req)
@@ -57,7 +57,7 @@ func SearchProducs(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	resp, err := service.NewSearchProducsService(ctx, c).Run(&req)
+	resp, err := service.NewSearchProductsService(ctx, c).Run(&req)
 	if err != nil {
 		utils.ErrorResponse(c, consts.StatusOK, err.Error())
 		return

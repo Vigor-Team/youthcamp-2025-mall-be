@@ -38,9 +38,9 @@ func TestGetProduct(t *testing.T) {
 	// assert.DeepEqual(t, "null", string(resp.Body()))
 }
 
-func TestSearchProducs(t *testing.T) {
+func TestSearchProducts(t *testing.T) {
 	h := server.Default()
-	h.GET("/search", SearchProducs)
+	h.GET("/search", SearchProducts)
 	path := "/search"                                         // todo: you can customize query
 	body := &ut.Body{Body: bytes.NewBufferString(""), Len: 1} // todo: you can customize body
 	header := ut.Header{}                                     // todo: you can customize header
