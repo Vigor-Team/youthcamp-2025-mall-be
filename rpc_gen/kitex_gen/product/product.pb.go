@@ -94,7 +94,7 @@ type Product struct {
 	Description string   `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
 	Picture     string   `protobuf:"bytes,4,opt,name=picture,proto3" json:"picture,omitempty"`
 	Price       float32  `protobuf:"fixed32,5,opt,name=price,proto3" json:"price,omitempty"`
-	Quantity    uint32   `protobuf:"varint,6,opt,name=quantity,proto3" json:"quantity,omitempty"`
+	Quantity    uint32   `protobuf:"varint,6,opt,name=quantity,proto3" json:"quantity"`
 	Categories  []string `protobuf:"bytes,7,rep,name=categories,proto3" json:"categories,omitempty"`
 }
 
