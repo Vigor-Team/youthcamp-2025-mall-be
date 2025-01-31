@@ -39,7 +39,7 @@ func (s *RegisterService) Run(req *user.RegisterReq) (resp *user.RegisterResp, e
 		return
 	}
 	userInfo, _ := model.GetByEmail(mysql.DB, s.ctx, req.Email)
-	if userInfo != nil {
+	if userInfo != nil && userInfo.ID != 0 {
 		err = errors.New("user already exists")
 		return
 	}

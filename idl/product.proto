@@ -8,7 +8,7 @@ service ProductCatalogService {
   rpc ListProducts(ListProductsReq) returns (ListProductsResp) {}
   rpc GetProduct(GetProductReq) returns (GetProductResp) {}
   rpc SearchProducts(SearchProductsReq) returns (SearchProductsResp) {}
-  rpc GetCategories(common.Empty) returns (GetCategoriesResp) {}
+//  rpc GetCategories(Empty) returns (Empty) {}
 }
 
 message ListProductsReq{
@@ -24,8 +24,9 @@ message Product {
   string description = 3;
   string picture = 4;
   float price = 5;
+  uint32 quantity = 6;
 
-  repeated string categories = 6;
+  repeated string categories = 7;
 }
 
 message ListProductsResp {

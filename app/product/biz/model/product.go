@@ -30,6 +30,7 @@ type Product struct {
 	Description string     `json:"description"`
 	Picture     string     `json:"picture"`
 	Price       float32    `json:"price"`
+	Quantity    uint32     `json:"quantity" gorm:"not null;default:0"`
 	Categories  []Category `json:"categories" gorm:"many2many:product_category"`
 }
 
@@ -102,4 +103,9 @@ func GetProductById(db *gorm.DB, ctx context.Context, productId int) (product Pr
 func SearchProduct(db *gorm.DB, ctx context.Context, q string) (product []*Product, err error) {
 	err = db.WithContext(ctx).Model(&Product{}).Find(&product, "name like ? or description like ?", "%"+q+"%", "%"+q+"%").Error
 	return product, err
+}
+
+func ListProducts(db *gorm.DB, ctx context.Context) (products []*Product, err error) {
+	err = db.WithContext(ctx).Model(&Product{}).Find(&products).Error
+	return products, err
 }

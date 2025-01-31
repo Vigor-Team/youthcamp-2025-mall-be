@@ -18,3 +18,7 @@ func NewServer(handler product.ProductCatalogService, opts ...server.Option) ser
 	}
 	return svr
 }
+
+func RegisterService(svr server.Server, handler product.ProductCatalogService, opts ...server.RegisterOption) error {
+	return svr.RegisterService(serviceInfo(), handler, opts...)
+}

@@ -32,11 +32,6 @@ func _getproductMw() []app.HandlerFunc {
 	return nil
 }
 
-func _searchproducsMw() []app.HandlerFunc {
-	// your code...
-	return nil
-}
-
 func _categoriesMw() []app.HandlerFunc {
 	// your code...
 	return nil
@@ -58,6 +53,11 @@ func _listproductsMw() []app.HandlerFunc {
 }
 
 func _productsMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _searchproductsMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
