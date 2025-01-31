@@ -16,6 +16,7 @@ package rpc
 
 import (
 	"context"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/llm/llmservice"
 	"sync"
 
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/conf"
@@ -41,6 +42,7 @@ var (
 	CartClient     cartservice.Client
 	CheckoutClient checkoutservice.Client
 	OrderClient    orderservice.Client
+	LlmClient      llmservice.Client
 	once           sync.Once
 	err            error
 	registryAddr   string
@@ -59,6 +61,7 @@ func InitClient() {
 		initCartClient()
 		initCheckoutClient()
 		initOrderClient()
+		initLlmClient()
 	})
 }
 
@@ -113,5 +116,10 @@ func initCheckoutClient() {
 
 func initOrderClient() {
 	OrderClient, err = orderservice.NewClient("order", commonSuite)
+	gatewayutils.MustHandleError(err)
+}
+
+func initLlmClient() {
+	LlmClient, err = llmservice.NewClient("llm", commonSuite)
 	gatewayutils.MustHandleError(err)
 }

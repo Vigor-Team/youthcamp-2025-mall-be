@@ -28,7 +28,7 @@ gen-server: ## gen service code of {svc}. example: make gen-server svc=product
 
 .PHONY: gen-gateway
 gen-gateway:
-	@cd app/gateway && cwgo server --type HTTP --idl ../../idl/gateway/auth_api.proto --service gateway --module github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway -I ../../idl
+	@cd app/gateway && cwgo server --type HTTP --idl ../../idl/gateway/llm_api.proto --service gateway --module github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway -I ../../idl
 
 ##@ Build
 
@@ -89,4 +89,9 @@ open-jaeger: ## open `jaeger ui` in the default browser
 open-prometheus: ## open `prometheus ui` in the default browser
 	@open "http://localhost:9090"
 
+
+.PHONY: gen-llm
+gen-llm:
+	@cd rpc_gen && cwgo client --type RPC --service llm --module github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen --I ../idl --idl ../idl/llm.proto
+	@cd app/llm && cwgo server --type RPC --service llm --module github.com/Vigor-Team/youthcamp-2025-mall-be/app/llm --pass "-use github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen" -I ../../idl --idl ../../idl/llm.proto
 

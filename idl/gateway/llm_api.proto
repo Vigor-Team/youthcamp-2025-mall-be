@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package gateway.llm;
+option go_package = "/gateway/llm";
+import "api.proto";
+
+message ChatRequest {
+  string user_id = 1;
+  string message = 2;
+  string conversation_id = 3;
+}
+
+message ChatResponse {
+  string response = 1;
+  ResponseStatus status = 2;
+  string error = 3;
+}
+
+enum ResponseStatus {
+  SUCCESS = 0;
+  ERROR = 1;
+  PROCESSING = 2;
+}
+
+service ChatHttpService {
+  rpc SendMessage(ChatRequest) returns (ChatResponse) {
+    option (api.post) = "/v1/chat/send";
+  }
+
+  rpc StreamMessage(ChatRequest) returns (stream ChatResponse) {
+    option (api.post) = "/v1/chat/stream";
+  }
+}

@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package llm;
+
+option go_package = "/llm";
+
+message ChatRequest {
+  string user_id = 1;
+  string message = 2;
+  string conversation_id = 3;
+}
+
+message ChatResponse {
+  string response = 1;
+  ResponseStatus status = 2;
+  string error = 3;
+}
+
+enum ResponseStatus {
+  SUCCESS = 0;
+  ERROR = 1;
+  PROCESSING = 2;
+}
+
+service LlmService {
+  rpc SendMessage(ChatRequest) returns (ChatResponse){};
+
+  rpc StreamMessage(ChatRequest) returns (stream ChatResponse){};
+}
