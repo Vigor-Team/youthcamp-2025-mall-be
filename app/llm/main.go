@@ -1,6 +1,8 @@
 package main
 
 import (
+	"context"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/llm/biz/chat"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/llm/conf"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/common/mtl"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/common/serversuite"
@@ -29,6 +31,8 @@ func main() {
 	mtl.InitTracing(serviceName)
 	mtl.InitMetric(serviceName, conf.GetConf().Kitex.MetricsPort, conf.GetConf().Registry.RegistryAddress[0])
 	opts := kitexInit()
+
+	chat.InitChatModel(context.Background())
 
 	svr := llmservice.NewServer(new(LlmServiceImpl), opts...)
 

@@ -6,50 +6,53 @@ import (
 	"github.com/cloudwego/eino/components/model"
 	"github.com/cloudwego/eino/components/prompt"
 	"github.com/cloudwego/eino/schema"
-	"log"
+	"github.com/cloudwego/kitex/pkg/klog"
+	"sync"
 )
+
+var (
+	chatModel model.ChatModel
+	once      sync.Once
+)
+
+func InitChatModel(ctx context.Context) {
+	once.Do(func() {
+		chatModel = createOpenAIChatModel(ctx)
+	})
+}
 
 // todo 历史消息
 func GenerateLlmResponse(ctx context.Context, in string) *schema.Message {
 	messages := createMessagesFromTemplate(in)
-	llm := createOpenAIChatModel(ctx)
-	return generate(ctx, llm, messages)
+	return generate(ctx, chatModel, messages)
 }
 
 func StreamLlmResponse(ctx context.Context, in string) *schema.StreamReader[*schema.Message] {
 	messages := createMessagesFromTemplate(in)
-	llm := createOpenAIChatModel(ctx)
-	return stream(ctx, llm, messages)
+	return stream(ctx, chatModel, messages)
 }
 
 func createMessagesFromTemplate(message string) []*schema.Message {
 	template := createTemplate()
 
 	messages, err := template.Format(context.Background(), map[string]any{
-		"role":     "程序员鼓励师",
-		"style":    "积极、温暖且专业",
+		"role":     "电商客服",
+		"style":    "友好、耐心、专业、关注用户体验",
+		"object":   "帮助用户解决问题包括但不限于商品搜索，帮助下单，售后处理等等，提升用户体验。",
 		"question": message,
-		"chat_history": []*schema.Message{
-			schema.UserMessage("你好"),
-			schema.AssistantMessage("嘿！我是你的程序员鼓励师！记住，每个优秀的程序员都是从 Debug 中成长起来的。有什么我可以帮你的吗？", nil),
-			schema.UserMessage("我觉得自己写的代码太烂了"),
-			schema.AssistantMessage("每个程序员都经历过这个阶段！重要的是你在不断学习和进步。让我们一起看看代码，我相信通过重构和优化，它会变得更好。记住，Rome wasn't built in a day，代码质量是通过持续改进来提升的。", nil),
-		},
 	})
 	if err != nil {
-		log.Fatalf("format template failed: %v\n", err)
+		klog.CtxErrorf(context.Background(), "format template failed: %v\n", err)
 	}
 	return messages
 }
 
 func createTemplate() prompt.ChatTemplate {
 	return prompt.FromMessages(schema.FString,
-		schema.SystemMessage("你是一个{role}。你需要用{style}的语气回答问题。你的目标是帮助程序员保持积极乐观的心态，提供技术建议的同时也要关注他们的心理健康。"),
+		schema.SystemMessage("你是一个{role}。你需要用{style}的语气回答问题。你的目标是{object}"),
 
-		// 插入需要的对话历史（新对话的话这里不填）
-		schema.MessagesPlaceholder("chat_history", true),
+		//schema.MessagesPlaceholder("chat_history", true),
 
-		// 用户消息模板
 		schema.UserMessage("问题: {question}"),
 	)
 }
@@ -57,12 +60,12 @@ func createTemplate() prompt.ChatTemplate {
 func createOpenAIChatModel(ctx context.Context) model.ChatModel {
 	//key := os.Getenv("OPENAI_API_KEY")
 	chatModel, err := openai.NewChatModel(ctx, &openai.ChatModelConfig{
-		Model:   "gpt-4o",
+		Model:   "gpt-3.5-turbo",
 		APIKey:  "sk-H6HQY3ZQ5e2xIcGiHEHtoa4MudvS3TzO6DQfrrgCxNqgy7T4",
 		BaseURL: "https://api.chatanywhere.tech",
 	})
 	if err != nil {
-		log.Fatalf("create openai chat model failed, err=%v", err)
+		klog.CtxFatalf(ctx, "create openai chat model failed, err=%v", err)
 	}
 	return chatModel
 }
@@ -70,7 +73,7 @@ func createOpenAIChatModel(ctx context.Context) model.ChatModel {
 func generate(ctx context.Context, llm model.ChatModel, in []*schema.Message) *schema.Message {
 	result, err := llm.Generate(ctx, in)
 	if err != nil {
-		log.Fatalf("chat generate failed: %v", err)
+		klog.CtxErrorf(ctx, "chat generate failed: %v", err)
 	}
 	return result
 }
@@ -78,7 +81,7 @@ func generate(ctx context.Context, llm model.ChatModel, in []*schema.Message) *s
 func stream(ctx context.Context, llm model.ChatModel, in []*schema.Message) *schema.StreamReader[*schema.Message] {
 	result, err := llm.Stream(ctx, in)
 	if err != nil {
-		log.Fatalf("chat generate failed: %v", err)
+		klog.CtxErrorf(ctx, "chat stream failed: %v", err)
 	}
 	return result
 }

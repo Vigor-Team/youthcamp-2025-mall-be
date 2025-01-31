@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/llm/biz/chat"
 	llm "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/llm"
 )
 
@@ -15,11 +16,10 @@ func NewSendMessageService(ctx context.Context) *SendMessageService {
 // Run create note info
 func (s *SendMessageService) Run(req *llm.ChatRequest) (resp *llm.ChatResponse, err error) {
 	// Finish your business logic.
-	//in := req.Message
-	//chatresp := chat.GenerateLlmResponse(s.ctx, in)
+	in := req.Message
+	chatresp := chat.GenerateLlmResponse(s.ctx, in)
 	resp = &llm.ChatResponse{
-		//Response: chatresp.Content,
-		Response: "hello",
+		Response: chatresp.Content,
 	}
 	return
 }
