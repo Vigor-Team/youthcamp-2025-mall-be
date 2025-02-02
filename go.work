@@ -10,6 +10,6 @@ use (
 	./app/product
 	./app/user
 	./common
+	./app/llm
 	rpc_gen
-	app/llm
 )
