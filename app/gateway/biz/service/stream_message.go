@@ -26,7 +26,11 @@ func (h *StreamMessageService) Run(req *llm.ChatRequest) (resp llmservice.LlmSer
 		hlog.CtxInfof(h.Context, "resp = %+v", resp)
 	}()
 	// todo edit your code
-	client, err := rpc.LlmClient.StreamMessage(h.Context, &rpcllm.ChatRequest{Message: req.GetMessage()})
+	client, err := rpc.LlmClient.StreamMessage(h.Context, &rpcllm.ChatRequest{
+		Message:        req.GetMessage(),
+		UserId:         req.GetUserId(),
+		ConversationId: req.ConversationId,
+	})
 	if err != nil {
 		return nil, err
 	}

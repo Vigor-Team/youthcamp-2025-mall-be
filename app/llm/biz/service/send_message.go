@@ -2,12 +2,10 @@ package service
 
 import (
 	"context"
-	"fmt"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/llm/biz/consts"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/llm/biz/mallagent"
-	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/llm/biz/mallagent/conversation"
 	llm "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/llm"
 	"github.com/cloudwego/kitex/pkg/klog"
-	"github.com/google/uuid"
 )
 
 type SendMessageService struct {
@@ -19,26 +17,24 @@ func NewSendMessageService(ctx context.Context) *SendMessageService {
 
 // Run create note info
 func (s *SendMessageService) Run(req *llm.ChatRequest) (resp *llm.ChatResponse, err error) {
-	// Finish your business logic.
-	//in := req.Message
-	//chatresp := chat.GenerateLlmResponse(s.ctx, in)
-	//resp = &llm.ChatResponse{
-	//	Response: chatresp.Content,
-	//}
+	// todo: chat history
+	msg := req.Message
+	userId := req.UserId
+	convId := req.ConversationId
+	if msg == "" || userId == "" || convId == "" {
+		return nil, consts.ErrReqParamNotFound
+	}
+
 	runnable, err := mallagent.BuildMallAgent(s.ctx, &mallagent.BuildConfig{MallAgent: &mallagent.MallAgentBuildConfig{}})
 	if err != nil {
 		klog.CtxErrorf(s.ctx, "build mall agent error: %v", err)
 		return
 	}
 	userMessage := &mallagent.UserMessage{
-		ChatId: uuid.New().String(),
-		Query:  req.Message,
-		UserId: req.UserId,
+		ConversationId: convId,
+		Query:          msg,
+		UserId:         userId,
 	}
-
-	memory := conversation.GetDefaultMemory(s.ctx)
-	conversation := memory.GetConversation(userMessage.UserId, true)
-	fmt.Println("conversation: ", conversation)
 	rs, err := runnable.Invoke(s.ctx, userMessage)
 	if err != nil {
 		klog.CtxErrorf(s.ctx, "invoke mall agent error: %v", err)

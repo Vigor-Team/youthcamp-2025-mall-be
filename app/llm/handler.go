@@ -44,3 +44,24 @@ func (s *LlmServiceImpl) StreamMessage(req *llm.ChatRequest, stream llm.LlmServi
 		}
 	}
 }
+
+// GetHistory implements the LlmServiceImpl interface.
+func (s *LlmServiceImpl) GetHistory(ctx context.Context, req *llm.GetHistoryRequest) (resp *llm.GetHistoryResponse, err error) {
+	resp, err = service.NewGetHistoryService(ctx).Run(req)
+
+	return resp, err
+}
+
+// DeleteHistory implements the LlmServiceImpl interface.
+func (s *LlmServiceImpl) DeleteHistory(ctx context.Context, req *llm.DeleteHistoryRequest) (resp *llm.DeleteHistoryResponse, err error) {
+	resp, err = service.NewDeleteHistoryService(ctx).Run(req)
+
+	return resp, err
+}
+
+// GetConversationId implements the LlmServiceImpl interface.
+func (s *LlmServiceImpl) GetConversationId(ctx context.Context, req *llm.GetConversationIdRequest) (resp *llm.GetConversationIdResponse, err error) {
+	resp, err = service.NewGetConversationIdService(ctx).Run(req)
+
+	return resp, err
+}

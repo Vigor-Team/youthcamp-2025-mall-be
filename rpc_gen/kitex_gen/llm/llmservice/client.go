@@ -8,7 +8,7 @@ import (
 	client "github.com/cloudwego/kitex/client"
 	callopt "github.com/cloudwego/kitex/client/callopt"
 	"github.com/cloudwego/kitex/client/callopt/streamcall"
-	"github.com/cloudwego/kitex/client/streamclient"
+	"github.com/cloudwego/kitex/client/streamclien
 	streaming "github.com/cloudwego/kitex/pkg/streaming"
 	transport "github.com/cloudwego/kitex/transport"
 )
@@ -17,6 +17,9 @@ import (
 type Client interface {
 	SendMessage(ctx context.Context, Req *llm.ChatRequest, callOptions ...callopt.Option) (r *llm.ChatResponse, err error)
 	StreamMessage(ctx context.Context, Req *llm.ChatRequest, callOptions ...callopt.Option) (stream LlmService_StreamMessageClient, err error)
+	GetHistory(ctx context.Context, Req *llm.GetHistoryRequest, callOptions ...callopt.Option) (r *llm.GetHistoryResponse, err error)
+	DeleteHistory(ctx context.Context, Req *llm.DeleteHistoryRequest, callOptions ...callopt.Option) (r *llm.DeleteHistoryResponse, err error)
+	GetConversationId(ctx context.Context, Req *llm.GetConversationIdRequest, callOptions ...callopt.Option) (r *llm.GetConversationIdResponse, err error)
 }
 
 // StreamClient is designed to provide Interface for Streaming APIs.
@@ -68,6 +71,21 @@ func (p *kLlmServiceClient) SendMessage(ctx context.Context, Req *llm.ChatReques
 func (p *kLlmServiceClient) StreamMessage(ctx context.Context, Req *llm.ChatRequest, callOptions ...callopt.Option) (stream LlmService_StreamMessageClient, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.StreamMessage(ctx, Req)
+}
+
+func (p *kLlmServiceClient) GetHistory(ctx context.Context, Req *llm.GetHistoryRequest, callOptions ...callopt.Option) (r *llm.GetHistoryResponse, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.GetHistory(ctx, Req)
+}
+
+func (p *kLlmServiceClient) DeleteHistory(ctx context.Context, Req *llm.DeleteHistoryRequest, callOptions ...callopt.Option) (r *llm.DeleteHistoryResponse, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.DeleteHistory(ctx, Req)
+}
+
+func (p *kLlmServiceClient) GetConversationId(ctx context.Context, Req *llm.GetConversationIdRequest, callOptions ...callopt.Option) (r *llm.GetConversationIdResponse, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.GetConversationId(ctx, Req)
 }
 
 // NewStreamClient creates a stream client for the service's streaming APIs defined in IDL.

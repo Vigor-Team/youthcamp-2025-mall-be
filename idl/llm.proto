@@ -12,18 +12,42 @@ message ChatRequest {
 
 message ChatResponse {
   string response = 1;
-  ResponseStatus status = 2;
-  string error = 3;
 }
 
-enum ResponseStatus {
-  SUCCESS = 0;
-  ERROR = 1;
-  PROCESSING = 2;
+message GetHistoryRequest {
+  string conversation_id = 1;
+  string user_id = 2;
+}
+
+message GetHistoryResponse {
+  repeated Message history = 1;
+}
+
+message Message {
+  string role = 1;
+  string content = 2;
+}
+
+message DeleteHistoryRequest {
+  string conversation_id = 1;
+  string user_id = 2;
+}
+
+message DeleteHistoryResponse {
+}
+
+message GetConversationIdRequest {
+  string user_id = 1;
+}
+
+message GetConversationIdResponse {
+  repeated string conversation_id = 1;
 }
 
 service LlmService {
   rpc SendMessage(ChatRequest) returns (ChatResponse){};
-
   rpc StreamMessage(ChatRequest) returns (stream ChatResponse){};
+  rpc GetHistory(GetHistoryRequest) returns (GetHistoryResponse){};
+  rpc DeleteHistory(DeleteHistoryRequest) returns (DeleteHistoryResponse){};
+  rpc GetConversationId(GetConversationIdRequest) returns (GetConversationIdResponse){};
 }

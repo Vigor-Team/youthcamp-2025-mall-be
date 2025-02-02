@@ -64,16 +64,6 @@ func (x *ChatResponse) FastRead(buf []byte, _type int8, number int32) (offset in
 		if err != nil {
 			goto ReadFieldError
 		}
-	case 2:
-		offset, err = x.fastReadField2(buf, _type)
-		if err != nil {
-			goto ReadFieldError
-		}
-	case 3:
-		offset, err = x.fastReadField3(buf, _type)
-		if err != nil {
-			goto ReadFieldError
-		}
 	default:
 		offset, err = fastpb.Skip(buf, _type, number)
 		if err != nil {
@@ -92,18 +82,206 @@ func (x *ChatResponse) fastReadField1(buf []byte, _type int8) (offset int, err e
 	return offset, err
 }
 
-func (x *ChatResponse) fastReadField2(buf []byte, _type int8) (offset int, err error) {
-	var v int32
-	v, offset, err = fastpb.ReadInt32(buf, _type)
+func (x *GetHistoryRequest) FastRead(buf []byte, _type int8, number int32) (offset int, err error) {
+	switch number {
+	case 1:
+		offset, err = x.fastReadField1(buf, _type)
+		if err != nil {
+			goto ReadFieldError
+		}
+	case 2:
+		offset, err = x.fastReadField2(buf, _type)
+		if err != nil {
+			goto ReadFieldError
+		}
+	default:
+		offset, err = fastpb.Skip(buf, _type, number)
+		if err != nil {
+			goto SkipFieldError
+		}
+	}
+	return offset, nil
+SkipFieldError:
+	return offset, fmt.Errorf("%T cannot parse invalid wire-format data, error: %s", x, err)
+ReadFieldError:
+	return offset, fmt.Errorf("%T read field %d '%s' error: %s", x, number, fieldIDToName_GetHistoryRequest[number], err)
+}
+
+func (x *GetHistoryRequest) fastReadField1(buf []byte, _type int8) (offset int, err error) {
+	x.ConversationId, offset, err = fastpb.ReadString(buf, _type)
+	return offset, err
+}
+
+func (x *GetHistoryRequest) fastReadField2(buf []byte, _type int8) (offset int, err error) {
+	x.UserId, offset, err = fastpb.ReadString(buf, _type)
+	return offset, err
+}
+
+func (x *GetHistoryResponse) FastRead(buf []byte, _type int8, number int32) (offset int, err error) {
+	switch number {
+	case 1:
+		offset, err = x.fastReadField1(buf, _type)
+		if err != nil {
+			goto ReadFieldError
+		}
+	default:
+		offset, err = fastpb.Skip(buf, _type, number)
+		if err != nil {
+			goto SkipFieldError
+		}
+	}
+	return offset, nil
+SkipFieldError:
+	return offset, fmt.Errorf("%T cannot parse invalid wire-format data, error: %s", x, err)
+ReadFieldError:
+	return offset, fmt.Errorf("%T read field %d '%s' error: %s", x, number, fieldIDToName_GetHistoryResponse[number], err)
+}
+
+func (x *GetHistoryResponse) fastReadField1(buf []byte, _type int8) (offset int, err error) {
+	var v Message
+	offset, err = fastpb.ReadMessage(buf, _type, &v)
 	if err != nil {
 		return offset, err
 	}
-	x.Status = ResponseStatus(v)
+	x.History = append(x.History, &v)
 	return offset, nil
 }
 
-func (x *ChatResponse) fastReadField3(buf []byte, _type int8) (offset int, err error) {
-	x.Error, offset, err = fastpb.ReadString(buf, _type)
+func (x *Message) FastRead(buf []byte, _type int8, number int32) (offset int, err error) {
+	switch number {
+	case 1:
+		offset, err = x.fastReadField1(buf, _type)
+		if err != nil {
+			goto ReadFieldError
+		}
+	case 2:
+		offset, err = x.fastReadField2(buf, _type)
+		if err != nil {
+			goto ReadFieldError
+		}
+	default:
+		offset, err = fastpb.Skip(buf, _type, number)
+		if err != nil {
+			goto SkipFieldError
+		}
+	}
+	return offset, nil
+SkipFieldError:
+	return offset, fmt.Errorf("%T cannot parse invalid wire-format data, error: %s", x, err)
+ReadFieldError:
+	return offset, fmt.Errorf("%T read field %d '%s' error: %s", x, number, fieldIDToName_Message[number], err)
+}
+
+func (x *Message) fastReadField1(buf []byte, _type int8) (offset int, err error) {
+	x.Role, offset, err = fastpb.ReadString(buf, _type)
+	return offset, err
+}
+
+func (x *Message) fastReadField2(buf []byte, _type int8) (offset int, err error) {
+	x.Content, offset, err = fastpb.ReadString(buf, _type)
+	return offset, err
+}
+
+func (x *DeleteHistoryRequest) FastRead(buf []byte, _type int8, number int32) (offset int, err error) {
+	switch number {
+	case 1:
+		offset, err = x.fastReadField1(buf, _type)
+		if err != nil {
+			goto ReadFieldError
+		}
+	case 2:
+		offset, err = x.fastReadField2(buf, _type)
+		if err != nil {
+			goto ReadFieldError
+		}
+	default:
+		offset, err = fastpb.Skip(buf, _type, number)
+		if err != nil {
+			goto SkipFieldError
+		}
+	}
+	return offset, nil
+SkipFieldError:
+	return offset, fmt.Errorf("%T cannot parse invalid wire-format data, error: %s", x, err)
+ReadFieldError:
+	return offset, fmt.Errorf("%T read field %d '%s' error: %s", x, number, fieldIDToName_DeleteHistoryRequest[number], err)
+}
+
+func (x *DeleteHistoryRequest) fastReadField1(buf []byte, _type int8) (offset int, err error) {
+	x.ConversationId, offset, err = fastpb.ReadString(buf, _type)
+	return offset, err
+}
+
+func (x *DeleteHistoryRequest) fastReadField2(buf []byte, _type int8) (offset int, err error) {
+	x.UserId, offset, err = fastpb.ReadString(buf, _type)
+	return offset, err
+}
+
+func (x *DeleteHistoryResponse) FastRead(buf []byte, _type int8, number int32) (offset int, err error) {
+	switch number {
+	default:
+		offset, err = fastpb.Skip(buf, _type, number)
+		if err != nil {
+			goto SkipFieldError
+		}
+	}
+	return offset, nil
+SkipFieldError:
+	return offset, fmt.Errorf("%T cannot parse invalid wire-format data, error: %s", x, err)
+}
+
+func (x *GetConversationIdRequest) FastRead(buf []byte, _type int8, number int32) (offset int, err error) {
+	switch number {
+	case 1:
+		offset, err = x.fastReadField1(buf, _type)
+		if err != nil {
+			goto ReadFieldError
+		}
+	default:
+		offset, err = fastpb.Skip(buf, _type, number)
+		if err != nil {
+			goto SkipFieldError
+		}
+	}
+	return offset, nil
+SkipFieldError:
+	return offset, fmt.Errorf("%T cannot parse invalid wire-format data, error: %s", x, err)
+ReadFieldError:
+	return offset, fmt.Errorf("%T read field %d '%s' error: %s", x, number, fieldIDToName_GetConversationIdRequest[number], err)
+}
+
+func (x *GetConversationIdRequest) fastReadField1(buf []byte, _type int8) (offset int, err error) {
+	x.UserId, offset, err = fastpb.ReadString(buf, _type)
+	return offset, err
+}
+
+func (x *GetConversationIdResponse) FastRead(buf []byte, _type int8, number int32) (offset int, err error) {
+	switch number {
+	case 1:
+		offset, err = x.fastReadField1(buf, _type)
+		if err != nil {
+			goto ReadFieldError
+		}
+	default:
+		offset, err = fastpb.Skip(buf, _type, number)
+		if err != nil {
+			goto SkipFieldError
+		}
+	}
+	return offset, nil
+SkipFieldError:
+	return offset, fmt.Errorf("%T cannot parse invalid wire-format data, error: %s", x, err)
+ReadFieldError:
+	return offset, fmt.Errorf("%T read field %d '%s' error: %s", x, number, fieldIDToName_GetConversationIdResponse[number], err)
+}
+
+func (x *GetConversationIdResponse) fastReadField1(buf []byte, _type int8) (offset int, err error) {
+	var v string
+	v, offset, err = fastpb.ReadString(buf, _type)
+	if err != nil {
+		return offset, err
+	}
+	x.ConversationId = append(x.ConversationId, v)
 	return offset, err
 }
 
@@ -146,8 +324,6 @@ func (x *ChatResponse) FastWrite(buf []byte) (offset int) {
 		return offset
 	}
 	offset += x.fastWriteField1(buf[offset:])
-	offset += x.fastWriteField2(buf[offset:])
-	offset += x.fastWriteField3(buf[offset:])
 	return offset
 }
 
@@ -159,19 +335,137 @@ func (x *ChatResponse) fastWriteField1(buf []byte) (offset int) {
 	return offset
 }
 
-func (x *ChatResponse) fastWriteField2(buf []byte) (offset int) {
-	if x.Status == 0 {
+func (x *GetHistoryRequest) FastWrite(buf []byte) (offset int) {
+	if x == nil {
 		return offset
 	}
-	offset += fastpb.WriteInt32(buf[offset:], 2, int32(x.GetStatus()))
+	offset += x.fastWriteField1(buf[offset:])
+	offset += x.fastWriteField2(buf[offset:])
 	return offset
 }
 
-func (x *ChatResponse) fastWriteField3(buf []byte) (offset int) {
-	if x.Error == "" {
+func (x *GetHistoryRequest) fastWriteField1(buf []byte) (offset int) {
+	if x.ConversationId == "" {
 		return offset
 	}
-	offset += fastpb.WriteString(buf[offset:], 3, x.GetError())
+	offset += fastpb.WriteString(buf[offset:], 1, x.GetConversationId())
+	return offset
+}
+
+func (x *GetHistoryRequest) fastWriteField2(buf []byte) (offset int) {
+	if x.UserId == "" {
+		return offset
+	}
+	offset += fastpb.WriteString(buf[offset:], 2, x.GetUserId())
+	return offset
+}
+
+func (x *GetHistoryResponse) FastWrite(buf []byte) (offset int) {
+	if x == nil {
+		return offset
+	}
+	offset += x.fastWriteField1(buf[offset:])
+	return offset
+}
+
+func (x *GetHistoryResponse) fastWriteField1(buf []byte) (offset int) {
+	if x.History == nil {
+		return offset
+	}
+	for i := range x.GetHistory() {
+		offset += fastpb.WriteMessage(buf[offset:], 1, x.GetHistory()[i])
+	}
+	return offset
+}
+
+func (x *Message) FastWrite(buf []byte) (offset int) {
+	if x == nil {
+		return offset
+	}
+	offset += x.fastWriteField1(buf[offset:])
+	offset += x.fastWriteField2(buf[offset:])
+	return offset
+}
+
+func (x *Message) fastWriteField1(buf []byte) (offset int) {
+	if x.Role == "" {
+		return offset
+	}
+	offset += fastpb.WriteString(buf[offset:], 1, x.GetRole())
+	return offset
+}
+
+func (x *Message) fastWriteField2(buf []byte) (offset int) {
+	if x.Content == "" {
+		return offset
+	}
+	offset += fastpb.WriteString(buf[offset:], 2, x.GetContent())
+	return offset
+}
+
+func (x *DeleteHistoryRequest) FastWrite(buf []byte) (offset int) {
+	if x == nil {
+		return offset
+	}
+	offset += x.fastWriteField1(buf[offset:])
+	offset += x.fastWriteField2(buf[offset:])
+	return offset
+}
+
+func (x *DeleteHistoryRequest) fastWriteField1(buf []byte) (offset int) {
+	if x.ConversationId == "" {
+		return offset
+	}
+	offset += fastpb.WriteString(buf[offset:], 1, x.GetConversationId())
+	return offset
+}
+
+func (x *DeleteHistoryRequest) fastWriteField2(buf []byte) (offset int) {
+	if x.UserId == "" {
+		return offset
+	}
+	offset += fastpb.WriteString(buf[offset:], 2, x.GetUserId())
+	return offset
+}
+
+func (x *DeleteHistoryResponse) FastWrite(buf []byte) (offset int) {
+	if x == nil {
+		return offset
+	}
+	return offset
+}
+
+func (x *GetConversationIdRequest) FastWrite(buf []byte) (offset int) {
+	if x == nil {
+		return offset
+	}
+	offset += x.fastWriteField1(buf[offset:])
+	return offset
+}
+
+func (x *GetConversationIdRequest) fastWriteField1(buf []byte) (offset int) {
+	if x.UserId == "" {
+		return offset
+	}
+	offset += fastpb.WriteString(buf[offset:], 1, x.GetUserId())
+	return offset
+}
+
+func (x *GetConversationIdResponse) FastWrite(buf []byte) (offset int) {
+	if x == nil {
+		return offset
+	}
+	offset += x.fastWriteField1(buf[offset:])
+	return offset
+}
+
+func (x *GetConversationIdResponse) fastWriteField1(buf []byte) (offset int) {
+	if len(x.ConversationId) == 0 {
+		return offset
+	}
+	for i := range x.GetConversationId() {
+		offset += fastpb.WriteString(buf[offset:], 1, x.GetConversationId()[i])
+	}
 	return offset
 }
 
@@ -214,8 +508,6 @@ func (x *ChatResponse) Size() (n int) {
 		return n
 	}
 	n += x.sizeField1()
-	n += x.sizeField2()
-	n += x.sizeField3()
 	return n
 }
 
@@ -227,19 +519,137 @@ func (x *ChatResponse) sizeField1() (n int) {
 	return n
 }
 
-func (x *ChatResponse) sizeField2() (n int) {
-	if x.Status == 0 {
+func (x *GetHistoryRequest) Size() (n int) {
+	if x == nil {
 		return n
 	}
-	n += fastpb.SizeInt32(2, int32(x.GetStatus()))
+	n += x.sizeField1()
+	n += x.sizeField2()
 	return n
 }
 
-func (x *ChatResponse) sizeField3() (n int) {
-	if x.Error == "" {
+func (x *GetHistoryRequest) sizeField1() (n int) {
+	if x.ConversationId == "" {
 		return n
 	}
-	n += fastpb.SizeString(3, x.GetError())
+	n += fastpb.SizeString(1, x.GetConversationId())
+	return n
+}
+
+func (x *GetHistoryRequest) sizeField2() (n int) {
+	if x.UserId == "" {
+		return n
+	}
+	n += fastpb.SizeString(2, x.GetUserId())
+	return n
+}
+
+func (x *GetHistoryResponse) Size() (n int) {
+	if x == nil {
+		return n
+	}
+	n += x.sizeField1()
+	return n
+}
+
+func (x *GetHistoryResponse) sizeField1() (n int) {
+	if x.History == nil {
+		return n
+	}
+	for i := range x.GetHistory() {
+		n += fastpb.SizeMessage(1, x.GetHistory()[i])
+	}
+	return n
+}
+
+func (x *Message) Size() (n int) {
+	if x == nil {
+		return n
+	}
+	n += x.sizeField1()
+	n += x.sizeField2()
+	return n
+}
+
+func (x *Message) sizeField1() (n int) {
+	if x.Role == "" {
+		return n
+	}
+	n += fastpb.SizeString(1, x.GetRole())
+	return n
+}
+
+func (x *Message) sizeField2() (n int) {
+	if x.Content == "" {
+		return n
+	}
+	n += fastpb.SizeString(2, x.GetContent())
+	return n
+}
+
+func (x *DeleteHistoryRequest) Size() (n int) {
+	if x == nil {
+		return n
+	}
+	n += x.sizeField1()
+	n += x.sizeField2()
+	return n
+}
+
+func (x *DeleteHistoryRequest) sizeField1() (n int) {
+	if x.ConversationId == "" {
+		return n
+	}
+	n += fastpb.SizeString(1, x.GetConversationId())
+	return n
+}
+
+func (x *DeleteHistoryRequest) sizeField2() (n int) {
+	if x.UserId == "" {
+		return n
+	}
+	n += fastpb.SizeString(2, x.GetUserId())
+	return n
+}
+
+func (x *DeleteHistoryResponse) Size() (n int) {
+	if x == nil {
+		return n
+	}
+	return n
+}
+
+func (x *GetConversationIdRequest) Size() (n int) {
+	if x == nil {
+		return n
+	}
+	n += x.sizeField1()
+	return n
+}
+
+func (x *GetConversationIdRequest) sizeField1() (n int) {
+	if x.UserId == "" {
+		return n
+	}
+	n += fastpb.SizeString(1, x.GetUserId())
+	return n
+}
+
+func (x *GetConversationIdResponse) Size() (n int) {
+	if x == nil {
+		return n
+	}
+	n += x.sizeField1()
+	return n
+}
+
+func (x *GetConversationIdResponse) sizeField1() (n int) {
+	if len(x.ConversationId) == 0 {
+		return n
+	}
+	for i := range x.GetConversationId() {
+		n += fastpb.SizeString(1, x.GetConversationId()[i])
+	}
 	return n
 }
 
@@ -251,6 +661,33 @@ var fieldIDToName_ChatRequest = map[int32]string{
 
 var fieldIDToName_ChatResponse = map[int32]string{
 	1: "Response",
-	2: "Status",
-	3: "Error",
+}
+
+var fieldIDToName_GetHistoryRequest = map[int32]string{
+	1: "ConversationId",
+	2: "UserId",
+}
+
+var fieldIDToName_GetHistoryResponse = map[int32]string{
+	1: "History",
+}
+
+var fieldIDToName_Message = map[int32]string{
+	1: "Role",
+	2: "Content",
+}
+
+var fieldIDToName_DeleteHistoryRequest = map[int32]string{
+	1: "ConversationId",
+	2: "UserId",
+}
+
+var fieldIDToName_DeleteHistoryResponse = map[int32]string{}
+
+var fieldIDToName_GetConversationIdRequest = map[int32]string{
+	1: "UserId",
+}
+
+var fieldIDToName_GetConversationIdResponse = map[int32]string{
+	1: "ConversationId",
 }

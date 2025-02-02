@@ -22,55 +22,6 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type ResponseStatus int32
-
-const (
-	ResponseStatus_SUCCESS    ResponseStatus = 0
-	ResponseStatus_ERROR      ResponseStatus = 1
-	ResponseStatus_PROCESSING ResponseStatus = 2
-)
-
-// Enum value maps for ResponseStatus.
-var (
-	ResponseStatus_name = map[int32]string{
-		0: "SUCCESS",
-		1: "ERROR",
-		2: "PROCESSING",
-	}
-	ResponseStatus_value = map[string]int32{
-		"SUCCESS":    0,
-		"ERROR":      1,
-		"PROCESSING": 2,
-	}
-)
-
-func (x ResponseStatus) Enum() *ResponseStatus {
-	p := new(ResponseStatus)
-	*p = x
-	return p
-}
-
-func (x ResponseStatus) String() string {
-	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
-}
-
-func (ResponseStatus) Descriptor() protoreflect.EnumDescriptor {
-	return file_llm_proto_enumTypes[0].Descriptor()
-}
-
-func (ResponseStatus) Type() protoreflect.EnumType {
-	return &file_llm_proto_enumTypes[0]
-}
-
-func (x ResponseStatus) Number() protoreflect.EnumNumber {
-	return protoreflect.EnumNumber(x)
-}
-
-// Deprecated: Use ResponseStatus.Descriptor instead.
-func (ResponseStatus) EnumDescriptor() ([]byte, []int) {
-	return file_llm_proto_rawDescGZIP(), []int{0}
-}
-
 type ChatRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -139,9 +90,7 @@ type ChatResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Response string         `protobuf:"bytes,1,opt,name=response,proto3" json:"response,omitempty"`
-	Status   ResponseStatus `protobuf:"varint,2,opt,name=status,proto3,enum=llm.ResponseStatus" json:"status,omitempty"`
-	Error    string         `protobuf:"bytes,3,opt,name=error,proto3" json:"error,omitempty"`
+	Response string `protobuf:"bytes,1,opt,name=response,proto3" json:"response,omitempty"`
 }
 
 func (x *ChatResponse) Reset() {
@@ -183,18 +132,348 @@ func (x *ChatResponse) GetResponse() string {
 	return ""
 }
 
-func (x *ChatResponse) GetStatus() ResponseStatus {
-	if x != nil {
-		return x.Status
-	}
-	return ResponseStatus_SUCCESS
+type GetHistoryRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	ConversationId string `protobuf:"bytes,1,opt,name=conversation_id,json=conversationId,proto3" json:"conversation_id,omitempty"`
+	UserId         string `protobuf:"bytes,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 }
 
-func (x *ChatResponse) GetError() string {
+func (x *GetHistoryRequest) Reset() {
+	*x = GetHistoryRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_llm_proto_msgTypes[2]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetHistoryRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetHistoryRequest) ProtoMessage() {}
+
+func (x *GetHistoryRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_llm_proto_msgTypes[2]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetHistoryRequest.ProtoReflect.Descriptor instead.
+func (*GetHistoryRequest) Descriptor() ([]byte, []int) {
+	return file_llm_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *GetHistoryRequest) GetConversationId() string {
 	if x != nil {
-		return x.Error
+		return x.ConversationId
 	}
 	return ""
+}
+
+func (x *GetHistoryRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+type GetHistoryResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	History []*Message `protobuf:"bytes,1,rep,name=history,proto3" json:"history,omitempty"`
+}
+
+func (x *GetHistoryResponse) Reset() {
+	*x = GetHistoryResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_llm_proto_msgTypes[3]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetHistoryResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetHistoryResponse) ProtoMessage() {}
+
+func (x *GetHistoryResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_llm_proto_msgTypes[3]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetHistoryResponse.ProtoReflect.Descriptor instead.
+func (*GetHistoryResponse) Descriptor() ([]byte, []int) {
+	return file_llm_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *GetHistoryResponse) GetHistory() []*Message {
+	if x != nil {
+		return x.History
+	}
+	return nil
+}
+
+type Message struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Role    string `protobuf:"bytes,1,opt,name=role,proto3" json:"role,omitempty"`
+	Content string `protobuf:"bytes,2,opt,name=content,proto3" json:"content,omitempty"`
+}
+
+func (x *Message) Reset() {
+	*x = Message{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_llm_proto_msgTypes[4]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Message) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Message) ProtoMessage() {}
+
+func (x *Message) ProtoReflect() protoreflect.Message {
+	mi := &file_llm_proto_msgTypes[4]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Message.ProtoReflect.Descriptor instead.
+func (*Message) Descriptor() ([]byte, []int) {
+	return file_llm_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *Message) GetRole() string {
+	if x != nil {
+		return x.Role
+	}
+	return ""
+}
+
+func (x *Message) GetContent() string {
+	if x != nil {
+		return x.Content
+	}
+	return ""
+}
+
+type DeleteHistoryRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	ConversationId string `protobuf:"bytes,1,opt,name=conversation_id,json=conversationId,proto3" json:"conversation_id,omitempty"`
+	UserId         string `protobuf:"bytes,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+}
+
+func (x *DeleteHistoryRequest) Reset() {
+	*x = DeleteHistoryRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_llm_proto_msgTypes[5]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *DeleteHistoryRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteHistoryRequest) ProtoMessage() {}
+
+func (x *DeleteHistoryRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_llm_proto_msgTypes[5]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteHistoryRequest.ProtoReflect.Descriptor instead.
+func (*DeleteHistoryRequest) Descriptor() ([]byte, []int) {
+	return file_llm_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *DeleteHistoryRequest) GetConversationId() string {
+	if x != nil {
+		return x.ConversationId
+	}
+	return ""
+}
+
+func (x *DeleteHistoryRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+type DeleteHistoryResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *DeleteHistoryResponse) Reset() {
+	*x = DeleteHistoryResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_llm_proto_msgTypes[6]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *DeleteHistoryResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteHistoryResponse) ProtoMessage() {}
+
+func (x *DeleteHistoryResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_llm_proto_msgTypes[6]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteHistoryResponse.ProtoReflect.Descriptor instead.
+func (*DeleteHistoryResponse) Descriptor() ([]byte, []int) {
+	return file_llm_proto_rawDescGZIP(), []int{6}
+}
+
+type GetConversationIdRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	UserId string `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+}
+
+func (x *GetConversationIdRequest) Reset() {
+	*x = GetConversationIdRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_llm_proto_msgTypes[7]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetConversationIdRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetConversationIdRequest) ProtoMessage() {}
+
+func (x *GetConversationIdRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_llm_proto_msgTypes[7]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetConversationIdRequest.ProtoReflect.Descriptor instead.
+func (*GetConversationIdRequest) Descriptor() ([]byte, []int) {
+	return file_llm_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *GetConversationIdRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+type GetConversationIdResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	ConversationId []string `protobuf:"bytes,1,rep,name=conversation_id,json=conversationId,proto3" json:"conversation_id,omitempty"`
+}
+
+func (x *GetConversationIdResponse) Reset() {
+	*x = GetConversationIdResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_llm_proto_msgTypes[8]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetConversationIdResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetConversationIdResponse) ProtoMessage() {}
+
+func (x *GetConversationIdResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_llm_proto_msgTypes[8]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetConversationIdResponse.ProtoReflect.Descriptor instead.
+func (*GetConversationIdResponse) Descriptor() ([]byte, []int) {
+	return file_llm_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *GetConversationIdResponse) GetConversationId() []string {
+	if x != nil {
+		return x.ConversationId
+	}
+	return nil
 }
 
 var File_llm_proto protoreflect.FileDescriptor
@@ -207,18 +486,38 @@ var file_llm_proto_rawDesc = []byte{
 	0x61, 0x67, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x6d, 0x65, 0x73, 0x73, 0x61,
 	0x67, 0x65, 0x12, 0x27, 0x0a, 0x0f, 0x63, 0x6f, 0x6e, 0x76, 0x65, 0x72, 0x73, 0x61, 0x74, 0x69,
 	0x6f, 0x6e, 0x5f, 0x69, 0x64, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0e, 0x63, 0x6f, 0x6e,
-	0x76, 0x65, 0x72, 0x73, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x49, 0x64, 0x22, 0x6d, 0x0a, 0x0c, 0x43,
+	0x76, 0x65, 0x72, 0x73, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x49, 0x64, 0x22, 0x2a, 0x0a, 0x0c, 0x43,
 	0x68, 0x61, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x1a, 0x0a, 0x08, 0x72,
 	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x72,
-	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x2b, 0x0a, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75,
-	0x73, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x13, 0x2e, 0x6c, 0x6c, 0x6d, 0x2e, 0x52, 0x65,
-	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x52, 0x06, 0x73, 0x74,
-	0x61, 0x74, 0x75, 0x73, 0x12, 0x14, 0x0a, 0x05, 0x65, 0x72, 0x72, 0x6f, 0x72, 0x18, 0x03, 0x20,
-	0x01, 0x28, 0x09, 0x52, 0x05, 0x65, 0x72, 0x72, 0x6f, 0x72, 0x2a, 0x38, 0x0a, 0x0e, 0x52, 0x65,
-	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x12, 0x0b, 0x0a, 0x07,
-	0x53, 0x55, 0x43, 0x43, 0x45, 0x53, 0x53, 0x10, 0x00, 0x12, 0x09, 0x0a, 0x05, 0x45, 0x52, 0x52,
-	0x4f, 0x52, 0x10, 0x01, 0x12, 0x0e, 0x0a, 0x0a, 0x50, 0x52, 0x4f, 0x43, 0x45, 0x53, 0x53, 0x49,
-	0x4e, 0x47, 0x10, 0x02, 0x32, 0x7c, 0x0a, 0x0a, 0x4c, 0x6c, 0x6d, 0x53, 0x65, 0x72, 0x76, 0x69,
+	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x55, 0x0a, 0x11, 0x47, 0x65, 0x74, 0x48, 0x69,
+	0x73, 0x74, 0x6f, 0x72, 0x79, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x27, 0x0a, 0x0f,
+	0x63, 0x6f, 0x6e, 0x76, 0x65, 0x72, 0x73, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x5f, 0x69, 0x64, 0x18,
+	0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0e, 0x63, 0x6f, 0x6e, 0x76, 0x65, 0x72, 0x73, 0x61, 0x74,
+	0x69, 0x6f, 0x6e, 0x49, 0x64, 0x12, 0x17, 0x0a, 0x07, 0x75, 0x73, 0x65, 0x72, 0x5f, 0x69, 0x64,
+	0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x75, 0x73, 0x65, 0x72, 0x49, 0x64, 0x22, 0x3c,
+	0x0a, 0x12, 0x47, 0x65, 0x74, 0x48, 0x69, 0x73, 0x74, 0x6f, 0x72, 0x79, 0x52, 0x65, 0x73, 0x70,
+	0x6f, 0x6e, 0x73, 0x65, 0x12, 0x26, 0x0a, 0x07, 0x68, 0x69, 0x73, 0x74, 0x6f, 0x72, 0x79, 0x18,
+	0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x0c, 0x2e, 0x6c, 0x6c, 0x6d, 0x2e, 0x4d, 0x65, 0x73, 0x73,
+	0x61, 0x67, 0x65, 0x52, 0x07, 0x68, 0x69, 0x73, 0x74, 0x6f, 0x72, 0x79, 0x22, 0x37, 0x0a, 0x07,
+	0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x12, 0x12, 0x0a, 0x04, 0x72, 0x6f, 0x6c, 0x65, 0x18,
+	0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x72, 0x6f, 0x6c, 0x65, 0x12, 0x18, 0x0a, 0x07, 0x63,
+	0x6f, 0x6e, 0x74, 0x65, 0x6e, 0x74, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x63, 0x6f,
+	0x6e, 0x74, 0x65, 0x6e, 0x74, 0x22, 0x58, 0x0a, 0x14, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x48,
+	0x69, 0x73, 0x74, 0x6f, 0x72, 0x79, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x27, 0x0a,
+	0x0f, 0x63, 0x6f, 0x6e, 0x76, 0x65, 0x72, 0x73, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x5f, 0x69, 0x64,
+	0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0e, 0x63, 0x6f, 0x6e, 0x76, 0x65, 0x72, 0x73, 0x61,
+	0x74, 0x69, 0x6f, 0x6e, 0x49, 0x64, 0x12, 0x17, 0x0a, 0x07, 0x75, 0x73, 0x65, 0x72, 0x5f, 0x69,
+	0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x75, 0x73, 0x65, 0x72, 0x49, 0x64, 0x22,
+	0x17, 0x0a, 0x15, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x48, 0x69, 0x73, 0x74, 0x6f, 0x72, 0x79,
+	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x33, 0x0a, 0x18, 0x47, 0x65, 0x74, 0x43,
+	0x6f, 0x6e, 0x76, 0x65, 0x72, 0x73, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x49, 0x64, 0x52, 0x65, 0x71,
+	0x75, 0x65, 0x73, 0x74, 0x12, 0x17, 0x0a, 0x07, 0x75, 0x73, 0x65, 0x72, 0x5f, 0x69, 0x64, 0x18,
+	0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x75, 0x73, 0x65, 0x72, 0x49, 0x64, 0x22, 0x44, 0x0a,
+	0x19, 0x47, 0x65, 0x74, 0x43, 0x6f, 0x6e, 0x76, 0x65, 0x72, 0x73, 0x61, 0x74, 0x69, 0x6f, 0x6e,
+	0x49, 0x64, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x27, 0x0a, 0x0f, 0x63, 0x6f,
+	0x6e, 0x76, 0x65, 0x72, 0x73, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20,
+	0x03, 0x28, 0x09, 0x52, 0x0e, 0x63, 0x6f, 0x6e, 0x76, 0x65, 0x72, 0x73, 0x61, 0x74, 0x69, 0x6f,
+	0x6e, 0x49, 0x64, 0x32, 0xdd, 0x02, 0x0a, 0x0a, 0x4c, 0x6c, 0x6d, 0x53, 0x65, 0x72, 0x76, 0x69,
 	0x63, 0x65, 0x12, 0x34, 0x0a, 0x0b, 0x53, 0x65, 0x6e, 0x64, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67,
 	0x65, 0x12, 0x10, 0x2e, 0x6c, 0x6c, 0x6d, 0x2e, 0x43, 0x68, 0x61, 0x74, 0x52, 0x65, 0x71, 0x75,
 	0x65, 0x73, 0x74, 0x1a, 0x11, 0x2e, 0x6c, 0x6c, 0x6d, 0x2e, 0x43, 0x68, 0x61, 0x74, 0x52, 0x65,
@@ -226,11 +525,26 @@ var file_llm_proto_rawDesc = []byte{
 	0x61, 0x6d, 0x4d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x12, 0x10, 0x2e, 0x6c, 0x6c, 0x6d, 0x2e,
 	0x43, 0x68, 0x61, 0x74, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x11, 0x2e, 0x6c, 0x6c,
 	0x6d, 0x2e, 0x43, 0x68, 0x61, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00,
-	0x30, 0x01, 0x42, 0x44, 0x5a, 0x42, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d,
-	0x2f, 0x56, 0x69, 0x67, 0x6f, 0x72, 0x2d, 0x54, 0x65, 0x61, 0x6d, 0x2f, 0x79, 0x6f, 0x75, 0x74,
-	0x68, 0x63, 0x61, 0x6d, 0x70, 0x2d, 0x32, 0x30, 0x32, 0x35, 0x2d, 0x6d, 0x61, 0x6c, 0x6c, 0x2d,
-	0x62, 0x65, 0x2f, 0x72, 0x70, 0x63, 0x5f, 0x67, 0x65, 0x6e, 0x2f, 0x6b, 0x69, 0x74, 0x65, 0x78,
-	0x5f, 0x67, 0x65, 0x6e, 0x2f, 0x6c, 0x6c, 0x6d, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x30, 0x01, 0x12, 0x3f, 0x0a, 0x0a, 0x47, 0x65, 0x74, 0x48, 0x69, 0x73, 0x74, 0x6f, 0x72, 0x79,
+	0x12, 0x16, 0x2e, 0x6c, 0x6c, 0x6d, 0x2e, 0x47, 0x65, 0x74, 0x48, 0x69, 0x73, 0x74, 0x6f, 0x72,
+	0x79, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x17, 0x2e, 0x6c, 0x6c, 0x6d, 0x2e, 0x47,
+	0x65, 0x74, 0x48, 0x69, 0x73, 0x74, 0x6f, 0x72, 0x79, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
+	0x65, 0x22, 0x00, 0x12, 0x48, 0x0a, 0x0d, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x48, 0x69, 0x73,
+	0x74, 0x6f, 0x72, 0x79, 0x12, 0x19, 0x2e, 0x6c, 0x6c, 0x6d, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74,
+	0x65, 0x48, 0x69, 0x73, 0x74, 0x6f, 0x72, 0x79, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a,
+	0x1a, 0x2e, 0x6c, 0x6c, 0x6d, 0x2e, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x48, 0x69, 0x73, 0x74,
+	0x6f, 0x72, 0x79, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x54, 0x0a,
+	0x11, 0x47, 0x65, 0x74, 0x43, 0x6f, 0x6e, 0x76, 0x65, 0x72, 0x73, 0x61, 0x74, 0x69, 0x6f, 0x6e,
+	0x49, 0x64, 0x12, 0x1d, 0x2e, 0x6c, 0x6c, 0x6d, 0x2e, 0x47, 0x65, 0x74, 0x43, 0x6f, 0x6e, 0x76,
+	0x65, 0x72, 0x73, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x49, 0x64, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
+	0x74, 0x1a, 0x1e, 0x2e, 0x6c, 0x6c, 0x6d, 0x2e, 0x47, 0x65, 0x74, 0x43, 0x6f, 0x6e, 0x76, 0x65,
+	0x72, 0x73, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x49, 0x64, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
+	0x65, 0x22, 0x00, 0x42, 0x44, 0x5a, 0x42, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f,
+	0x6d, 0x2f, 0x56, 0x69, 0x67, 0x6f, 0x72, 0x2d, 0x54, 0x65, 0x61, 0x6d, 0x2f, 0x79, 0x6f, 0x75,
+	0x74, 0x68, 0x63, 0x61, 0x6d, 0x70, 0x2d, 0x32, 0x30, 0x32, 0x35, 0x2d, 0x6d, 0x61, 0x6c, 0x6c,
+	0x2d, 0x62, 0x65, 0x2f, 0x72, 0x70, 0x63, 0x5f, 0x67, 0x65, 0x6e, 0x2f, 0x6b, 0x69, 0x74, 0x65,
+	0x78, 0x5f, 0x67, 0x65, 0x6e, 0x2f, 0x6c, 0x6c, 0x6d, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x33,
 }
 
 var (
@@ -245,21 +559,32 @@ func file_llm_proto_rawDescGZIP() []byte {
 	return file_llm_proto_rawDescData
 }
 
-var file_llm_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_llm_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_llm_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
 var file_llm_proto_goTypes = []interface{}{
-	(ResponseStatus)(0),  // 0: llm.ResponseStatus
-	(*ChatRequest)(nil),  // 1: llm.ChatRequest
-	(*ChatResponse)(nil), // 2: llm.ChatResponse
+	(*ChatRequest)(nil),               // 0: llm.ChatRequest
+	(*ChatResponse)(nil),              // 1: llm.ChatResponse
+	(*GetHistoryRequest)(nil),         // 2: llm.GetHistoryRequest
+	(*GetHistoryResponse)(nil),        // 3: llm.GetHistoryResponse
+	(*Message)(nil),                   // 4: llm.Message
+	(*DeleteHistoryRequest)(nil),      // 5: llm.DeleteHistoryRequest
+	(*DeleteHistoryResponse)(nil),     // 6: llm.DeleteHistoryResponse
+	(*GetConversationIdRequest)(nil),  // 7: llm.GetConversationIdRequest
+	(*GetConversationIdResponse)(nil), // 8: llm.GetConversationIdResponse
 }
 var file_llm_proto_depIdxs = []int32{
-	0, // 0: llm.ChatResponse.status:type_name -> llm.ResponseStatus
-	1, // 1: llm.LlmService.SendMessage:input_type -> llm.ChatRequest
-	1, // 2: llm.LlmService.StreamMessage:input_type -> llm.ChatRequest
-	2, // 3: llm.LlmService.SendMessage:output_type -> llm.ChatResponse
-	2, // 4: llm.LlmService.StreamMessage:output_type -> llm.ChatResponse
-	3, // [3:5] is the sub-list for method output_type
-	1, // [1:3] is the sub-list for method input_type
+	4, // 0: llm.GetHistoryResponse.history:type_name -> llm.Message
+	0, // 1: llm.LlmService.SendMessage:input_type -> llm.ChatRequest
+	0, // 2: llm.LlmService.StreamMessage:input_type -> llm.ChatRequest
+	2, // 3: llm.LlmService.GetHistory:input_type -> llm.GetHistoryRequest
+	5, // 4: llm.LlmService.DeleteHistory:input_type -> llm.DeleteHistoryRequest
+	7, // 5: llm.LlmService.GetConversationId:input_type -> llm.GetConversationIdRequest
+	1, // 6: llm.LlmService.SendMessage:output_type -> llm.ChatResponse
+	1, // 7: llm.LlmService.StreamMessage:output_type -> llm.ChatResponse
+	3, // 8: llm.LlmService.GetHistory:output_type -> llm.GetHistoryResponse
+	6, // 9: llm.LlmService.DeleteHistory:output_type -> llm.DeleteHistoryResponse
+	8, // 10: llm.LlmService.GetConversationId:output_type -> llm.GetConversationIdResponse
+	6, // [6:11] is the sub-list for method output_type
+	1, // [1:6] is the sub-list for method input_type
 	1, // [1:1] is the sub-list for extension type_name
 	1, // [1:1] is the sub-list for extension extendee
 	0, // [0:1] is the sub-list for field type_name
@@ -295,20 +620,103 @@ func file_llm_proto_init() {
 				return nil
 			}
 		}
+		file_llm_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetHistoryRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_llm_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetHistoryResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_llm_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Message); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_llm_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*DeleteHistoryRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_llm_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*DeleteHistoryResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_llm_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetConversationIdRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_llm_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetConversationIdResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_llm_proto_rawDesc,
-			NumEnums:      1,
-			NumMessages:   2,
+			NumEnums:      0,
+			NumMessages:   9,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
 		GoTypes:           file_llm_proto_goTypes,
 		DependencyIndexes: file_llm_proto_depIdxs,
-		EnumInfos:         file_llm_proto_enumTypes,
 		MessageInfos:      file_llm_proto_msgTypes,
 	}.Build()
 	File_llm_proto = out.File
@@ -324,6 +732,9 @@ var _ context.Context
 type LlmService interface {
 	SendMessage(ctx context.Context, req *ChatRequest) (res *ChatResponse, err error)
 	StreamMessage(req *ChatRequest, stream LlmService_StreamMessageServer) (err error)
+	GetHistory(ctx context.Context, req *GetHistoryRequest) (res *GetHistoryResponse, err error)
+	DeleteHistory(ctx context.Context, req *DeleteHistoryRequest) (res *DeleteHistoryResponse, err error)
+	GetConversationId(ctx context.Context, req *GetConversationIdRequest) (res *GetConversationIdResponse, err error)
 }
 
 type LlmService_StreamMessageServer interface {
