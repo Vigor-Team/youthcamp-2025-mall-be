@@ -44,13 +44,6 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		false,
 		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
-	"GetConversationId": kitex.NewMethodInfo(
-		getConversationIdHandler,
-		newGetConversationIdArgs,
-		newGetConversationIdResult,
-		false,
-		kitex.WithStreamingMode(kitex.StreamingUnary),
-	),
 }
 
 var (
@@ -742,159 +735,6 @@ func (p *DeleteHistoryResult) GetResult() interface{} {
 	return p.Success
 }
 
-func getConversationIdHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	switch s := arg.(type) {
-	case *streaming.Args:
-		st := s.Stream
-		req := new(llm.GetConversationIdRequest)
-		if err := st.RecvMsg(req); err != nil {
-			return err
-		}
-		resp, err := handler.(llm.LlmService).GetConversationId(ctx, req)
-		if err != nil {
-			return err
-		}
-		return st.SendMsg(resp)
-	case *GetConversationIdArgs:
-		success, err := handler.(llm.LlmService).GetConversationId(ctx, s.Req)
-		if err != nil {
-			return err
-		}
-		realResult := result.(*GetConversationIdResult)
-		realResult.Success = success
-		return nil
-	default:
-		return errInvalidMessageType
-	}
-}
-func newGetConversationIdArgs() interface{} {
-	return &GetConversationIdArgs{}
-}
-
-func newGetConversationIdResult() interface{} {
-	return &GetConversationIdResult{}
-}
-
-type GetConversationIdArgs struct {
-	Req *llm.GetConversationIdRequest
-}
-
-func (p *GetConversationIdArgs) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
-	if !p.IsSetReq() {
-		p.Req = new(llm.GetConversationIdRequest)
-	}
-	return p.Req.FastRead(buf, _type, number)
-}
-
-func (p *GetConversationIdArgs) FastWrite(buf []byte) (n int) {
-	if !p.IsSetReq() {
-		return 0
-	}
-	return p.Req.FastWrite(buf)
-}
-
-func (p *GetConversationIdArgs) Size() (n int) {
-	if !p.IsSetReq() {
-		return 0
-	}
-	return p.Req.Size()
-}
-
-func (p *GetConversationIdArgs) Marshal(out []byte) ([]byte, error) {
-	if !p.IsSetReq() {
-		return out, nil
-	}
-	return proto.Marshal(p.Req)
-}
-
-func (p *GetConversationIdArgs) Unmarshal(in []byte) error {
-	msg := new(llm.GetConversationIdRequest)
-	if err := proto.Unmarshal(in, msg); err != nil {
-		return err
-	}
-	p.Req = msg
-	return nil
-}
-
-var GetConversationIdArgs_Req_DEFAULT *llm.GetConversationIdRequest
-
-func (p *GetConversationIdArgs) GetReq() *llm.GetConversationIdRequest {
-	if !p.IsSetReq() {
-		return GetConversationIdArgs_Req_DEFAULT
-	}
-	return p.Req
-}
-
-func (p *GetConversationIdArgs) IsSetReq() bool {
-	return p.Req != nil
-}
-
-func (p *GetConversationIdArgs) GetFirstArgument() interface{} {
-	return p.Req
-}
-
-type GetConversationIdResult struct {
-	Success *llm.GetConversationIdResponse
-}
-
-var GetConversationIdResult_Success_DEFAULT *llm.GetConversationIdResponse
-
-func (p *GetConversationIdResult) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
-	if !p.IsSetSuccess() {
-		p.Success = new(llm.GetConversationIdResponse)
-	}
-	return p.Success.FastRead(buf, _type, number)
-}
-
-func (p *GetConversationIdResult) FastWrite(buf []byte) (n int) {
-	if !p.IsSetSuccess() {
-		return 0
-	}
-	return p.Success.FastWrite(buf)
-}
-
-func (p *GetConversationIdResult) Size() (n int) {
-	if !p.IsSetSuccess() {
-		return 0
-	}
-	return p.Success.Size()
-}
-
-func (p *GetConversationIdResult) Marshal(out []byte) ([]byte, error) {
-	if !p.IsSetSuccess() {
-		return out, nil
-	}
-	return proto.Marshal(p.Success)
-}
-
-func (p *GetConversationIdResult) Unmarshal(in []byte) error {
-	msg := new(llm.GetConversationIdResponse)
-	if err := proto.Unmarshal(in, msg); err != nil {
-		return err
-	}
-	p.Success = msg
-	return nil
-}
-
-func (p *GetConversationIdResult) GetSuccess() *llm.GetConversationIdResponse {
-	if !p.IsSetSuccess() {
-		return GetConversationIdResult_Success_DEFAULT
-	}
-	return p.Success
-}
-
-func (p *GetConversationIdResult) SetSuccess(x interface{}) {
-	p.Success = x.(*llm.GetConversationIdResponse)
-}
-
-func (p *GetConversationIdResult) IsSetSuccess() bool {
-	return p.Success != nil
-}
-
-func (p *GetConversationIdResult) GetResult() interface{} {
-	return p.Success
-}
-
 type kClient struct {
 	c client.Client
 }
@@ -951,16 +791,6 @@ func (p *kClient) DeleteHistory(ctx context.Context, Req *llm.DeleteHistoryReque
 	_args.Req = Req
 	var _result DeleteHistoryResult
 	if err = p.c.Call(ctx, "DeleteHistory", &_args, &_result); err != nil {
-		return
-	}
-	return _result.GetSuccess(), nil
-}
-
-func (p *kClient) GetConversationId(ctx context.Context, Req *llm.GetConversationIdRequest) (r *llm.GetConversationIdResponse, err error) {
-	var _args GetConversationIdArgs
-	_args.Req = Req
-	var _result GetConversationIdResult
-	if err = p.c.Call(ctx, "GetConversationId", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil

@@ -19,7 +19,6 @@ type Client interface {
 	StreamMessage(ctx context.Context, Req *llm.ChatRequest, callOptions ...callopt.Option) (stream LlmService_StreamMessageClient, err error)
 	GetHistory(ctx context.Context, Req *llm.GetHistoryRequest, callOptions ...callopt.Option) (r *llm.GetHistoryResponse, err error)
 	DeleteHistory(ctx context.Context, Req *llm.DeleteHistoryRequest, callOptions ...callopt.Option) (r *llm.DeleteHistoryResponse, err error)
-	GetConversationId(ctx context.Context, Req *llm.GetConversationIdRequest, callOptions ...callopt.Option) (r *llm.GetConversationIdResponse, err error)
 }
 
 // StreamClient is designed to provide Interface for Streaming APIs.
@@ -81,11 +80,6 @@ func (p *kLlmServiceClient) GetHistory(ctx context.Context, Req *llm.GetHistoryR
 func (p *kLlmServiceClient) DeleteHistory(ctx context.Context, Req *llm.DeleteHistoryRequest, callOptions ...callopt.Option) (r *llm.DeleteHistoryResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.DeleteHistory(ctx, Req)
-}
-
-func (p *kLlmServiceClient) GetConversationId(ctx context.Context, Req *llm.GetConversationIdRequest, callOptions ...callopt.Option) (r *llm.GetConversationIdResponse, err error) {
-	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.GetConversationId(ctx, Req)
 }
 
 // NewStreamClient creates a stream client for the service's streaming APIs defined in IDL.

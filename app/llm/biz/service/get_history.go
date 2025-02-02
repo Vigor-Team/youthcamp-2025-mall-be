@@ -2,7 +2,10 @@ package service
 
 import (
 	"context"
-	llm "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/llm"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/llm/biz/consts"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/llm/biz/mallagent/conversation"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/llm"
+	"github.com/cloudwego/kitex/pkg/klog"
 )
 
 type GetHistoryService struct {
@@ -14,7 +17,36 @@ func NewGetHistoryService(ctx context.Context) *GetHistoryService {
 
 // Run create note info
 func (s *GetHistoryService) Run(req *llm.GetHistoryRequest) (resp *llm.GetHistoryResponse, err error) {
-	// Finish your business logic.
+	userId := req.UserId
+	if userId == "" {
+		err = consts.ErrReqParamNotFound
+		return
+	}
+	if req.ConversationId == "" {
+		ids, err := conversation.GetDefaultBucket(s.ctx).ListConversations(userId)
+		if err != nil {
+			klog.CtxErrorf(s.ctx, "get conversation list failed, err: %v", err)
+			return nil, consts.ErrGetConversation
+		}
 
+		resp = &llm.GetHistoryResponse{
+			ConversationId: ids,
+		}
+		return resp, nil
+	}
+	conv, err := conversation.GetDefaultBucket(s.ctx).GetConversation(userId, req.ConversationId)
+	if err != nil {
+		return nil, err
+	}
+	history := make([]*llm.Message, 0)
+	for _, m := range conv.Messages {
+		history = append(history, &llm.Message{
+			Role:    string(m.Role),
+			Content: m.Content,
+		})
+	}
+	resp = &llm.GetHistoryResponse{
+		History: history,
+	}
 	return
 }

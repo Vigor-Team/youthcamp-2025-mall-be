@@ -16,7 +16,6 @@ type RPCClient interface {
 	StreamMessage(ctx context.Context, Req *llm.ChatRequest, callOptions ...callopt.Option) (stream llmservice.LlmService_StreamMessageClient, err error)
 	GetHistory(ctx context.Context, Req *llm.GetHistoryRequest, callOptions ...callopt.Option) (r *llm.GetHistoryResponse, err error)
 	DeleteHistory(ctx context.Context, Req *llm.DeleteHistoryRequest, callOptions ...callopt.Option) (r *llm.DeleteHistoryResponse, err error)
-	GetConversationId(ctx context.Context, Req *llm.GetConversationIdRequest, callOptions ...callopt.Option) (r *llm.GetConversationIdResponse, err error)
 }
 
 func NewRPCClient(dstService string, opts ...client.Option) (RPCClient, error) {
@@ -59,8 +58,4 @@ func (c *clientImpl) GetHistory(ctx context.Context, Req *llm.GetHistoryRequest,
 
 func (c *clientImpl) DeleteHistory(ctx context.Context, Req *llm.DeleteHistoryRequest, callOptions ...callopt.Option) (r *llm.DeleteHistoryResponse, err error) {
 	return c.kitexClient.DeleteHistory(ctx, Req, callOptions...)
-}
-
-func (c *clientImpl) GetConversationId(ctx context.Context, Req *llm.GetConversationIdRequest, callOptions ...callopt.Option) (r *llm.GetConversationIdResponse, err error) {
-	return c.kitexClient.GetConversationId(ctx, Req, callOptions...)
 }

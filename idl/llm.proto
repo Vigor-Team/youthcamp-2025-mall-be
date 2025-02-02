@@ -15,12 +15,15 @@ message ChatResponse {
 }
 
 message GetHistoryRequest {
-  string conversation_id = 1;
   string user_id = 2;
+  // optional
+  // query: conversation_id => get history, none => list all
+  string conversation_id = 1;
 }
 
 message GetHistoryResponse {
   repeated Message history = 1;
+  repeated string conversation_id = 2;
 }
 
 message Message {
@@ -36,18 +39,10 @@ message DeleteHistoryRequest {
 message DeleteHistoryResponse {
 }
 
-message GetConversationIdRequest {
-  string user_id = 1;
-}
-
-message GetConversationIdResponse {
-  repeated string conversation_id = 1;
-}
 
 service LlmService {
   rpc SendMessage(ChatRequest) returns (ChatResponse){};
   rpc StreamMessage(ChatRequest) returns (stream ChatResponse){};
   rpc GetHistory(GetHistoryRequest) returns (GetHistoryResponse){};
   rpc DeleteHistory(DeleteHistoryRequest) returns (DeleteHistoryResponse){};
-  rpc GetConversationId(GetConversationIdRequest) returns (GetConversationIdResponse){};
 }

@@ -44,12 +44,3 @@ func DeleteHistory(ctx context.Context, req *llm.DeleteHistoryRequest, callOptio
 	}
 	return resp, nil
 }
-
-func GetConversationId(ctx context.Context, req *llm.GetConversationIdRequest, callOptions ...callopt.Option) (resp *llm.GetConversationIdResponse, err error) {
-	resp, err = defaultClient.GetConversationId(ctx, req, callOptions...)
-	if err != nil {
-		klog.CtxErrorf(ctx, "GetConversationId call failed,err =%+v", err)
-		return nil, err
-	}
-	return resp, nil
-}

@@ -58,10 +58,3 @@ func (s *LlmServiceImpl) DeleteHistory(ctx context.Context, req *llm.DeleteHisto
 
 	return resp, err
 }
-
-// GetConversationId implements the LlmServiceImpl interface.
-func (s *LlmServiceImpl) GetConversationId(ctx context.Context, req *llm.GetConversationIdRequest) (resp *llm.GetConversationIdResponse, err error) {
-	resp, err = service.NewGetConversationIdService(ctx).Run(req)
-
-	return resp, err
-}
