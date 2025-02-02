@@ -158,7 +158,7 @@ func (x *GetHistoryResponse) fastReadField2(buf []byte, _type int8) (offset int,
 	if err != nil {
 		return offset, err
 	}
-	x.ConversationId = append(x.ConversationId, v)
+	x.ConversationIds = append(x.ConversationIds, v)
 	return offset, err
 }
 
@@ -340,11 +340,11 @@ func (x *GetHistoryResponse) fastWriteField1(buf []byte) (offset int) {
 }
 
 func (x *GetHistoryResponse) fastWriteField2(buf []byte) (offset int) {
-	if len(x.ConversationId) == 0 {
+	if len(x.ConversationIds) == 0 {
 		return offset
 	}
-	for i := range x.GetConversationId() {
-		offset += fastpb.WriteString(buf[offset:], 2, x.GetConversationId()[i])
+	for i := range x.GetConversationIds() {
+		offset += fastpb.WriteString(buf[offset:], 2, x.GetConversationIds()[i])
 	}
 	return offset
 }
@@ -501,11 +501,11 @@ func (x *GetHistoryResponse) sizeField1() (n int) {
 }
 
 func (x *GetHistoryResponse) sizeField2() (n int) {
-	if len(x.ConversationId) == 0 {
+	if len(x.ConversationIds) == 0 {
 		return n
 	}
-	for i := range x.GetConversationId() {
-		n += fastpb.SizeString(2, x.GetConversationId()[i])
+	for i := range x.GetConversationIds() {
+		n += fastpb.SizeString(2, x.GetConversationIds()[i])
 	}
 	return n
 }
@@ -584,7 +584,7 @@ var fieldIDToName_GetHistoryRequest = map[int32]string{
 
 var fieldIDToName_GetHistoryResponse = map[int32]string{
 	1: "History",
-	2: "ConversationId",
+	2: "ConversationIds",
 }
 
 var fieldIDToName_Message = map[int32]string{

@@ -21,8 +21,14 @@ func Register(r *server.Hertz) {
 		_v1 := root.Group("/v1", _v1Mw()...)
 		{
 			_chat := _v1.Group("/chat", _chatMw()...)
+			_chat.DELETE("/:conversation_id", append(_deletemessageMw(), llm.DeleteMessage)...)
+			_chat.GET("/conversations", append(_getconversationidsMw(), llm.GetConversationIds)...)
 			_chat.POST("/send", append(_sendmessageMw(), llm.SendMessage)...)
 			_chat.POST("/stream", append(_streammessageMw(), llm.StreamMessage)...)
+			{
+				_conversations := _chat.Group("/conversations", _conversationsMw()...)
+				_conversations.GET("/:conversation_id", append(_gethistoryMw(), llm.GetHistory)...)
+			}
 		}
 	}
 }

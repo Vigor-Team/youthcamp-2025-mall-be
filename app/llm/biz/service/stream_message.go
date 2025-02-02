@@ -9,6 +9,7 @@ import (
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/llm"
 	"github.com/cloudwego/eino/schema"
 	"github.com/cloudwego/kitex/pkg/klog"
+	"github.com/google/uuid"
 	"io"
 )
 
@@ -25,8 +26,11 @@ func (s *StreamMessageService) Run(req *llm.ChatRequest) (sr *schema.StreamReade
 	msg := req.Message
 	userId := req.UserId
 	convId := req.ConversationId
-	if msg == "" || userId == "" || convId == "" {
+	if msg == "" || userId == "" {
 		return nil, consts.ErrReqParamNotFound
+	}
+	if convId == "" {
+		convId = uuid.New().String()
 	}
 
 	runnable, err := mallagent.BuildMallAgent(s.ctx, &mallagent.BuildConfig{MallAgent: &mallagent.MallAgentBuildConfig{}})

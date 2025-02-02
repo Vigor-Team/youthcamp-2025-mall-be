@@ -34,6 +34,7 @@ type Config struct {
 	Env      string
 	Kitex    Kitex    `yaml:"kitex"`
 	MySQL    MySQL    `yaml:"mysql"`
+	MongoDB  MongoDB  `yaml:"mongodb"`
 	Redis    Redis    `yaml:"redis"`
 	Registry Registry `yaml:"registry"`
 	// Centralized Config Server
@@ -42,6 +43,10 @@ type Config struct {
 
 type MySQL struct {
 	DSN string `yaml:"dsn"`
+}
+
+type MongoDB struct {
+	URI string `yaml:"uri"`
 }
 
 type Redis struct {

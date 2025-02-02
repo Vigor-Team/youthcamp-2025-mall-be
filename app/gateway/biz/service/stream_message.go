@@ -25,10 +25,9 @@ func (h *StreamMessageService) Run(req *llm.ChatRequest) (resp llmservice.LlmSer
 		hlog.CtxInfof(h.Context, "req = %+v", req)
 		hlog.CtxInfof(h.Context, "resp = %+v", resp)
 	}()
-	// todo edit your code
 	client, err := rpc.LlmClient.StreamMessage(h.Context, &rpcllm.ChatRequest{
 		Message:        req.GetMessage(),
-		UserId:         req.GetUserId(),
+		UserId:         "12345", // todo test, should get from jwt
 		ConversationId: req.ConversationId,
 	})
 	if err != nil {

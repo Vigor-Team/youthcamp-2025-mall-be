@@ -6,6 +6,7 @@ import (
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/llm/biz/mallagent"
 	llm "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/llm"
 	"github.com/cloudwego/kitex/pkg/klog"
+	"github.com/google/uuid"
 )
 
 type SendMessageService struct {
@@ -21,8 +22,11 @@ func (s *SendMessageService) Run(req *llm.ChatRequest) (resp *llm.ChatResponse, 
 	msg := req.Message
 	userId := req.UserId
 	convId := req.ConversationId
-	if msg == "" || userId == "" || convId == "" {
+	if msg == "" || userId == "" {
 		return nil, consts.ErrReqParamNotFound
+	}
+	if convId == "" {
+		convId = uuid.New().String()
 	}
 
 	runnable, err := mallagent.BuildMallAgent(s.ctx, &mallagent.BuildConfig{MallAgent: &mallagent.MallAgentBuildConfig{}})

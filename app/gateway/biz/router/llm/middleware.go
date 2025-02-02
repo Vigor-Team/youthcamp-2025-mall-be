@@ -30,3 +30,23 @@ func _streammessageMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
+
+func _deletemessageMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _getconversationidsMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _conversationsMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _gethistoryMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}

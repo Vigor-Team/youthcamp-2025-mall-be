@@ -92,3 +92,63 @@ func StreamMessage(ctx context.Context, c *app.RequestContext) {
 		}
 	}
 }
+
+// GetHistory .
+// @router /v1/chat/conversations/:conversation_id [GET]
+func GetHistory(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req llm.GetHistoryRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		return
+	}
+
+	resp, err := service.NewGetHistoryService(ctx, c).Run(&req)
+
+	if err != nil {
+		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		return
+	}
+	utils.SuccessResponse(c, resp)
+}
+
+// GetConversationIds .
+// @router /v1/chat/conversations [GET]
+func GetConversationIds(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req llm.GetConversationIdsRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		return
+	}
+
+	resp, err := service.NewGetConversationIdsService(ctx, c).Run(&req)
+
+	if err != nil {
+		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		return
+	}
+	utils.SuccessResponse(c, resp)
+}
+
+// DeleteMessage .
+// @router /v1/chat/:conversation_id [DELETE]
+func DeleteMessage(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req llm.DeleteHistoryRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		return
+	}
+
+	resp, err := service.NewDeleteMessageService(ctx, c).Run(&req)
+
+	if err != nil {
+		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		return
+	}
+	utils.SuccessResponse(c, resp)
+}

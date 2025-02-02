@@ -30,11 +30,11 @@ func (s *GetHistoryService) Run(req *llm.GetHistoryRequest) (resp *llm.GetHistor
 		}
 
 		resp = &llm.GetHistoryResponse{
-			ConversationId: ids,
+			ConversationIds: ids,
 		}
 		return resp, nil
 	}
-	conv, err := conversation.GetDefaultBucket(s.ctx).GetConversation(userId, req.ConversationId)
+	conv, err := conversation.GetDefaultBucket(s.ctx).GetConversation(req.ConversationId, userId)
 	if err != nil {
 		return nil, err
 	}

@@ -2,7 +2,10 @@ package mongo
 
 import (
 	"context"
+	"fmt"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/llm/conf"
 	"github.com/cloudwego/kitex/pkg/klog"
+	"os"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -18,7 +21,8 @@ var (
 func Init() {
 	// Use the SetServerAPIOptions() method to set the version of the Stable API on the client
 	serverAPI := options.ServerAPI(options.ServerAPIVersion1)
-	opts := options.Client().ApplyURI("mongodb+srv://whitea:whitea20041029@cluster0.ddjbm.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0").SetServerAPIOptions(serverAPI)
+	uri := fmt.Sprintf(conf.GetConf().MongoDB.URI, os.Getenv("MONGO_USER"), os.Getenv("MONGO_PASSWORD"))
+	opts := options.Client().ApplyURI(uri).SetServerAPIOptions(serverAPI)
 
 	// Create a new client and connect to the server
 	Client, err = mongo.Connect(context.TODO(), opts)

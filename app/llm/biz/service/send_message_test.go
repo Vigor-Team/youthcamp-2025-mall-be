@@ -12,7 +12,9 @@ func TestSendMessage_Run(t *testing.T) {
 	// init req and assert value
 
 	req := &llm.ChatRequest{
-		Message: "你好呀，帮我搜索一下T-shirt",
+		ConversationId: "123",
+		UserId:         "123",
+		Message:        "你好呀",
 	}
 	resp, err := s.Run(req)
 	t.Logf("err: %v", err)

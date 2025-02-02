@@ -23,7 +23,7 @@ message GetHistoryRequest {
 
 message GetHistoryResponse {
   repeated Message history = 1;
-  repeated string conversation_id = 2;
+  repeated string conversation_ids = 2;
 }
 
 message Message {

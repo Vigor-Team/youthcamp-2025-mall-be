@@ -25,7 +25,10 @@ func (h *SendMessageService) Run(req *llm.ChatRequest) (resp *llm.ChatResponse, 
 		hlog.CtxInfof(h.Context, "resp = %+v", resp)
 	}()
 	// todo edit your code
-	llmResp, err := rpc.LlmClient.SendMessage(h.Context, &rpcllm.ChatRequest{Message: req.GetMessage()})
+	llmResp, err := rpc.LlmClient.SendMessage(h.Context, &rpcllm.ChatRequest{
+		Message: req.GetMessage(),
+		UserId:  "12345", // todo test, should get from jwt
+	})
 	if err != nil {
 		return nil, err
 	}
