@@ -43,13 +43,12 @@ func GetProduct(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 	hlog.CtxInfof(ctx, "GetProduct: %v", resp)
-	//c.Set("data", resp)
 	utils.SuccessResponse(c, resp)
 }
 
-// SearchProducts .
+// SearchProducs .
 // @router /search [GET]
-func SearchProducts(ctx context.Context, c *app.RequestContext) {
+func SearchProducs(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req product.SearchProductsReq
 	err = c.BindAndValidate(&req)
@@ -58,12 +57,11 @@ func SearchProducts(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	resp, err := service.NewSearchProductsService(ctx, c).Run(&req)
+	resp, err := service.NewSearchProducsService(ctx, c).Run(&req)
 	if err != nil {
 		utils.ErrorResponse(c, consts.StatusOK, err.Error())
 		return
 	}
-	//c.Set("data", resp)
 	utils.SuccessResponse(c, resp)
 }
 
@@ -85,7 +83,6 @@ func ListProducts(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	//c.Set("data", resp)
 	utils.SuccessResponse(c, resp)
 }
 
@@ -106,7 +103,6 @@ func ListCategories(ctx context.Context, c *app.RequestContext) {
 		utils.ErrorResponse(c, consts.StatusOK, err.Error())
 		return
 	}
-	//c.Set("data", resp)
 	utils.SuccessResponse(c, resp)
 }
 
@@ -127,6 +123,5 @@ func GetCategory(ctx context.Context, c *app.RequestContext) {
 		utils.ErrorResponse(c, consts.StatusOK, err.Error())
 		return
 	}
-	//c.Set("data", resp)
 	utils.SuccessResponse(c, resp)
 }

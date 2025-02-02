@@ -16,18 +16,13 @@ type SearchProductTool struct {
 func (spt *SearchProductTool) Info(ctx context.Context) (*schema.ToolInfo, error) {
 	return &schema.ToolInfo{
 		Name: "search_product",
-		Desc: "Search for products based on user query",
+		Desc: "Search for products based on user query, and return the results",
 		ParamsOneOf: schema.NewParamsOneOfByParams(map[string]*schema.ParameterInfo{
 			"query": {
-				Desc:     "The search query for products",
+				Desc:     "The search query for products, e.g. 'T-shirt'",
 				Type:     schema.String,
 				Required: true,
 			},
-			//"sort_by": {
-			//	Desc:     "Sort products by price (asc or desc)",
-			//	Type:     schema.String,
-			//	Required: false,
-			//},
 		}),
 	}, nil
 }
@@ -35,7 +30,6 @@ func (spt *SearchProductTool) Info(ctx context.Context) (*schema.ToolInfo, error
 func (spt *SearchProductTool) InvokableRun(ctx context.Context, argumentsInJSON string, opts ...tool.Option) (string, error) {
 	var args struct {
 		Query string `json:"query"`
-		//SortBy string `json:"sort_by"`
 	}
 	if err := json.Unmarshal([]byte(argumentsInJSON), &args); err != nil {
 		return "", consts.ErrJsonUnmarshal
@@ -51,4 +45,8 @@ func (spt *SearchProductTool) InvokableRun(ctx context.Context, argumentsInJSON 
 		return "", consts.ErrJsonMarshal
 	}
 	return string(result), nil
+}
+
+func NewSearchProductTool(ctx context.Context) (tool.BaseTool, error) {
+	return &SearchProductTool{}, nil
 }

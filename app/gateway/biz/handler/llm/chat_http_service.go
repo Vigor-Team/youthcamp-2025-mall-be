@@ -2,6 +2,7 @@ package llm
 
 import (
 	"context"
+	"errors"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/biz/service"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/biz/utils"
 	llm "github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/hertz_gen/gateway/llm"
@@ -46,26 +47,35 @@ func StreamMessage(ctx context.Context, c *app.RequestContext) {
 	}
 	c.Response.Header.Set("X-Accel-Buffering", "no")
 
-	client, err := service.NewStreamMessageService(ctx, c).Run(&req)
+	stream, err := service.NewStreamMessageService(ctx, c).Run(&req)
 	if err != nil {
 		utils.ErrorResponse(c, consts.StatusOK, err.Error())
 		return
 	}
-	err = client.Close()
-	if err != nil {
-		return
-	}
+
+	defer func() {
+		err := stream.Close()
+		if err != nil {
+			return
+		}
+		err = c.Flush()
+		if err != nil {
+			return
+		}
+	}()
 
 	c.SetStatusCode(http.StatusOK)
 	s := sse.NewStream(c)
+
 	for {
 		select {
 		case <-ctx.Done():
+			hlog.CtxInfof(ctx, "context done")
 			return
 		default:
-			resp, err := client.Recv()
+			resp, err := stream.Recv()
 			if err != nil {
-				if err == io.EOF {
+				if errors.Is(err, io.EOF) {
 					return
 				}
 				hlog.CtxErrorf(ctx, "stream recv error: %v", err)

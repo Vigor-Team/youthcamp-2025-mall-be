@@ -3,7 +3,9 @@ package main
 import (
 	"context"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/llm/biz/service"
-	llm "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/llm"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/llm"
+	"github.com/cloudwego/kitex/pkg/klog"
+	"io"
 )
 
 // LlmServiceImpl implements the last service interface defined in the IDL.
@@ -18,6 +20,27 @@ func (s *LlmServiceImpl) SendMessage(ctx context.Context, req *llm.ChatRequest) 
 
 func (s *LlmServiceImpl) StreamMessage(req *llm.ChatRequest, stream llm.LlmService_StreamMessageServer) (err error) {
 	ctx := context.Background()
-	err = service.NewStreamMessageService(ctx).Run(req, stream)
-	return
+	sr, err := service.NewStreamMessageService(ctx).Run(req, stream)
+	for {
+		select {
+		case <-stream.Context().Done():
+			return nil
+		default:
+			msg, err := sr.Recv()
+			if err != nil {
+				klog.CtxErrorf(stream.Context(), "stream read error: %v", err)
+				if err == io.EOF {
+					return nil
+				}
+			}
+			resp := &llm.ChatResponse{
+				Response: msg.Content,
+			}
+
+			if err := stream.Send(resp); err != nil {
+				klog.CtxErrorf(stream.Context(), "stream send error: %v", err)
+				return err
+			}
+		}
+	}
 }

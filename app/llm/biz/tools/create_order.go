@@ -9,6 +9,8 @@ import (
 	rpcorder "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/order"
 	"github.com/cloudwego/eino/components/tool"
 	"github.com/cloudwego/eino/schema"
+	"github.com/cloudwego/kitex/pkg/klog"
+	"strconv"
 )
 
 type CreateOrderTool struct {
@@ -20,17 +22,12 @@ func (cot *CreateOrderTool) Info(ctx context.Context) (*schema.ToolInfo, error) 
 		Desc: "Create an order for a selected product",
 		ParamsOneOf: schema.NewParamsOneOfByParams(map[string]*schema.ParameterInfo{
 			"product_id": {
-				Desc:     "The ID of the product to order",
+				Desc:     "The ID of the product in order",
 				Type:     schema.String,
 				Required: true,
 			},
 			"quantity": {
-				Desc:     "The quantity of the product to order",
-				Type:     schema.Integer,
-				Required: true,
-			},
-			"user_id": {
-				Desc:     "The ID of the user who is ordering",
+				Desc:     "The quantity of the product in order",
 				Type:     schema.Integer,
 				Required: true,
 			},
@@ -40,25 +37,31 @@ func (cot *CreateOrderTool) Info(ctx context.Context) (*schema.ToolInfo, error) 
 
 func (cot *CreateOrderTool) InvokableRun(ctx context.Context, argumentsInJSON string, opts ...tool.Option) (string, error) {
 	var args struct {
-		UserId    uint32 `json:"user_id"`
-		ProductID uint32 `json:"product_id"`
+		ProductID string `json:"product_id"`
 		Quantity  int32  `json:"quantity"`
 	}
 	if err := json.Unmarshal([]byte(argumentsInJSON), &args); err != nil {
+		klog.CtxErrorf(ctx, "Unmarshal arguments error: %v", err)
 		return "", consts.ErrJsonUnmarshal
+	}
+
+	pId, err := strconv.ParseUint(args.ProductID, 10, 32)
+	if err != nil {
+		klog.CtxErrorf(ctx, "Parse product id error: %v", err)
+		return "", consts.ErrCreateOrder
 	}
 
 	// Just Test
 	var oi []*rpcorder.OrderItem
 	oi = append(oi, &rpcorder.OrderItem{
 		Item: &rpccart.CartItem{
-			ProductId: args.ProductID,
+			ProductId: uint32(pId),
 			Quantity:  args.Quantity,
 		},
 		Cost: 1 * float32(args.Quantity),
 	})
 	order, err := rpc.OrderClient.PlaceOrder(ctx, &rpcorder.PlaceOrderReq{
-		UserId:       args.UserId,
+		UserId:       123,
 		UserCurrency: "USD",
 		Address: &rpcorder.Address{
 			StreetAddress: "123 Main St",
@@ -71,6 +74,7 @@ func (cot *CreateOrderTool) InvokableRun(ctx context.Context, argumentsInJSON st
 	})
 
 	if err != nil {
+		klog.CtxErrorf(ctx, "Place order error: %v", err)
 		return "", consts.ErrCreateOrder
 	}
 
@@ -80,4 +84,8 @@ func (cot *CreateOrderTool) InvokableRun(ctx context.Context, argumentsInJSON st
 		return "", consts.ErrJsonMarshal
 	}
 	return string(resultJSON), nil
+}
+
+func NewCreateOrderTool(ctx context.Context) (tool.BaseTool, error) {
+	return &CreateOrderTool{}, nil
 }

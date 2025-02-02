@@ -12,7 +12,7 @@ func TestSendMessage_Run(t *testing.T) {
 	// init req and assert value
 
 	req := &llm.ChatRequest{
-		Message: "我觉得自己写的代码太烂了",
+		Message: "你好呀，帮我搜索一下T-shirt",
 	}
 	resp, err := s.Run(req)
 	t.Logf("err: %v", err)

@@ -1,9 +1,9 @@
 package main
 
 import (
-	"context"
-	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/llm/biz/chat"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/llm/biz/dal"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/llm/conf"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/llm/infra/rpc"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/common/mtl"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/common/serversuite"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/common/utils"
@@ -22,6 +22,10 @@ var serviceName = conf.GetConf().Kitex.Service
 
 func main() {
 	_ = godotenv.Load()
+
+	dal.Init()
+
+	rpc.InitClient()
 	mtl.InitLog(&lumberjack.Logger{
 		Filename:   conf.GetConf().Kitex.LogFileName,
 		MaxSize:    conf.GetConf().Kitex.LogMaxSize,
@@ -31,8 +35,6 @@ func main() {
 	mtl.InitTracing(serviceName)
 	mtl.InitMetric(serviceName, conf.GetConf().Kitex.MetricsPort, conf.GetConf().Registry.RegistryAddress[0])
 	opts := kitexInit()
-
-	chat.InitChatModel(context.Background())
 
 	svr := llmservice.NewServer(new(LlmServiceImpl), opts...)
 

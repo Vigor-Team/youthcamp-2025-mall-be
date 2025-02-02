@@ -2,10 +2,13 @@ package service
 
 import (
 	"context"
-	"fmt"
-	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/llm/biz/chat"
-	llm "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/llm"
+	"errors"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/llm/biz/mallagent"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/llm/infra/mem"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/llm"
+	"github.com/cloudwego/eino/schema"
 	"github.com/cloudwego/kitex/pkg/klog"
+	"github.com/google/uuid"
 	"io"
 )
 
@@ -18,31 +21,60 @@ func NewStreamMessageService(ctx context.Context) *StreamMessageService {
 	return &StreamMessageService{ctx: ctx}
 }
 
-func (s *StreamMessageService) Run(req *llm.ChatRequest, stream llm.LlmService_StreamMessageServer) (err error) {
-	streamReader := chat.StreamLlmResponse(stream.Context(), req.Message)
+func (s *StreamMessageService) Run(req *llm.ChatRequest, stream llm.LlmService_StreamMessageServer) (sr *schema.StreamReader[*schema.Message], err error) {
+	msg := req.Message
 
-	for {
-		select {
-		case <-stream.Context().Done():
-			return nil
-		default:
-			msg, err := streamReader.Recv()
-			if err != nil {
-				klog.CtxErrorf(stream.Context(), "stream read error: %v", err)
-				if err == io.EOF {
-					return nil
-				}
-			}
-			resp := &llm.ChatResponse{
-				Response: msg.Content,
-			}
-
-			fmt.Println("resp: ", resp)
-			if err := stream.Send(resp); err != nil {
-				klog.CtxErrorf(stream.Context(), "stream send error: %v", err)
-				return err
-			}
-		}
+	runnable, err := mallagent.BuildMallAgent(s.ctx, &mallagent.BuildConfig{MallAgent: &mallagent.MallAgentBuildConfig{}})
+	if err != nil {
+		klog.CtxErrorf(s.ctx, "build mall agent error: %v", err)
+		return
+	}
+	userMessage := &mallagent.UserMessage{
+		ChatId: uuid.New().String(),
+		Query:  msg,
+		UserId: req.UserId,
 	}
 
+	memory := mem.GetDefaultMemory()
+	conversation := memory.GetConversation(userMessage.UserId, true)
+
+	streamResult, err := runnable.Stream(s.ctx, userMessage)
+	if err != nil {
+		klog.CtxErrorf(s.ctx, "failed to stream: %v", err)
+		return
+	}
+
+	srs := streamResult.Copy(2)
+
+	go func() {
+		fullMsgs := make([]*schema.Message, 0)
+		defer func() {
+			srs[1].Close()
+
+			conversation.Append(schema.UserMessage(msg))
+
+			fullMsg, err := schema.ConcatMessages(fullMsgs)
+			if err != nil {
+				klog.CtxErrorf(s.ctx, "error concatenating messages: %v", err)
+			}
+			conversation.Append(fullMsg)
+		}()
+	loop:
+		for {
+			select {
+			case <-s.ctx.Done():
+				klog.CtxInfof(s.ctx, "context done: %v", s.ctx.Err())
+				break loop
+			default:
+				chunk, err := srs[1].Recv()
+				if err != nil {
+					if errors.Is(err, io.EOF) {
+						break loop
+					}
+				}
+				fullMsgs = append(fullMsgs, chunk)
+			}
+		}
+	}()
+	return srs[0], nil
 }
