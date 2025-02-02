@@ -1,7 +1,9 @@
 package main
 
 import (
+	"context"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/llm/biz/dal"
+	dalmongo "github.com/Vigor-Team/youthcamp-2025-mall-be/app/llm/biz/dal/mongo"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/llm/conf"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/llm/infra/rpc"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/common/mtl"
@@ -68,5 +70,13 @@ func kitexInit() (opts []server.Option) {
 	)
 
 	opts = append(opts, server.WithSuite(serversuite.CommonServerSuite{CurrentServiceName: serviceName, RegistryAddr: conf.GetConf().Registry.RegistryAddress[0]}))
+
+	server.RegisterShutdownHook(func() {
+		err := dalmongo.Client.Disconnect(context.TODO())
+		if err != nil {
+			klog.Error(err.Error())
+			return
+		}
+	})
 	return
 }

@@ -2,9 +2,9 @@ package redis
 
 import (
 	"context"
+	"github.com/redis/go-redis/v9"
 
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/llm/conf"
-	
 )
 
 var (

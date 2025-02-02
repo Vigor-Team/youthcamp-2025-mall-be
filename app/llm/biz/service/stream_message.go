@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/llm/biz/mallagent"
-	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/llm/infra/mem"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/llm/biz/mallagent/conversation"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/llm"
 	"github.com/cloudwego/eino/schema"
 	"github.com/cloudwego/kitex/pkg/klog"
@@ -21,7 +21,7 @@ func NewStreamMessageService(ctx context.Context) *StreamMessageService {
 	return &StreamMessageService{ctx: ctx}
 }
 
-func (s *StreamMessageService) Run(req *llm.ChatRequest, stream llm.LlmService_StreamMessageServer) (sr *schema.StreamReader[*schema.Message], err error) {
+func (s *StreamMessageService) Run(req *llm.ChatRequest) (sr *schema.StreamReader[*schema.Message], err error) {
 	msg := req.Message
 
 	runnable, err := mallagent.BuildMallAgent(s.ctx, &mallagent.BuildConfig{MallAgent: &mallagent.MallAgentBuildConfig{}})
@@ -35,7 +35,7 @@ func (s *StreamMessageService) Run(req *llm.ChatRequest, stream llm.LlmService_S
 		UserId: req.UserId,
 	}
 
-	memory := mem.GetDefaultMemory()
+	memory := conversation.GetDefaultMemory(s.ctx)
 	conversation := memory.GetConversation(userMessage.UserId, true)
 
 	streamResult, err := runnable.Stream(s.ctx, userMessage)
@@ -51,13 +51,13 @@ func (s *StreamMessageService) Run(req *llm.ChatRequest, stream llm.LlmService_S
 		defer func() {
 			srs[1].Close()
 
-			conversation.Append(schema.UserMessage(msg))
+			_ = conversation.Append(schema.UserMessage(msg))
 
 			fullMsg, err := schema.ConcatMessages(fullMsgs)
 			if err != nil {
 				klog.CtxErrorf(s.ctx, "error concatenating messages: %v", err)
 			}
-			conversation.Append(fullMsg)
+			_ = conversation.Append(fullMsg)
 		}()
 	loop:
 		for {

@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/llm/biz/mallagent"
-	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/llm/infra/mem"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/llm/biz/mallagent/conversation"
 	llm "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/llm"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/google/uuid"
@@ -36,7 +36,7 @@ func (s *SendMessageService) Run(req *llm.ChatRequest) (resp *llm.ChatResponse, 
 		UserId: req.UserId,
 	}
 
-	memory := mem.GetDefaultMemory()
+	memory := conversation.GetDefaultMemory(s.ctx)
 	conversation := memory.GetConversation(userMessage.UserId, true)
 	fmt.Println("conversation: ", conversation)
 	rs, err := runnable.Invoke(s.ctx, userMessage)

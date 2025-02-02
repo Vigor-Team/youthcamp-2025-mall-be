@@ -20,7 +20,7 @@ func (s *LlmServiceImpl) SendMessage(ctx context.Context, req *llm.ChatRequest) 
 
 func (s *LlmServiceImpl) StreamMessage(req *llm.ChatRequest, stream llm.LlmService_StreamMessageServer) (err error) {
 	ctx := context.Background()
-	sr, err := service.NewStreamMessageService(ctx).Run(req, stream)
+	sr, err := service.NewStreamMessageService(ctx).Run(req)
 	for {
 		select {
 		case <-stream.Context().Done():

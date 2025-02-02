@@ -25,13 +25,6 @@ func Init() {
 	if err != nil {
 		panic(err)
 	}
-
-	defer func() {
-		if err = Client.Disconnect(context.TODO()); err != nil {
-			panic(err)
-		}
-	}()
-
 	// Send a ping to confirm a successful connection
 	if err := Client.Database("admin").RunCommand(context.TODO(), bson.D{{"ping", 1}}).Err(); err != nil {
 		panic(err)

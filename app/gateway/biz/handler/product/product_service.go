@@ -57,7 +57,7 @@ func SearchProducs(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	resp, err := service.NewSearchProducsService(ctx, c).Run(&req)
+	resp, err := service.NewSearchProductsService(ctx, c).Run(&req)
 	if err != nil {
 		utils.ErrorResponse(c, consts.StatusOK, err.Error())
 		return
