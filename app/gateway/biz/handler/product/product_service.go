@@ -46,9 +46,9 @@ func GetProduct(ctx context.Context, c *app.RequestContext) {
 	utils.SuccessResponse(c, resp)
 }
 
-// SearchProducs .
+// SearchProducts .
 // @router /search [GET]
-func SearchProducs(ctx context.Context, c *app.RequestContext) {
+func SearchProducts(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req product.SearchProductsReq
 	err = c.BindAndValidate(&req)
