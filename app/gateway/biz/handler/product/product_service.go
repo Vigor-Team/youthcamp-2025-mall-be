@@ -43,7 +43,6 @@ func GetProduct(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 	hlog.CtxInfof(ctx, "GetProduct: %v", resp)
-	//c.Set("data", resp)
 	utils.SuccessResponse(c, resp)
 }
 
@@ -63,7 +62,6 @@ func SearchProducts(ctx context.Context, c *app.RequestContext) {
 		utils.ErrorResponse(c, consts.StatusOK, err.Error())
 		return
 	}
-	//c.Set("data", resp)
 	utils.SuccessResponse(c, resp)
 }
 
@@ -85,7 +83,6 @@ func ListProducts(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	//c.Set("data", resp)
 	utils.SuccessResponse(c, resp)
 }
 
@@ -106,7 +103,6 @@ func ListCategories(ctx context.Context, c *app.RequestContext) {
 		utils.ErrorResponse(c, consts.StatusOK, err.Error())
 		return
 	}
-	//c.Set("data", resp)
 	utils.SuccessResponse(c, resp)
 }
 
@@ -127,6 +123,5 @@ func GetCategory(ctx context.Context, c *app.RequestContext) {
 		utils.ErrorResponse(c, consts.StatusOK, err.Error())
 		return
 	}
-	//c.Set("data", resp)
 	utils.SuccessResponse(c, resp)
 }

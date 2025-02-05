@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package llm;
+
+option go_package = "/llm";
+
+message ChatRequest {
+  string user_id = 1;
+  string message = 2;
+  string conversation_id = 3;
+}
+
+message ChatResponse {
+  string response = 1;
+}
+
+message GetHistoryRequest {
+  string user_id = 2;
+  // optional
+  // query: conversation_id => get history, none => list all
+  string conversation_id = 1;
+}
+
+message GetHistoryResponse {
+  repeated Message history = 1;
+  repeated string conversation_ids = 2;
+}
+
+message Message {
+  string role = 1;
+  string content = 2;
+}
+
+message DeleteHistoryRequest {
+  string conversation_id = 1;
+  string user_id = 2;
+}
+
+message DeleteHistoryResponse {
+}
+
+
+service LlmService {
+  rpc SendMessage(ChatRequest) returns (ChatResponse){};
+  rpc StreamMessage(ChatRequest) returns (stream ChatResponse){};
+  rpc GetHistory(GetHistoryRequest) returns (GetHistoryResponse){};
+  rpc DeleteHistory(DeleteHistoryRequest) returns (DeleteHistoryResponse){};
+}

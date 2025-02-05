@@ -7,6 +7,14 @@ services:
       - MYSQL_ROOT_PASSWORD=root
     volumes:
       - ./db/sql/ini:/docker-entrypoint-initdb.d
+  mongo:
+    image: 'mongo:latest'
+    ports:
+      - 27017:27017
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
   redis:
     image: 'redis:latest'
     ports:

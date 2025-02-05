@@ -1,4 +1,4 @@
-go 1.21
+go 1.21.0
 
 use (
 	./app/cart
@@ -10,7 +10,6 @@ use (
 	./app/product
 	./app/user
 	./common
+	./app/llm
 	rpc_gen
 )
-
-replace github.com/apache/thrift => github.com/apache/thrift v0.13.0

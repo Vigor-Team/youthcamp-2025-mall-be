@@ -1,0 +1,60 @@
+syntax = "proto3";
+
+package gateway.llm;
+option go_package = "/gateway/llm";
+import "api.proto";
+
+message ChatRequest {
+  string message = 1;
+  string conversation_id = 2;
+}
+
+message ChatResponse {
+  string response = 1;
+}
+
+message GetHistoryRequest {
+  string conversation_id = 1 [(api.path) = "conversation_id"];
+}
+
+message GetHistoryResponse {
+  repeated Message history = 1;
+}
+
+message Message {
+  string role = 1;
+  string content = 2;
+}
+
+message GetConversationIdsRequest {
+}
+
+message GetConversationIdsResponse {
+  repeated string conversation_ids = 1;
+}
+
+message DeleteHistoryRequest {
+  string conversation_id = 1 [(api.path) = "conversation_id"];
+}
+
+message DeleteHistoryResponse {
+}
+
+service ChatHttpService {
+  rpc SendMessage(ChatRequest) returns (ChatResponse) {
+    option (api.post) = "/v1/chat/send";
+  }
+  rpc StreamMessage(ChatRequest) returns (stream ChatResponse) {
+    option (api.post) = "/v1/chat/stream";
+  }
+  rpc GetHistory(GetHistoryRequest) returns (GetHistoryResponse) {
+    option (api.get) = "/v1/chat/conversations/:conversation_id";
+  }
+  rpc GetConversationIds(GetConversationIdsRequest) returns (GetConversationIdsResponse) {
+    option (api.get) = "/v1/chat/conversations";
+  }
+  rpc DeleteMessage(DeleteHistoryRequest) returns (DeleteHistoryResponse) {
+    option (api.delete) = "/v1/chat/:conversation_id";
+  }
+
+}
