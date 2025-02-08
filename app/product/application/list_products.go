@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package service
+package application
 
 import (
 	"context"
-	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/biz/dal/mysql"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/biz/model"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/infras/repository"
 	product "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/product"
 )
 
@@ -31,7 +31,7 @@ func NewListProductsService(ctx context.Context) *ListProductsService {
 // Run create note info
 func (s *ListProductsService) Run(req *product.ListProductsReq) (resp *product.ListProductsResp, err error) {
 	// Finish your business logic.
-	c, err := model.ListProducts(mysql.DB, s.ctx)
+	c, err := model.ListProducts(repository.DB, s.ctx)
 	if err != nil {
 		return nil, err
 	}

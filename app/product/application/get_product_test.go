@@ -12,18 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package service
+package application
 
 import (
 	"testing"
 )
 
-func TestListProducts_Run(t *testing.T) {
+func TestGetProduct_Run(t *testing.T) {
 	// ctx := context.Background()
-	// s := NewListProductsService(ctx)
+	// s := NewGetProductService(ctx)
 	// // init req and assert value
 
-	// req := &product.ListProductsReq{}
+	// req := &product.GetProductRequest{}
 	// resp, err := s.Run(req)
 	// if err != nil {
 	// 	t.Errorf("unexpected error: %v", err)

@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package service
+package application
 
 import (
 	"context"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/infras/redis"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/infras/repository"
 
-	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/biz/dal/mysql"
-	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/biz/dal/redis"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/biz/model"
 	product "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/product"
 	"github.com/cloudwego/kitex/pkg/kerrors"
@@ -38,7 +38,7 @@ func (s *GetProductService) Run(req *product.GetProductReq) (resp *product.GetPr
 		return nil, kerrors.NewBizStatusError(40000, "product id is required")
 	}
 
-	p, err := model.NewCachedProductQuery(model.NewProductQuery(s.ctx, mysql.DB), redis.RedisClient).GetById(int(req.Id))
+	p, err := model.NewCachedProductQuery(model.NewProductQuery(s.ctx, repository.DB), redis.RedisClient).GetById(int(req.Id))
 	if err != nil {
 		return nil, err
 	}

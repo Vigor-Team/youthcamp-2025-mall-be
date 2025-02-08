@@ -12,14 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package dal
+package application
 
 import (
-	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/biz/dal/mysql"
-	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/biz/dal/redis"
+	"testing"
 )
 
-func Init() {
-	redis.Init()
-	mysql.Init()
+func TestListProducts_Run(t *testing.T) {
+	// ctx := context.Background()
+	// s := NewListProductsService(ctx)
+	// // init req and assert value
+
+	// req := &product.ListProductsReq{}
+	// resp, err := s.Run(req)
+	// if err != nil {
+	// 	t.Errorf("unexpected error: %v", err)
+	// }
+	// if resp == nil {
+	// 	t.Errorf("unexpected nil response")
+	// }
+	// // todo: edit your unit test
 }

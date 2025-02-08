@@ -1,15 +1,17 @@
-go 1.21.0
+go 1.22
+
+toolchain go1.23.5
 
 use (
 	./app/cart
 	./app/checkout
 	./app/email
 	./app/gateway
+	./app/llm
 	./app/order
 	./app/payment
 	./app/product
 	./app/user
 	./common
-	./app/llm
 	rpc_gen
 )

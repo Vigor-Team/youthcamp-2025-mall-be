@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package service
+package application
 
 import (
 	"context"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/infras/repository"
 
-	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/biz/dal/mysql"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/biz/model"
 	product "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/product"
 )
@@ -32,7 +32,7 @@ func NewSearchProductsService(ctx context.Context) *SearchProductsService {
 // Run create note info
 func (s *SearchProductsService) Run(req *product.SearchProductsReq) (resp *product.SearchProductsResp, err error) {
 	// Finish your business logic.
-	p, err := model.SearchProduct(mysql.DB, s.ctx, req.Query)
+	p, err := model.SearchProduct(repository.DB, s.ctx, req.Query)
 	var results []*product.Product
 	for _, v := range p {
 		results = append(results, &product.Product{
