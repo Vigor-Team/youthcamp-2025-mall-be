@@ -28,6 +28,6 @@ func (s *AddProductService) Run(req *product.AddProductReq) (resp *product.AddPr
 		return nil, err
 	}
 	entity.Categories = categories
-	err = productservice.GetProductUpdateServiceInstance().AddProduct(context.Background(), entity)
+	err = productservice.GetProductUpdateService().AddProduct(context.Background(), entity)
 	return
 }

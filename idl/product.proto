@@ -21,6 +21,7 @@ message Product {
 message Category {
   uint32 id = 1;
   string name = 2;
+  string description = 3;
 }
 
 enum Status {
@@ -104,7 +105,7 @@ message BatchGetProductsReq {
 }
 
 message BatchGetProductsResp {
-  map<string, Product> products = 1;
+  map<uint32, Product> products = 1;
 }
 
 message SearchProductsReq {

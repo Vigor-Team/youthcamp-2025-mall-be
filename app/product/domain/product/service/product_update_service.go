@@ -10,7 +10,7 @@ type ProductUpdateService struct{}
 
 var productUpdateService ProductUpdateService
 
-func GetProductUpdateServiceInstance() *ProductUpdateService {
+func GetProductUpdateService() *ProductUpdateService {
 	return &productUpdateService
 }
 

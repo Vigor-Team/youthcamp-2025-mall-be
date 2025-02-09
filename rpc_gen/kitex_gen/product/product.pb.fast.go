@@ -149,6 +149,11 @@ func (x *Category) FastRead(buf []byte, _type int8, number int32) (offset int, e
 		if err != nil {
 			goto ReadFieldError
 		}
+	case 3:
+		offset, err = x.fastReadField3(buf, _type)
+		if err != nil {
+			goto ReadFieldError
+		}
 	default:
 		offset, err = fastpb.Skip(buf, _type, number)
 		if err != nil {
@@ -169,6 +174,11 @@ func (x *Category) fastReadField1(buf []byte, _type int8) (offset int, err error
 
 func (x *Category) fastReadField2(buf []byte, _type int8) (offset int, err error) {
 	x.Name, offset, err = fastpb.ReadString(buf, _type)
+	return offset, err
+}
+
+func (x *Category) fastReadField3(buf []byte, _type int8) (offset int, err error) {
+	x.Description, offset, err = fastpb.ReadString(buf, _type)
 	return offset, err
 }
 
@@ -728,13 +738,13 @@ ReadFieldError:
 
 func (x *BatchGetProductsResp) fastReadField1(buf []byte, _type int8) (offset int, err error) {
 	if x.Products == nil {
-		x.Products = make(map[string]*Product)
+		x.Products = make(map[uint32]*Product)
 	}
-	var key string
+	var key uint32
 	var value *Product
 	offset, err = fastpb.ReadMapEntry(buf, _type,
 		func(buf []byte, _type int8) (offset int, err error) {
-			key, offset, err = fastpb.ReadString(buf, _type)
+			key, offset, err = fastpb.ReadUint32(buf, _type)
 			return offset, err
 		},
 		func(buf []byte, _type int8) (offset int, err error) {
@@ -1052,6 +1062,7 @@ func (x *Category) FastWrite(buf []byte) (offset int) {
 	}
 	offset += x.fastWriteField1(buf[offset:])
 	offset += x.fastWriteField2(buf[offset:])
+	offset += x.fastWriteField3(buf[offset:])
 	return offset
 }
 
@@ -1068,6 +1079,14 @@ func (x *Category) fastWriteField2(buf []byte) (offset int) {
 		return offset
 	}
 	offset += fastpb.WriteString(buf[offset:], 2, x.GetName())
+	return offset
+}
+
+func (x *Category) fastWriteField3(buf []byte) (offset int) {
+	if x.Description == "" {
+		return offset
+	}
+	offset += fastpb.WriteString(buf[offset:], 3, x.GetDescription())
 	return offset
 }
 
@@ -1461,7 +1480,7 @@ func (x *BatchGetProductsResp) fastWriteField1(buf []byte) (offset int) {
 		offset += fastpb.WriteMapEntry(buf[offset:], 1,
 			func(buf []byte, numTagOrKey, numIdxOrVal int32) int {
 				offset := 0
-				offset += fastpb.WriteString(buf[offset:], numTagOrKey, k)
+				offset += fastpb.WriteUint32(buf[offset:], numTagOrKey, k)
 				offset += fastpb.WriteMessage(buf[offset:], numIdxOrVal, v)
 				return offset
 			})
@@ -1697,6 +1716,7 @@ func (x *Category) Size() (n int) {
 	}
 	n += x.sizeField1()
 	n += x.sizeField2()
+	n += x.sizeField3()
 	return n
 }
 
@@ -1713,6 +1733,14 @@ func (x *Category) sizeField2() (n int) {
 		return n
 	}
 	n += fastpb.SizeString(2, x.GetName())
+	return n
+}
+
+func (x *Category) sizeField3() (n int) {
+	if x.Description == "" {
+		return n
+	}
+	n += fastpb.SizeString(3, x.GetDescription())
 	return n
 }
 
@@ -2106,7 +2134,7 @@ func (x *BatchGetProductsResp) sizeField1() (n int) {
 		n += fastpb.SizeMapEntry(1,
 			func(numTagOrKey, numIdxOrVal int32) int {
 				n := 0
-				n += fastpb.SizeString(numTagOrKey, k)
+				n += fastpb.SizeUint32(numTagOrKey, k)
 				n += fastpb.SizeMessage(numIdxOrVal, v)
 				return n
 			})
@@ -2253,6 +2281,7 @@ var fieldIDToName_Product = map[int32]string{
 var fieldIDToName_Category = map[int32]string{
 	1: "Id",
 	2: "Name",
+	3: "Description",
 }
 
 var fieldIDToName_AddProductReq = map[int32]string{

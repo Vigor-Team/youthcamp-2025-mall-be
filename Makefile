@@ -93,4 +93,4 @@ open-prometheus: ## open `prometheus ui` in the default browser
 .PHONY: gen-product
 gen-product:
 	@cd rpc_gen && cwgo client --type RPC --service product --module github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen --I ../idl --idl ../idl/product.proto
-	@cd app/product && cwgo server --type RPC --service product --module github.com/Vigor-Team/youthcamp-2025-mall-be/app/product --pass "-use github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen" -I ../../idl --idl ../../idl/product.proto
+	@#cd app/product && cwgo server --type RPC --service product --module github.com/Vigor-Team/youthcamp-2025-mall-be/app/product --pass "-use github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen" -I ../../idl --idl ../../idl/product.proto
