@@ -109,7 +109,7 @@ func (s *ProductCatalogServiceImpl) IncrStock(ctx context.Context, req *product.
 
 // GetCategory implements the ProductCatalogServiceImpl interface.
 func (s *ProductCatalogServiceImpl) GetCategory(ctx context.Context, req *product.GetCategoryReq) (resp *product.GetCategoryResp, err error) {
-	resp, err = service.NewGetCategoryService(ctx).Run(req)
+	resp, err = application.NewGetCategoryService(ctx).Run(req)
 
 	return resp, err
 }
