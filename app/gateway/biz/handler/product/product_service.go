@@ -36,7 +36,7 @@ func CreateProduct(ctx context.Context, c *app.RequestContext) {
 // @router /api/v1/products/:productId [PUT]
 func UpdateProduct(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req product.ProductIDReq
+	var req product.UpdateProductReq
 	err = c.BindAndValidate(&req)
 	if err != nil {
 		utils.ErrorResponse(c, consts.StatusOK, err.Error())
