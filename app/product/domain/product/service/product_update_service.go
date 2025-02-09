@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	productrepo "github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/domain/product/repository"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/model/entity"
 )
 
@@ -14,6 +15,10 @@ func GetProductUpdateServiceInstance() *ProductUpdateService {
 }
 
 func (s *ProductUpdateService) AddProduct(ctx context.Context, product *entity.ProductEntity) error {
+	err := productrepo.GetFactory().GetProductRepository().AddProduct(ctx, product)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 

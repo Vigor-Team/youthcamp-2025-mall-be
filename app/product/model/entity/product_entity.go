@@ -11,8 +11,8 @@ type ProductEntity struct {
 	SpuPrice    float32
 	Price       float32
 	Stock       uint32
-	Statue      uint32
-	Categories  []CategoryEntity
+	Status      uint32
+	Categories  []*CategoryEntity
 }
 
 func (entity *ProductEntity) Clone() (*ProductEntity, error) {

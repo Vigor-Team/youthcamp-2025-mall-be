@@ -15,18 +15,13 @@
 package repository
 
 import (
-	"fmt"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/model/po"
 	"os"
 
-	"github.com/Vigor-Team/youthcamp-2025-mall-be/common/mtl"
-
-	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/biz/model"
-	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/conf"
 	categoryrepo "github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/domain/category/repository"
 	productrepo "github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/domain/product/repository"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	"gorm.io/plugin/opentelemetry/tracing"
 )
 
 var (
@@ -40,13 +35,20 @@ func Init() {
 }
 
 func register() {
-	productrepo.GetFactory().SetStockRepository(&StockRepositoryImpl{})
-	productrepo.GetFactory().SetProductRepository(&ProductRepositoryImpl{})
-	categoryrepo.GetFactory().SetCategoryRepository(&CategoryRepositoryImpl{})
+	productrepo.GetFactory().SetStockRepository(&StockRepositoryImpl{
+		db: DB,
+	})
+	productrepo.GetFactory().SetProductRepository(&ProductRepositoryImpl{
+		db: DB,
+	})
+	categoryrepo.GetFactory().SetCategoryRepository(&CategoryRepositoryImpl{
+		db: DB,
+	})
 }
 
 func initDB() {
-	dsn := fmt.Sprintf(conf.GetConf().MySQL.DSN, os.Getenv("MYSQL_USER"), os.Getenv("MYSQL_PASSWORD"), os.Getenv("MYSQL_HOST"))
+	//dsn := fmt.Sprintf(conf.GetConf().MySQL.DSN, os.Getenv("MYSQL_USER"), os.Getenv("MYSQL_PASSWORD"), os.Getenv("MYSQL_HOST"))
+	dsn := "root:root@tcp(127.0.0.1:3306)/product?charset=utf8mb4&parseTime=True&loc=Local"
 	DB, err = gorm.Open(mysql.Open(dsn),
 		&gorm.Config{
 			PrepareStmt:            true,
@@ -57,19 +59,13 @@ func initDB() {
 		panic(err)
 	}
 	if os.Getenv("GO_ENV") != "online" {
-		//needDemoData := !DB.Migrator().HasTable(&model.Product{})
 		//nolint:errcheck
 		DB.AutoMigrate(
-			&model.Product{},
-			&model.Category{},
+			&po.Product{},
+			&po.Category{},
 		)
-		//if needDemoData {
-		//	DB.Exec("INSERT INTO `product`.`category` VALUES (1,'2023-12-06 15:05:06','2023-12-06 15:05:06','T-Shirt','T-Shirt'),(2,'2023-12-06 15:05:06','2023-12-06 15:05:06','Sticker','Sticker')")
-		//	DB.Exec("INSERT INTO `product`.`product` VALUES ( 1, '2023-12-06 15:26:19', '2023-12-09 22:29:10', 'Notebook', 'The cloudwego notebook is a highly efficient and feature-rich notebook designed to meet all your note-taking needs. ', '/static/image/notebook.jpeg', 9.90, 3 ), ( 2, '2023-12-06 15:26:19', '2023-12-09 22:29:10', 'Mouse-Pad', 'The cloudwego mouse pad is a premium-grade accessory designed to enhance your computer usage experience. ', '/static/image/mouse-pad.jpeg', 8.80, 2), ( 3, '2023-12-06 15:26:19', '2023-12-09 22:31:20', 'T-Shirt', 'The cloudwego t-shirt is a stylish and comfortable clothing item that allows you to showcase your fashion sense while enjoying maximum comfort.', '/static/image/t-shirt.jpeg', 6.60, 0), ( 4, '2023-12-06 15:26:19', '2023-12-09 22:31:20', 'T-Shirt', 'The cloudwego t-shirt is a stylish and comfortable clothing item that allows you to showcase your fashion sense while enjoying maximum comfort.', '/static/image/t-shirt-1.jpeg', 2.20, 12), ( 5, '2023-12-06 15:26:19', '2023-12-09 22:32:35', 'Sweatshirt', 'The cloudwego Sweatshirt is a cozy and fashionable garment that provides warmth and style during colder weather.', '/static/image/sweatshirt.jpeg', 1.10, 3), ( 6, '2023-12-06 15:26:19', '2023-12-09 22:31:20', 'T-Shirt', 'The cloudwego t-shirt is a stylish and comfortable clothing item that allows you to showcase your fashion sense while enjoying maximum comfort.', '/static/image/t-shirt-2.jpeg', 1.80, 2), ( 7, '2023-12-06 15:26:19', '2023-12-09 22:31:20', 'mascot', 'The cloudwego mascot is a charming and captivating representation of the brand, designed to bring joy and a playful spirit to any environment.', '/static/image/logo.jpg', 4.80, 1)")
-		//	DB.Exec("INSERT INTO `product`.`product_category` (product_id,category_id) VALUES (1, 1), ( 1, 2 ), ( 2, 2 ), ( 3, 1 ), ( 4, 1 ), ( 5, 1 ), ( 6, 1 ),( 7, 2 )")
-		//}
 	}
-	if err := DB.Use(tracing.NewPlugin(tracing.WithoutMetrics(), tracing.WithTracerProvider(mtl.TracerProvider))); err != nil {
-		panic(err)
-	}
+	//if err := DB.Use(tracing.NewPlugin(tracing.WithoutMetrics(), tracing.WithTracerProvider(mtl.TracerProvider))); err != nil {
+	//	panic(err)
+	//}
 }
