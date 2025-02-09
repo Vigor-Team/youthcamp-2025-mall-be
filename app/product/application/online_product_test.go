@@ -6,12 +6,12 @@ import (
 	"testing"
 )
 
-func TestListProducts_Run(t *testing.T) {
+func TestOnlineProduct_Run(t *testing.T) {
 	ctx := context.Background()
-	s := NewListProductsService(ctx)
+	s := NewOnlineProductService(ctx)
 	// init req and assert value
 
-	req := &product.ListProductsReq{}
+	req := &product.OnlineProductReq{}
 	resp, err := s.Run(req)
 	t.Logf("err: %v", err)
 	t.Logf("resp: %v", resp)

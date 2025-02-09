@@ -2,7 +2,7 @@ package repository
 
 import (
 	"context"
-	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/domain/product/entity"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/model/entity"
 )
 
 type ProductRepository interface {

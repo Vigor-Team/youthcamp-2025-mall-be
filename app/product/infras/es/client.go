@@ -1,6 +1,7 @@
 package es
 
 import (
+	"context"
 	"github.com/elastic/go-elasticsearch/v8"
 	"sync"
 )
@@ -23,6 +24,10 @@ func GetESClient() *elasticsearch.TypedClient {
 		cli, err := elasticsearch.NewTypedClient(cfg)
 		if err != nil {
 			panic("new es client failed, err=" + err.Error())
+		}
+		_, err = cli.Info().Do(context.Background())
+		if err != nil {
+			panic("client connect fail, err=" + err.Error())
 		}
 		esCli = cli
 	})

@@ -54,6 +54,11 @@ func (x *Product) FastRead(buf []byte, _type int8, number int32) (offset int, er
 		if err != nil {
 			goto ReadFieldError
 		}
+	case 9:
+		offset, err = x.fastReadField9(buf, _type)
+		if err != nil {
+			goto ReadFieldError
+		}
 	case 10:
 		offset, err = x.fastReadField10(buf, _type)
 		if err != nil {
@@ -110,6 +115,16 @@ func (x *Product) fastReadField7(buf []byte, _type int8) (offset int, err error)
 func (x *Product) fastReadField8(buf []byte, _type int8) (offset int, err error) {
 	x.Stock, offset, err = fastpb.ReadUint32(buf, _type)
 	return offset, err
+}
+
+func (x *Product) fastReadField9(buf []byte, _type int8) (offset int, err error) {
+	var v int32
+	v, offset, err = fastpb.ReadInt32(buf, _type)
+	if err != nil {
+		return offset, err
+	}
+	x.Status = Status(v)
+	return offset, nil
 }
 
 func (x *Product) fastReadField10(buf []byte, _type int8) (offset int, err error) {
@@ -944,6 +959,7 @@ func (x *Product) FastWrite(buf []byte) (offset int) {
 	offset += x.fastWriteField6(buf[offset:])
 	offset += x.fastWriteField7(buf[offset:])
 	offset += x.fastWriteField8(buf[offset:])
+	offset += x.fastWriteField9(buf[offset:])
 	offset += x.fastWriteField10(buf[offset:])
 	return offset
 }
@@ -1009,6 +1025,14 @@ func (x *Product) fastWriteField8(buf []byte) (offset int) {
 		return offset
 	}
 	offset += fastpb.WriteUint32(buf[offset:], 8, x.GetStock())
+	return offset
+}
+
+func (x *Product) fastWriteField9(buf []byte) (offset int) {
+	if x.Status == 0 {
+		return offset
+	}
+	offset += fastpb.WriteInt32(buf[offset:], 9, int32(x.GetStatus()))
 	return offset
 }
 
@@ -1580,6 +1604,7 @@ func (x *Product) Size() (n int) {
 	n += x.sizeField6()
 	n += x.sizeField7()
 	n += x.sizeField8()
+	n += x.sizeField9()
 	n += x.sizeField10()
 	return n
 }
@@ -1645,6 +1670,14 @@ func (x *Product) sizeField8() (n int) {
 		return n
 	}
 	n += fastpb.SizeUint32(8, x.GetStock())
+	return n
+}
+
+func (x *Product) sizeField9() (n int) {
+	if x.Status == 0 {
+		return n
+	}
+	n += fastpb.SizeInt32(9, int32(x.GetStatus()))
 	return n
 }
 
@@ -2213,6 +2246,7 @@ var fieldIDToName_Product = map[int32]string{
 	6:  "Price",
 	7:  "SpuPrice",
 	8:  "Stock",
+	9:  "Status",
 	10: "Categories",
 }
 

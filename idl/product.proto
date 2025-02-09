@@ -13,6 +13,7 @@ message Product {
   float price = 6;
   float spu_price = 7;
   uint32 stock = 8;
+  Status status = 9;
 
   repeated string categories = 10;
 }
