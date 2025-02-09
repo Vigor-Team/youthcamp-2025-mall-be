@@ -23,9 +23,9 @@ func (s *ProductQueryService) GetProductById(ctx context.Context, productId uint
 	return id, nil
 }
 
-func (s *ProductQueryService) ListProducts(ctx context.Context, categoryId string) ([]*entity.ProductEntity, error) {
+func (s *ProductQueryService) ListProducts(ctx context.Context, categoryId uint32) ([]*entity.ProductEntity, error) {
 	filterParam := make(map[string]interface{}, 1)
-	if categoryId != "" {
+	if categoryId != 0 {
 		filterParam["category_id"] = categoryId
 	} else {
 		filterParam = nil

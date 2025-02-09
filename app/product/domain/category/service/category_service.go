@@ -15,11 +15,19 @@ func GetCategoryService() *CategoryService {
 }
 
 func (s *CategoryService) GetCategoryById(ctx context.Context, categoryId uint32) (*entity.CategoryEntity, error) {
-	return nil, nil
+	category, err := categoryrepo.GetFactory().GetCategoryRepository().GetCategoryById(ctx, categoryId)
+	if err != nil {
+		return nil, err
+	}
+	return category, nil
 }
 
 func (s *CategoryService) GetCategories(ctx context.Context) ([]*entity.CategoryEntity, error) {
-	return nil, nil
+	categories, err := categoryrepo.GetFactory().GetCategoryRepository().GetCategories(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return categories, nil
 }
 
 func (s *CategoryService) BatchGetCategories(ctx context.Context, categoryIds []uint32) ([]*entity.CategoryEntity, error) {

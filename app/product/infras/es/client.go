@@ -2,7 +2,9 @@ package es
 
 import (
 	"context"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/conf"
 	"github.com/elastic/go-elasticsearch/v8"
+	"os"
 	"sync"
 )
 
@@ -17,9 +19,9 @@ func GetESClient() *elasticsearch.TypedClient {
 	}
 	esOnce.Do(func() {
 		cfg := elasticsearch.Config{
-			Addresses: []string{"http://localhost:9200"},
-			Username:  "elastic",
-			Password:  "123456",
+			Addresses: []string{conf.GetConf().ES.Address},
+			Username:  conf.GetConf().ES.UserName,
+			Password:  os.Getenv("ES_PASSWORD"),
 		}
 		cli, err := elasticsearch.NewTypedClient(cfg)
 		if err != nil {

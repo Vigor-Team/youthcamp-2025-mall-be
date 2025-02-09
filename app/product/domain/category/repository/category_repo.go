@@ -6,7 +6,7 @@ import (
 )
 
 type CategoryRepository interface {
-	GetCategoryById(ctx context.Context, categoryId int64) (*entity.CategoryEntity, error)
+	GetCategoryById(ctx context.Context, categoryId uint32) (*entity.CategoryEntity, error)
 	GetCategories(ctx context.Context) ([]*entity.CategoryEntity, error)
 	BatchGetCategories(ctx context.Context, categoryIds []uint32) ([]*entity.CategoryEntity, error)
 }

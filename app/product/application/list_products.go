@@ -24,5 +24,8 @@ func (s *ListProductsService) Run(req *product.ListProductsReq) (resp *product.L
 	for _, v := range get {
 		products = append(products, converter.ProductConvertEntity2DTO(v))
 	}
+	resp = &product.ListProductsResp{
+		Products: products,
+	}
 	return
 }

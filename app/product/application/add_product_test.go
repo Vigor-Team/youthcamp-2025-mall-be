@@ -12,18 +12,51 @@ func TestAddProduct_Run(t *testing.T) {
 	ctx := context.Background()
 	s := NewAddProductService(ctx)
 	// init req and assert value
-
-	req := &product.AddProductReq{
-		Name:        "test",
-		Description: "test",
-		Price:       1,
-		Stock:       1,
-		SpuName:     "test",
-		SpuPrice:    1,
-		Picture:     "test",
+	reqs := []*product.AddProductReq{}
+	reqs = append(reqs, &product.AddProductReq{
+		Name:        "Wireless Bluetooth Earphones",
+		Description: "High-quality wireless Bluetooth earphones, clear sound, long battery life.",
+		Price:       299,
+		Stock:       50,
+		SpuName:     "Bluetooth Earphone Series",
+		SpuPrice:    299,
+		Picture:     "https://example.com/earphone.jpg",
 		CategoryIds: []uint32{1, 2},
+	})
+	reqs = append(reqs, &product.AddProductReq{
+		Name:        "Smartwatch",
+		Description: "Multi-functional smartwatch with heart rate monitoring, GPS, and waterproof design.",
+		Price:       899,
+		Stock:       30,
+		SpuName:     "Watch Series",
+		SpuPrice:    899,
+		Picture:     "https://example.com/smartwatch.jpg",
+		CategoryIds: []uint32{1, 3},
+	})
+	reqs = append(reqs, &product.AddProductReq{
+		Name:        "Sports Shoes",
+		Description: "Comfortable sports shoes, suitable for running and everyday wear, breathable design.",
+		Price:       399,
+		Stock:       100,
+		SpuName:     "Footwear Series",
+		SpuPrice:    399,
+		Picture:     "https://example.com/sportsshoes.jpg",
+		CategoryIds: []uint32{2, 3},
+	})
+	reqs = append(reqs, &product.AddProductReq{
+		Name:        "Leather Wallet",
+		Description: "Premium leather wallet with multiple compartments, stylish and durable.",
+		Price:       129,
+		Stock:       200,
+		SpuName:     "Wallet Series",
+		SpuPrice:    129,
+		Picture:     "https://example.com/wallet.jpg",
+		CategoryIds: []uint32{1, 3},
+	})
+
+	for _, req := range reqs {
+		resp, err := s.Run(req)
+		t.Logf("err: %v", err)
+		t.Logf("resp: %v", resp)
 	}
-	resp, err := s.Run(req)
-	t.Logf("err: %v", err)
-	t.Logf("resp: %v", resp)
 }

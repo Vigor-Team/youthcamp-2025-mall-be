@@ -25,7 +25,7 @@ func (s *OnlineProductService) Run(req *product.OnlineProductReq) (resp *product
 		return nil, err
 	}
 
-	validateFunc, err := stateService.GetCanTransferFunc(constant.ProductStatusOnline)
+	validateFunc, err := stateService.GetCanTransferFunc(constant.StateOperationTypeOnline)
 	if err != nil {
 		return nil, err
 	}

@@ -34,8 +34,8 @@ func (s *UpdateProductService) Run(req *product.UpdateProductReq) (resp *product
 	if err != nil {
 		return nil, err
 	}
-
 	target.Categories = categories
+
 	err = updateService.UpdateProduct(s.ctx, origin, target)
 	if err != nil {
 		return nil, err

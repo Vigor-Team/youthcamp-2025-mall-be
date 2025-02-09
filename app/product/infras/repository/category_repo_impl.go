@@ -13,7 +13,7 @@ type CategoryRepositoryImpl struct {
 	db *gorm.DB
 }
 
-func (c *CategoryRepositoryImpl) GetCategoryById(ctx context.Context, categoryId int64) (*entity.CategoryEntity, error) {
+func (c *CategoryRepositoryImpl) GetCategoryById(ctx context.Context, categoryId uint32) (*entity.CategoryEntity, error) {
 	categories := make([]*po.Category, 0)
 	if err := c.db.WithContext(ctx).Where("id = ?", categoryId).Find(&categories).Error; err != nil {
 		return nil, err

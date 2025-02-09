@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"errors"
+	"fmt"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/common/model/entity"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/common/model/po"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/infras/es"
@@ -49,13 +50,14 @@ func (p *ProductRepositoryImpl) UpdateProduct(ctx context.Context, origin, targe
 		}
 	}()
 	changeMap := differ.ProductPODiffer.GetChangedMap(originPO, targetPO)
+	fmt.Println("changeMap: ", changeMap)
 	return DB.WithContext(ctx).Model(&po.Product{}).Where("id = ?", productId).
 		Updates(changeMap).Error
 }
 
 func (p *ProductRepositoryImpl) GetProductById(ctx context.Context, productId uint32) (*entity.ProductEntity, error) {
 	products := make([]*po.Product, 0)
-	err := p.db.WithContext(ctx).Where("id = ?", productId).First(&products).Error
+	err := p.db.WithContext(ctx).Preload("Categories").Where("id = ?", productId).First(&products).Error
 	if err != nil {
 		return nil, err
 	}
@@ -73,16 +75,16 @@ func (p *ProductRepositoryImpl) ListProducts(ctx context.Context, filterParam ma
 	products := make([]*po.Product, 0)
 	productEntities := make([]*entity.ProductEntity, 0)
 	db := p.db.Debug().WithContext(ctx)
-	if categoryId, exists := filterParam["categoryId"]; exists {
-		delete(filterParam, "categoryId")
-		db = db.Joins("JOIN product_category ON product_category.product_id = products.id").
+	if categoryId, exists := filterParam["category_id"]; exists {
+		delete(filterParam, "category_id")
+		db = db.Joins("JOIN product_category ON product_category.product_id = product.id").
 			Joins("JOIN category ON category.id = product_category.category_id").
 			Where("category.id = ?", categoryId)
 	}
 	for k, v := range filterParam {
 		db = db.Where(k+" = ?", v)
 	}
-	if err := db.Find(&products).Error; err != nil {
+	if err := db.Scopes(AvailableProducts).Preload("Categories").Find(&products).Error; err != nil {
 		return nil, err
 	}
 	for _, product := range products {
