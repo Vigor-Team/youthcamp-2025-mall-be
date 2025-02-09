@@ -2,8 +2,10 @@ package repository
 
 import (
 	"context"
-	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/model/entity"
-	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/model/po"
+	"errors"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/common/model/entity"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/common/model/po"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/infras/repository/converter"
 	"gorm.io/gorm"
 )
 
@@ -12,11 +14,34 @@ type CategoryRepositoryImpl struct {
 }
 
 func (c *CategoryRepositoryImpl) GetCategoryById(ctx context.Context, categoryId int64) (*entity.CategoryEntity, error) {
-	return nil, nil
+	categories := make([]*po.Category, 0)
+	if err := c.db.WithContext(ctx).Where("id = ?", categoryId).Find(&categories).Error; err != nil {
+		return nil, err
+	}
+	if len(categories) == 0 {
+		return nil, errors.New("category not found")
+	}
+	do, err := converter.CategoryPOWithDOConverter.Convert2DO(ctx, categories[0])
+	if err != nil {
+		return nil, err
+	}
+	return do, nil
 }
 
 func (c *CategoryRepositoryImpl) GetCategories(ctx context.Context) ([]*entity.CategoryEntity, error) {
-	return nil, nil
+	categories := make([]*po.Category, 0)
+	if err := c.db.WithContext(ctx).Find(&categories).Error; err != nil {
+		return nil, err
+	}
+	ret := make([]*entity.CategoryEntity, 0, len(categories))
+	for _, v := range categories {
+		do, err := converter.CategoryPOWithDOConverter.Convert2DO(ctx, v)
+		if err != nil {
+			return nil, err
+		}
+		ret = append(ret, do)
+	}
+	return ret, nil
 }
 
 func (c *CategoryRepositoryImpl) BatchGetCategories(ctx context.Context, categoryIds []uint32) ([]*entity.CategoryEntity, error) {
@@ -28,7 +53,7 @@ func (c *CategoryRepositoryImpl) BatchGetCategories(ctx context.Context, categor
 	ret := make([]*entity.CategoryEntity, 0, len(categories))
 	for _, v := range categories {
 		ret = append(ret, &entity.CategoryEntity{
-			ID:          uint32(v.ID),
+			ID:          v.ID,
 			Name:        v.Name,
 			Description: v.Description,
 		})

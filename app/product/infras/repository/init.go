@@ -15,7 +15,7 @@
 package repository
 
 import (
-	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/model/po"
+	po2 "github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/common/model/po"
 	"os"
 
 	categoryrepo "github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/domain/category/repository"
@@ -61,8 +61,8 @@ func initDB() {
 	if os.Getenv("GO_ENV") != "online" {
 		//nolint:errcheck
 		DB.AutoMigrate(
-			&po.Product{},
-			&po.Category{},
+			&po2.Product{},
+			&po2.Category{},
 		)
 	}
 	//if err := DB.Use(tracing.NewPlugin(tracing.WithoutMetrics(), tracing.WithTracerProvider(mtl.TracerProvider))); err != nil {

@@ -1701,7 +1701,7 @@ var file_product_proto_depIdxs = []int32{
 	2,  // 5: product.GetCategoriesResp.categories:type_name -> product.Category
 	1,  // 6: product.BatchGetProductsResp.ProductsEntry.value:type_name -> product.Product
 	3,  // 7: product.ProductCatalogService.AddProduct:input_type -> product.AddProductReq
-	5,  // 8: product.ProductCatalogService.UpdateProduct:input_type -> product.UpdateProductReq
+	5,  // 8: product.ProductCatalogService.UpsertProduct:input_type -> product.UpdateProductReq
 	7,  // 9: product.ProductCatalogService.DeleteProduct:input_type -> product.DeleteProductReq
 	9,  // 10: product.ProductCatalogService.OnlineProduct:input_type -> product.OnlineProductReq
 	11, // 11: product.ProductCatalogService.OfflineProduct:input_type -> product.OfflineProductReq
@@ -1713,7 +1713,7 @@ var file_product_proto_depIdxs = []int32{
 	23, // 17: product.ProductCatalogService.DecrStock:input_type -> product.DecrStockReq
 	25, // 18: product.ProductCatalogService.IncrStock:input_type -> product.IncrStockReq
 	4,  // 19: product.ProductCatalogService.AddProduct:output_type -> product.AddProductResp
-	6,  // 20: product.ProductCatalogService.UpdateProduct:output_type -> product.UpdateProductResp
+	6,  // 20: product.ProductCatalogService.UpsertProduct:output_type -> product.UpdateProductResp
 	8,  // 21: product.ProductCatalogService.DeleteProduct:output_type -> product.DeleteProductResp
 	10, // 22: product.ProductCatalogService.OnlineProduct:output_type -> product.OnlineProductResp
 	12, // 23: product.ProductCatalogService.OfflineProduct:output_type -> product.OfflineProductResp

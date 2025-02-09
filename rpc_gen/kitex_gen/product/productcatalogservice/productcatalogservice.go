@@ -22,7 +22,7 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		false,
 		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
-	"UpdateProduct": kitex.NewMethodInfo(
+	"UpsertProduct": kitex.NewMethodInfo(
 		updateProductHandler,
 		newUpdateProductArgs,
 		newUpdateProductResult,
@@ -2025,7 +2025,7 @@ func (p *kClient) UpdateProduct(ctx context.Context, Req *product.UpdateProductR
 	var _args UpdateProductArgs
 	_args.Req = Req
 	var _result UpdateProductResult
-	if err = p.c.Call(ctx, "UpdateProduct", &_args, &_result); err != nil {
+	if err = p.c.Call(ctx, "UpsertProduct", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil

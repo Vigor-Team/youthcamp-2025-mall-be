@@ -2,24 +2,24 @@ package converter
 
 import (
 	"context"
-	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/model/entity"
-	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/model/po"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/common/model/entity"
+	po2 "github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/common/model/po"
 )
 
 type productDO2POConverter struct{}
 
 var ProductDO2POConverter = &productDO2POConverter{}
 
-func (c *productDO2POConverter) Convert2po(_ context.Context, product *entity.ProductEntity) (*po.Product, error) {
-	categories := make([]po.Category, 0, len(product.Categories))
+func (c *productDO2POConverter) Convert2po(_ context.Context, product *entity.ProductEntity) (*po2.Product, error) {
+	categories := make([]po2.Category, 0, len(product.Categories))
 	for _, category := range product.Categories {
-		categories = append(categories, po.Category{
+		categories = append(categories, po2.Category{
 			ID:          category.ID,
 			Name:        category.Name,
 			Description: category.Description,
 		})
 	}
-	ret := &po.Product{
+	ret := &po2.Product{
 		ID:          product.ID,
 		Name:        product.Name,
 		Price:       product.Price,

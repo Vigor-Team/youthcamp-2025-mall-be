@@ -3,7 +3,7 @@ package es
 import (
 	"context"
 	"fmt"
-	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/model/entity"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/common/model/entity"
 	"github.com/cloudwego/hertz/pkg/common/test/assert"
 	"testing"
 )
@@ -14,7 +14,7 @@ func TestGetProductESClient(t *testing.T) {
 }
 
 func TestUpsertProductES(t *testing.T) {
-	err := GetProductESClient().UpdateProduct(context.Background(), 1001, &entity.ProductES{
+	err := GetProductESClient().UpsertProduct(context.Background(), 1001, &entity.ProductES{
 		ID:            1001,
 		Name:          "Wireless Mechanical Keyboard",
 		Description:   "A high-quality wireless mechanical keyboard with RGB lighting and hot-swappable switches.",
@@ -28,7 +28,7 @@ func TestUpsertProductES(t *testing.T) {
 	})
 	assert.Nil(t, err)
 
-	err = GetProductESClient().UpdateProduct(context.Background(), 1002, &entity.ProductES{
+	err = GetProductESClient().UpsertProduct(context.Background(), 1002, &entity.ProductES{
 		ID:            1002,
 		Name:          "Gaming Mouse",
 		Description:   "An ergonomic gaming mouse with 16000 DPI and customizable side buttons.",
@@ -42,7 +42,7 @@ func TestUpsertProductES(t *testing.T) {
 	})
 	assert.Nil(t, err)
 
-	err = GetProductESClient().UpdateProduct(context.Background(), 1003, &entity.ProductES{
+	err = GetProductESClient().UpsertProduct(context.Background(), 1003, &entity.ProductES{
 		ID:            1003,
 		Name:          "Noise-Canceling Headphones",
 		Description:   "Over-ear noise-canceling headphones with high-fidelity sound and 30-hour battery life.",

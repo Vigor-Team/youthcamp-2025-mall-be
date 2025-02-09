@@ -1,13 +1,11 @@
 package es
 
 import (
-	"bytes"
 	"context"
-	"encoding/json"
 	"fmt"
-	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/model/entity"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/common/model/entity"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/infras/repository/converter"
 	"github.com/bytedance/sonic"
-	"github.com/elastic/go-elasticsearch/v8/esapi"
 	"github.com/elastic/go-elasticsearch/v8/typedapi/core/search"
 	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
 	"github.com/elastic/go-elasticsearch/v8/typedapi/types/enums/refresh"
@@ -23,53 +21,41 @@ func GetProductESClient() *ProductESClient {
 	return &productESClient
 }
 
-func (c *ProductESClient) UpdateProduct(ctx context.Context, productId uint32, product *entity.ProductES) error {
+func (c *ProductESClient) UpsertProduct(ctx context.Context, productId uint32, product *entity.ProductES) error {
 	doc := getDocFromProductES(product)
 	_, err := GetESClient().Update("product", strconv.FormatInt(int64(productId), 10)).Doc(doc).Upsert(doc).Refresh(refresh.Refresh{Name: "true"}).Do(ctx)
 	return err
 }
 
-func (c *ProductESClient) BatchGetProductById(ctx context.Context, productIds []uint32) ([]*entity.ProductES, error) {
-	var buf bytes.Buffer
-	mgetBody := make(map[string]interface{})
-	docs := make([]map[string]string, len(productIds))
+func (c *ProductESClient) BatchGetProductById(ctx context.Context, productIds []uint32) ([]*entity.ProductEntity, error) {
+	termQuery := map[string]types.TermsQueryField{}
+	ids := make([]interface{}, len(productIds))
 	for i, id := range productIds {
-		docs[i] = map[string]string{
-			"_index": "product",
-			"_id":    strconv.FormatInt(int64(id), 10),
-		}
+		ids[i] = strconv.FormatInt(int64(id), 10)
 	}
-	mgetBody["docs"] = docs
-	if err := json.NewEncoder(&buf).Encode(mgetBody); err != nil {
-		return nil, fmt.Errorf("encoding error: %w", err)
-	}
-	req := esapi.MgetRequest{
-		Body: &buf,
-	}
-	res, err := req.Do(ctx, GetESClient())
+	termQuery["_id"] = ids
+	resp, err := GetESClient().Search().
+		Index("product").
+		Request(&search.Request{
+			Query: &types.Query{
+				Terms: &types.TermsQuery{
+					TermsQuery: termQuery,
+				},
+			},
+		}).
+		Do(ctx)
 	if err != nil {
-		return nil, fmt.Errorf("mget request error: %w", err)
+		return nil, fmt.Errorf("search request error: %w", err)
 	}
-	defer res.Body.Close()
-	var rsp struct {
-		Docs []struct {
-			Found  bool            `json:"found"`
-			Source json.RawMessage `json:"_source"`
-		} `json:"docs"`
+	products := make([]*entity.ProductEntity, 0)
+	for _, hit := range resp.Hits.Hits {
+		do := converter.ProductDoWithESConverter.Convert2DO(ctx, getProductESFormSource(string(hit.Source_)))
+		products = append(products, do)
 	}
-	if err := json.NewDecoder(res.Body).Decode(&rsp); err != nil {
-		return nil, fmt.Errorf("decode error: %w", err)
-	}
-	entities := make([]*entity.ProductES, 0)
-	for _, doc := range rsp.Docs {
-		if doc.Found {
-			entities = append(entities, getProductESFormSource(string(doc.Source)))
-		}
-	}
-	return entities, nil
+	return products, nil
 }
 
-func (c *ProductESClient) SearchProduct(ctx context.Context, keyword string) ([]*entity.ProductES, error) {
+func (c *ProductESClient) SearchProduct(ctx context.Context, keyword string) ([]*entity.ProductEntity, error) {
 	size := 1000
 	resp, err := GetESClient().Search().
 		Index("product").
@@ -89,9 +75,10 @@ func (c *ProductESClient) SearchProduct(ctx context.Context, keyword string) ([]
 	if err != nil {
 		return nil, fmt.Errorf("search request error: %w", err)
 	}
-	products := make([]*entity.ProductES, 0)
+	products := make([]*entity.ProductEntity, 0)
 	for _, hit := range resp.Hits.Hits {
-		products = append(products, getProductESFormSource(string(hit.Source_)))
+		do := converter.ProductDoWithESConverter.Convert2DO(ctx, getProductESFormSource(string(hit.Source_)))
+		products = append(products, do)
 	}
 	return products, nil
 }

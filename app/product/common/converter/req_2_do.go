@@ -3,8 +3,8 @@ package converter
 import (
 	"context"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/common/constant"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/common/model/entity"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/infras/utils"
-	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/model/entity"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/product"
 )
 

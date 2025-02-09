@@ -2,8 +2,8 @@ package service
 
 import (
 	"context"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/common/model/entity"
 	categoryrepo "github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/domain/category/repository"
-	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/model/entity"
 )
 
 type CategoryService struct{}

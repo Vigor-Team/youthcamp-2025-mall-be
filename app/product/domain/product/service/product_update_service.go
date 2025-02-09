@@ -2,8 +2,8 @@ package service
 
 import (
 	"context"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/common/model/entity"
 	productrepo "github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/domain/product/repository"
-	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/model/entity"
 )
 
 type ProductUpdateService struct{}
@@ -23,5 +23,9 @@ func (s *ProductUpdateService) AddProduct(ctx context.Context, product *entity.P
 }
 
 func (s *ProductUpdateService) UpdateProduct(ctx context.Context, origin, target *entity.ProductEntity) error {
+	err := productrepo.GetFactory().GetProductRepository().UpdateProduct(ctx, origin, target)
+	if err != nil {
+		return err
+	}
 	return nil
 }

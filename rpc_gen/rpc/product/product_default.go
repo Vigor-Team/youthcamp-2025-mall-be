@@ -19,7 +19,7 @@ func AddProduct(ctx context.Context, req *product.AddProductReq, callOptions ...
 func UpdateProduct(ctx context.Context, req *product.UpdateProductReq, callOptions ...callopt.Option) (resp *product.UpdateProductResp, err error) {
 	resp, err = defaultClient.UpdateProduct(ctx, req, callOptions...)
 	if err != nil {
-		klog.CtxErrorf(ctx, "UpdateProduct call failed,err =%+v", err)
+		klog.CtxErrorf(ctx, "UpsertProduct call failed,err =%+v", err)
 		return nil, err
 	}
 	return resp, nil
