@@ -15,7 +15,11 @@
 package repository
 
 import (
+	"fmt"
 	po2 "github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/common/model/po"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/conf"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/common/mtl"
+	"gorm.io/plugin/opentelemetry/tracing"
 	"os"
 
 	categoryrepo "github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/domain/category/repository"
@@ -47,8 +51,7 @@ func register() {
 }
 
 func initDB() {
-	//dsn := fmt.Sprintf(conf.GetConf().MySQL.DSN, os.Getenv("MYSQL_USER"), os.Getenv("MYSQL_PASSWORD"), os.Getenv("MYSQL_HOST"))
-	dsn := "root:root@tcp(127.0.0.1:3306)/product?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := fmt.Sprintf(conf.GetConf().MySQL.DSN, os.Getenv("MYSQL_USER"), os.Getenv("MYSQL_PASSWORD"), os.Getenv("MYSQL_HOST"))
 	DB, err = gorm.Open(mysql.Open(dsn),
 		&gorm.Config{
 			PrepareStmt:            true,
@@ -65,7 +68,7 @@ func initDB() {
 			&po2.Category{},
 		)
 	}
-	//if err := DB.Use(tracing.NewPlugin(tracing.WithoutMetrics(), tracing.WithTracerProvider(mtl.TracerProvider))); err != nil {
-	//	panic(err)
-	//}
+	if err := DB.Use(tracing.NewPlugin(tracing.WithoutMetrics(), tracing.WithTracerProvider(mtl.TracerProvider))); err != nil {
+		panic(err)
+	}
 }

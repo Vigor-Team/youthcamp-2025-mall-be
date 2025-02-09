@@ -95,3 +95,116 @@ func TestGetCategory(t *testing.T) {
 	// assert.DeepEqual(t, 200, resp.StatusCode())
 	// assert.DeepEqual(t, "null", string(resp.Body()))
 }
+
+func TestCreateProduct(t *testing.T) {
+	h := server.Default()
+	h.POST("/api/v1/products", CreateProduct)
+	path := "/api/v1/products"                                // todo: you can customize query
+	body := &ut.Body{Body: bytes.NewBufferString(""), Len: 1} // todo: you can customize body
+	header := ut.Header{}                                     // todo: you can customize header
+	w := ut.PerformRequest(h.Engine, "POST", path, body, header)
+	resp := w.Result()
+	t.Log(string(resp.Body()))
+
+	// todo edit your unit test.
+	// assert.DeepEqual(t, 200, resp.StatusCode())
+	// assert.DeepEqual(t, "null", string(resp.Body()))
+}
+func TestUpdateProduct(t *testing.T) {
+	h := server.Default()
+	h.PUT("/api/v1/products/:productId", UpdateProduct)
+	path := "/api/v1/products/:productId"                     // todo: you can customize query
+	body := &ut.Body{Body: bytes.NewBufferString(""), Len: 1} // todo: you can customize body
+	header := ut.Header{}                                     // todo: you can customize header
+	w := ut.PerformRequest(h.Engine, "PUT", path, body, header)
+	resp := w.Result()
+	t.Log(string(resp.Body()))
+
+	// todo edit your unit test.
+	// assert.DeepEqual(t, 200, resp.StatusCode())
+	// assert.DeepEqual(t, "null", string(resp.Body()))
+}
+func TestDeleteProduct(t *testing.T) {
+	h := server.Default()
+	h.DELETE("/api/v1/products/:productId", DeleteProduct)
+	path := "/api/v1/products/:productId"                     // todo: you can customize query
+	body := &ut.Body{Body: bytes.NewBufferString(""), Len: 1} // todo: you can customize body
+	header := ut.Header{}                                     // todo: you can customize header
+	w := ut.PerformRequest(h.Engine, "DELETE", path, body, header)
+	resp := w.Result()
+	t.Log(string(resp.Body()))
+
+	// todo edit your unit test.
+	// assert.DeepEqual(t, 200, resp.StatusCode())
+	// assert.DeepEqual(t, "null", string(resp.Body()))
+}
+func TestOnlineProduct(t *testing.T) {
+	h := server.Default()
+	h.POST("/api/v1/products/:productId/online", OnlineProduct)
+	path := "/api/v1/products/:productId/online"              // todo: you can customize query
+	body := &ut.Body{Body: bytes.NewBufferString(""), Len: 1} // todo: you can customize body
+	header := ut.Header{}                                     // todo: you can customize header
+	w := ut.PerformRequest(h.Engine, "POST", path, body, header)
+	resp := w.Result()
+	t.Log(string(resp.Body()))
+
+	// todo edit your unit test.
+	// assert.DeepEqual(t, 200, resp.StatusCode())
+	// assert.DeepEqual(t, "null", string(resp.Body()))
+}
+func TestOfflineProduct(t *testing.T) {
+	h := server.Default()
+	h.POST("/api/v1/products/:productId/offline", OfflineProduct)
+	path := "/api/v1/products/:productId/offline"             // todo: you can customize query
+	body := &ut.Body{Body: bytes.NewBufferString(""), Len: 1} // todo: you can customize body
+	header := ut.Header{}                                     // todo: you can customize header
+	w := ut.PerformRequest(h.Engine, "POST", path, body, header)
+	resp := w.Result()
+	t.Log(string(resp.Body()))
+
+	// todo edit your unit test.
+	// assert.DeepEqual(t, 200, resp.StatusCode())
+	// assert.DeepEqual(t, "null", string(resp.Body()))
+}
+func TestDecreaseStock(t *testing.T) {
+	h := server.Default()
+	h.PATCH("/api/v1/products/:productId/stock/decrease", DecreaseStock)
+	path := "/api/v1/products/:productId/stock/decrease"      // todo: you can customize query
+	body := &ut.Body{Body: bytes.NewBufferString(""), Len: 1} // todo: you can customize body
+	header := ut.Header{}                                     // todo: you can customize header
+	w := ut.PerformRequest(h.Engine, "PATCH", path, body, header)
+	resp := w.Result()
+	t.Log(string(resp.Body()))
+
+	// todo edit your unit test.
+	// assert.DeepEqual(t, 200, resp.StatusCode())
+	// assert.DeepEqual(t, "null", string(resp.Body()))
+}
+func TestIncreaseStock(t *testing.T) {
+	h := server.Default()
+	h.PATCH("/api/v1/products/:productId/stock/increase", IncreaseStock)
+	path := "/api/v1/products/:productId/stock/increase"      // todo: you can customize query
+	body := &ut.Body{Body: bytes.NewBufferString(""), Len: 1} // todo: you can customize body
+	header := ut.Header{}                                     // todo: you can customize header
+	w := ut.PerformRequest(h.Engine, "PATCH", path, body, header)
+	resp := w.Result()
+	t.Log(string(resp.Body()))
+
+	// todo edit your unit test.
+	// assert.DeepEqual(t, 200, resp.StatusCode())
+	// assert.DeepEqual(t, "null", string(resp.Body()))
+}
+func TestBatchGetProducts(t *testing.T) {
+	h := server.Default()
+	h.GET("/api/v1/products/batch", BatchGetProducts)
+	path := "/api/v1/products/batch"                          // todo: you can customize query
+	body := &ut.Body{Body: bytes.NewBufferString(""), Len: 1} // todo: you can customize body
+	header := ut.Header{}                                     // todo: you can customize header
+	w := ut.PerformRequest(h.Engine, "GET", path, body, header)
+	resp := w.Result()
+	t.Log(string(resp.Body()))
+
+	// todo edit your unit test.
+	// assert.DeepEqual(t, 200, resp.StatusCode())
+	// assert.DeepEqual(t, "null", string(resp.Body()))
+}

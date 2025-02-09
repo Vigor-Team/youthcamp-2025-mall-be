@@ -123,6 +123,14 @@ message GetCategoriesResp {
   repeated Category categories = 1;
 }
 
+message GetCategoryReq {
+  uint32 id = 1;
+}
+
+message GetCategoryResp {
+  Category category = 1;
+}
+
 message DecrStockReq {
   uint32 id = 1;
   uint32 decr = 2;
@@ -150,6 +158,7 @@ service ProductCatalogService {
   rpc BatchGetProducts(BatchGetProductsReq) returns (BatchGetProductsResp) {}
   rpc SearchProducts(SearchProductsReq) returns (SearchProductsResp) {}
   rpc GetCategories(GetCategoriesReq) returns (GetCategoriesResp) {}
+  rpc GetCategory(GetCategoryReq) returns (GetCategoryResp) {}
   rpc DecrStock(DecrStockReq) returns (DecrStockResp) {}
   rpc IncrStock(IncrStockReq) returns (IncrStockResp) {}
 }

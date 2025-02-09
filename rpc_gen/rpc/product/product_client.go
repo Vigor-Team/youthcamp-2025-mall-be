@@ -22,6 +22,7 @@ type RPCClient interface {
 	BatchGetProducts(ctx context.Context, Req *product.BatchGetProductsReq, callOptions ...callopt.Option) (r *product.BatchGetProductsResp, err error)
 	SearchProducts(ctx context.Context, Req *product.SearchProductsReq, callOptions ...callopt.Option) (r *product.SearchProductsResp, err error)
 	GetCategories(ctx context.Context, Req *product.GetCategoriesReq, callOptions ...callopt.Option) (r *product.GetCategoriesResp, err error)
+	GetCategory(ctx context.Context, Req *product.GetCategoryReq, callOptions ...callopt.Option) (r *product.GetCategoryResp, err error)
 	DecrStock(ctx context.Context, Req *product.DecrStockReq, callOptions ...callopt.Option) (r *product.DecrStockResp, err error)
 	IncrStock(ctx context.Context, Req *product.IncrStockReq, callOptions ...callopt.Option) (r *product.IncrStockResp, err error)
 }
@@ -90,6 +91,10 @@ func (c *clientImpl) SearchProducts(ctx context.Context, Req *product.SearchProd
 
 func (c *clientImpl) GetCategories(ctx context.Context, Req *product.GetCategoriesReq, callOptions ...callopt.Option) (r *product.GetCategoriesResp, err error) {
 	return c.kitexClient.GetCategories(ctx, Req, callOptions...)
+}
+
+func (c *clientImpl) GetCategory(ctx context.Context, Req *product.GetCategoryReq, callOptions ...callopt.Option) (r *product.GetCategoryResp, err error) {
+	return c.kitexClient.GetCategory(ctx, Req, callOptions...)
 }
 
 func (c *clientImpl) DecrStock(ctx context.Context, Req *product.DecrStockReq, callOptions ...callopt.Option) (r *product.DecrStockResp, err error) {

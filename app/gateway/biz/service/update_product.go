@@ -1,0 +1,43 @@
+package service
+
+import (
+	"context"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/infra/rpc"
+	rpcproduct "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/product"
+	"github.com/cloudwego/hertz/pkg/common/hlog"
+
+	common "github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/hertz_gen/gateway/common"
+	product "github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/hertz_gen/gateway/product"
+	"github.com/cloudwego/hertz/pkg/app"
+)
+
+type UpdateProductService struct {
+	RequestContext *app.RequestContext
+	Context        context.Context
+}
+
+func NewUpdateProductService(Context context.Context, RequestContext *app.RequestContext) *UpdateProductService {
+	return &UpdateProductService{RequestContext: RequestContext, Context: Context}
+}
+
+func (h *UpdateProductService) Run(req *product.UpdateProductReq) (resp *common.Empty, err error) {
+	defer func() {
+		hlog.CtxInfof(h.Context, "req = %+v", req)
+		hlog.CtxInfof(h.Context, "resp = %+v", resp)
+	}()
+	_, err = rpc.ProductClient.UpdateProduct(h.Context, &rpcproduct.UpdateProductReq{
+		Id:          req.ProductId,
+		Name:        req.Name,
+		Description: req.Description,
+		Price:       req.Price,
+		Picture:     req.Picture,
+		SpuPrice:    req.SpuPrice,
+		SpuName:     req.SpuName,
+		Stock:       req.Stock,
+		CategoryIds: req.CategoryIds,
+	})
+	if err != nil {
+		return
+	}
+	return
+}

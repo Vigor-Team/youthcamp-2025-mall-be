@@ -1,22 +1,7 @@
-// Copyright 2024 CloudWeGo Authors
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 package product
 
 import (
 	"context"
-	"github.com/cloudwego/hertz/pkg/common/hlog"
 
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/biz/service"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/biz/utils"
@@ -26,58 +11,229 @@ import (
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 )
 
-// GetProduct .
-// @router /products/:productId [GET]
-func GetProduct(ctx context.Context, c *app.RequestContext) {
+// CreateProduct .
+// @router /api/v1/products [POST]
+func CreateProduct(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req product.GetProductReq
+	var req product.CreateProductReq
 	err = c.BindAndValidate(&req)
 	if err != nil {
 		utils.ErrorResponse(c, consts.StatusOK, err.Error())
 		return
 	}
 
-	resp, err := service.NewGetProductService(ctx, c).Run(&req)
+	resp := &common.Empty{}
+	resp, err = service.NewCreateProductService(ctx, c).Run(&req)
 	if err != nil {
 		utils.ErrorResponse(c, consts.StatusOK, err.Error())
 		return
 	}
-	hlog.CtxInfof(ctx, "GetProduct: %v", resp)
+
 	utils.SuccessResponse(c, resp)
 }
 
-// SearchProducts .
-// @router /search [GET]
-func SearchProducts(ctx context.Context, c *app.RequestContext) {
+// UpdateProduct .
+// @router /api/v1/products/:productId [PUT]
+func UpdateProduct(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req product.SearchProductsReq
+	var req product.ProductIDReq
 	err = c.BindAndValidate(&req)
 	if err != nil {
 		utils.ErrorResponse(c, consts.StatusOK, err.Error())
 		return
 	}
 
-	resp, err := service.NewSearchProductsService(ctx, c).Run(&req)
+	resp := &common.Empty{}
+	resp, err = service.NewUpdateProductService(ctx, c).Run(&req)
 	if err != nil {
 		utils.ErrorResponse(c, consts.StatusOK, err.Error())
 		return
 	}
+
+	utils.SuccessResponse(c, resp)
+}
+
+// DeleteProduct .
+// @router /api/v1/products/:productId [DELETE]
+func DeleteProduct(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req product.ProductIDReq
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		return
+	}
+
+	resp := &common.Empty{}
+	resp, err = service.NewDeleteProductService(ctx, c).Run(&req)
+	if err != nil {
+		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		return
+	}
+
+	utils.SuccessResponse(c, resp)
+}
+
+// OnlineProduct .
+// @router /api/v1/products/:productId/online [POST]
+func OnlineProduct(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req product.ProductIDReq
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		return
+	}
+
+	resp := &common.Empty{}
+	resp, err = service.NewOnlineProductService(ctx, c).Run(&req)
+	if err != nil {
+		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		return
+	}
+
+	utils.SuccessResponse(c, resp)
+}
+
+// OfflineProduct .
+// @router /api/v1/products/:productId/offline [POST]
+func OfflineProduct(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req product.ProductIDReq
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		return
+	}
+
+	resp := &common.Empty{}
+	resp, err = service.NewOfflineProductService(ctx, c).Run(&req)
+	if err != nil {
+		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		return
+	}
+
+	utils.SuccessResponse(c, resp)
+}
+
+// DecreaseStock .
+// @router /api/v1/products/:productId/stock/decrease [PATCH]
+func DecreaseStock(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req product.StockOpReq
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		return
+	}
+
+	resp := &common.Empty{}
+	resp, err = service.NewDecreaseStockService(ctx, c).Run(&req)
+	if err != nil {
+		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		return
+	}
+
+	utils.SuccessResponse(c, resp)
+}
+
+// IncreaseStock .
+// @router /api/v1/products/:productId/stock/increase [PATCH]
+func IncreaseStock(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req product.StockOpReq
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		return
+	}
+
+	resp := &common.Empty{}
+	resp, err = service.NewIncreaseStockService(ctx, c).Run(&req)
+	if err != nil {
+		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		return
+	}
+
+	utils.SuccessResponse(c, resp)
+}
+
+// GetProduct .
+// @router /api/v1/products/:productId [GET]
+func GetProduct(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req product.ProductIDReq
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		return
+	}
+
+	resp := &product.GetProductResp{}
+	resp, err = service.NewGetProductService(ctx, c).Run(&req)
+	if err != nil {
+		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		return
+	}
+
 	utils.SuccessResponse(c, resp)
 }
 
 // ListProducts .
-// @router /products [GET]
+// @router /api/v1/products [GET]
 func ListProducts(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req common.Empty
+	var req product.ListProductsReq
 	err = c.BindAndValidate(&req)
 	if err != nil {
 		utils.ErrorResponse(c, consts.StatusOK, err.Error())
 		return
 	}
 
-	resp, err := service.NewListProductsService(ctx, c).Run(&req)
+	resp := &product.ListProductsResp{}
+	resp, err = service.NewListProductsService(ctx, c).Run(&req)
+	if err != nil {
+		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		return
+	}
 
+	utils.SuccessResponse(c, resp)
+}
+
+// BatchGetProducts .
+// @router /api/v1/products/batch [GET]
+func BatchGetProducts(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req product.BatchProductsReq
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		return
+	}
+
+	resp := &product.BatchProductsResp{}
+	resp, err = service.NewBatchGetProductsService(ctx, c).Run(&req)
+	if err != nil {
+		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		return
+	}
+
+	utils.SuccessResponse(c, resp)
+}
+
+// SearchProducts .
+// @router /api/v1/search [GET]
+func SearchProducts(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req product.SearchReq
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		return
+	}
+
+	resp := &product.ListProductsResp{}
+	resp, err = service.NewSearchProductsService(ctx, c).Run(&req)
 	if err != nil {
 		utils.ErrorResponse(c, consts.StatusOK, err.Error())
 		return
@@ -87,7 +243,7 @@ func ListProducts(ctx context.Context, c *app.RequestContext) {
 }
 
 // ListCategories .
-// @router /categories [GET]
+// @router /api/v1/categories [GET]
 func ListCategories(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req common.Empty
@@ -97,17 +253,18 @@ func ListCategories(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	resp, err := service.NewListCategoriesService(ctx, c).Run(&req)
-
+	resp := &product.ListCategoriesResp{}
+	resp, err = service.NewListCategoriesService(ctx, c).Run(&req)
 	if err != nil {
 		utils.ErrorResponse(c, consts.StatusOK, err.Error())
 		return
 	}
+
 	utils.SuccessResponse(c, resp)
 }
 
 // GetCategory .
-// @router /categories/:categoryId [GET]
+// @router /api/v1/categories/:categoryId [GET]
 func GetCategory(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req product.GetCategoryReq
@@ -117,11 +274,12 @@ func GetCategory(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	resp, err := service.NewGetCategoryService(ctx, c).Run(&req)
-
+	resp := &product.GetCategoryResp{}
+	resp, err = service.NewGetCategoryService(ctx, c).Run(&req)
 	if err != nil {
 		utils.ErrorResponse(c, consts.StatusOK, err.Error())
 		return
 	}
+
 	utils.SuccessResponse(c, resp)
 }

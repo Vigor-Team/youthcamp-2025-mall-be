@@ -21,6 +21,7 @@ type Client interface {
 	BatchGetProducts(ctx context.Context, Req *product.BatchGetProductsReq, callOptions ...callopt.Option) (r *product.BatchGetProductsResp, err error)
 	SearchProducts(ctx context.Context, Req *product.SearchProductsReq, callOptions ...callopt.Option) (r *product.SearchProductsResp, err error)
 	GetCategories(ctx context.Context, Req *product.GetCategoriesReq, callOptions ...callopt.Option) (r *product.GetCategoriesResp, err error)
+	GetCategory(ctx context.Context, Req *product.GetCategoryReq, callOptions ...callopt.Option) (r *product.GetCategoryResp, err error)
 	DecrStock(ctx context.Context, Req *product.DecrStockReq, callOptions ...callopt.Option) (r *product.DecrStockResp, err error)
 	IncrStock(ctx context.Context, Req *product.IncrStockReq, callOptions ...callopt.Option) (r *product.IncrStockResp, err error)
 }
@@ -102,6 +103,11 @@ func (p *kProductCatalogServiceClient) SearchProducts(ctx context.Context, Req *
 func (p *kProductCatalogServiceClient) GetCategories(ctx context.Context, Req *product.GetCategoriesReq, callOptions ...callopt.Option) (r *product.GetCategoriesResp, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.GetCategories(ctx, Req)
+}
+
+func (p *kProductCatalogServiceClient) GetCategory(ctx context.Context, Req *product.GetCategoryReq, callOptions ...callopt.Option) (r *product.GetCategoryResp, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.GetCategory(ctx, Req)
 }
 
 func (p *kProductCatalogServiceClient) DecrStock(ctx context.Context, Req *product.DecrStockReq, callOptions ...callopt.Option) (r *product.DecrStockResp, err error) {

@@ -861,6 +861,61 @@ func (x *GetCategoriesResp) fastReadField1(buf []byte, _type int8) (offset int, 
 	return offset, nil
 }
 
+func (x *GetCategoryReq) FastRead(buf []byte, _type int8, number int32) (offset int, err error) {
+	switch number {
+	case 1:
+		offset, err = x.fastReadField1(buf, _type)
+		if err != nil {
+			goto ReadFieldError
+		}
+	default:
+		offset, err = fastpb.Skip(buf, _type, number)
+		if err != nil {
+			goto SkipFieldError
+		}
+	}
+	return offset, nil
+SkipFieldError:
+	return offset, fmt.Errorf("%T cannot parse invalid wire-format data, error: %s", x, err)
+ReadFieldError:
+	return offset, fmt.Errorf("%T read field %d '%s' error: %s", x, number, fieldIDToName_GetCategoryReq[number], err)
+}
+
+func (x *GetCategoryReq) fastReadField1(buf []byte, _type int8) (offset int, err error) {
+	x.Id, offset, err = fastpb.ReadUint32(buf, _type)
+	return offset, err
+}
+
+func (x *GetCategoryResp) FastRead(buf []byte, _type int8, number int32) (offset int, err error) {
+	switch number {
+	case 1:
+		offset, err = x.fastReadField1(buf, _type)
+		if err != nil {
+			goto ReadFieldError
+		}
+	default:
+		offset, err = fastpb.Skip(buf, _type, number)
+		if err != nil {
+			goto SkipFieldError
+		}
+	}
+	return offset, nil
+SkipFieldError:
+	return offset, fmt.Errorf("%T cannot parse invalid wire-format data, error: %s", x, err)
+ReadFieldError:
+	return offset, fmt.Errorf("%T read field %d '%s' error: %s", x, number, fieldIDToName_GetCategoryResp[number], err)
+}
+
+func (x *GetCategoryResp) fastReadField1(buf []byte, _type int8) (offset int, err error) {
+	var v Category
+	offset, err = fastpb.ReadMessage(buf, _type, &v)
+	if err != nil {
+		return offset, err
+	}
+	x.Category = &v
+	return offset, nil
+}
+
 func (x *DecrStockReq) FastRead(buf []byte, _type int8, number int32) (offset int, err error) {
 	switch number {
 	case 1:
@@ -1547,6 +1602,38 @@ func (x *GetCategoriesResp) fastWriteField1(buf []byte) (offset int) {
 	return offset
 }
 
+func (x *GetCategoryReq) FastWrite(buf []byte) (offset int) {
+	if x == nil {
+		return offset
+	}
+	offset += x.fastWriteField1(buf[offset:])
+	return offset
+}
+
+func (x *GetCategoryReq) fastWriteField1(buf []byte) (offset int) {
+	if x.Id == 0 {
+		return offset
+	}
+	offset += fastpb.WriteUint32(buf[offset:], 1, x.GetId())
+	return offset
+}
+
+func (x *GetCategoryResp) FastWrite(buf []byte) (offset int) {
+	if x == nil {
+		return offset
+	}
+	offset += x.fastWriteField1(buf[offset:])
+	return offset
+}
+
+func (x *GetCategoryResp) fastWriteField1(buf []byte) (offset int) {
+	if x.Category == nil {
+		return offset
+	}
+	offset += fastpb.WriteMessage(buf[offset:], 1, x.GetCategory())
+	return offset
+}
+
 func (x *DecrStockReq) FastWrite(buf []byte) (offset int) {
 	if x == nil {
 		return offset
@@ -2201,6 +2288,38 @@ func (x *GetCategoriesResp) sizeField1() (n int) {
 	return n
 }
 
+func (x *GetCategoryReq) Size() (n int) {
+	if x == nil {
+		return n
+	}
+	n += x.sizeField1()
+	return n
+}
+
+func (x *GetCategoryReq) sizeField1() (n int) {
+	if x.Id == 0 {
+		return n
+	}
+	n += fastpb.SizeUint32(1, x.GetId())
+	return n
+}
+
+func (x *GetCategoryResp) Size() (n int) {
+	if x == nil {
+		return n
+	}
+	n += x.sizeField1()
+	return n
+}
+
+func (x *GetCategoryResp) sizeField1() (n int) {
+	if x.Category == nil {
+		return n
+	}
+	n += fastpb.SizeMessage(1, x.GetCategory())
+	return n
+}
+
 func (x *DecrStockReq) Size() (n int) {
 	if x == nil {
 		return n
@@ -2369,6 +2488,14 @@ var fieldIDToName_GetCategoriesReq = map[int32]string{}
 
 var fieldIDToName_GetCategoriesResp = map[int32]string{
 	1: "Categories",
+}
+
+var fieldIDToName_GetCategoryReq = map[int32]string{
+	1: "Id",
+}
+
+var fieldIDToName_GetCategoryResp = map[int32]string{
+	1: "Category",
 }
 
 var fieldIDToName_DecrStockReq = map[int32]string{

@@ -2,7 +2,7 @@ package service
 
 import (
 	"context"
-	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/infra/rpc"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/llm/infra/rpc"
 	rpcproduct "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/product"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 
@@ -10,33 +10,34 @@ import (
 	"github.com/cloudwego/hertz/pkg/app"
 )
 
-type ListProductsService struct {
+type BatchGetProductsService struct {
 	RequestContext *app.RequestContext
 	Context        context.Context
 }
 
-func NewListProductsService(Context context.Context, RequestContext *app.RequestContext) *ListProductsService {
-	return &ListProductsService{RequestContext: RequestContext, Context: Context}
+func NewBatchGetProductsService(Context context.Context, RequestContext *app.RequestContext) *BatchGetProductsService {
+	return &BatchGetProductsService{RequestContext: RequestContext, Context: Context}
 }
 
-func (h *ListProductsService) Run(req *product.ListProductsReq) (resp *product.ListProductsResp, err error) {
+func (h *BatchGetProductsService) Run(req *product.BatchProductsReq) (resp *product.BatchProductsResp, err error) {
 	defer func() {
 		hlog.CtxInfof(h.Context, "req = %+v", req)
 		hlog.CtxInfof(h.Context, "resp = %+v", resp)
 	}()
-	r, err := rpc.ProductClient.ListProducts(h.Context, &rpcproduct.ListProductsReq{
-		CategoryId: req.CategoryId,
+	r, err := rpc.ProductClient.BatchGetProducts(h.Context, &rpcproduct.BatchGetProductsReq{
+		Ids: req.Ids,
 	})
 	if err != nil {
 		return
 	}
-	products := make([]*product.Product, 0, len(r.Products))
+
+	products := map[uint32]*product.Product{}
 	for _, p := range r.Products {
 		categoryNames := make([]string, 0, len(p.Categories))
 		for _, c := range p.Categories {
 			categoryNames = append(categoryNames, c)
 		}
-		products = append(products, &product.Product{
+		products[p.Id] = &product.Product{
 			ProductId:   p.Id,
 			Name:        p.Name,
 			Description: p.Description,
@@ -46,9 +47,9 @@ func (h *ListProductsService) Run(req *product.ListProductsReq) (resp *product.L
 			SpuName:     p.SpuName,
 			Stock:       p.Stock,
 			Categories:  categoryNames,
-		})
+		}
 	}
-	resp = &product.ListProductsResp{
+	resp = &product.BatchProductsResp{
 		Products: products,
 	}
 	return

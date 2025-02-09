@@ -97,6 +97,15 @@ func GetCategories(ctx context.Context, req *product.GetCategoriesReq, callOptio
 	return resp, nil
 }
 
+func GetCategory(ctx context.Context, req *product.GetCategoryReq, callOptions ...callopt.Option) (resp *product.GetCategoryResp, err error) {
+	resp, err = defaultClient.GetCategory(ctx, req, callOptions...)
+	if err != nil {
+		klog.CtxErrorf(ctx, "GetCategory call failed,err =%+v", err)
+		return nil, err
+	}
+	return resp, nil
+}
+
 func DecrStock(ctx context.Context, req *product.DecrStockReq, callOptions ...callopt.Option) (resp *product.DecrStockResp, err error) {
 	resp, err = defaultClient.DecrStock(ctx, req, callOptions...)
 	if err != nil {

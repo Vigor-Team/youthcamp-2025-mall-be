@@ -85,6 +85,13 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		false,
 		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
+	"GetCategory": kitex.NewMethodInfo(
+		getCategoryHandler,
+		newGetCategoryArgs,
+		newGetCategoryResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingUnary),
+	),
 	"DecrStock": kitex.NewMethodInfo(
 		decrStockHandler,
 		newDecrStockArgs,
@@ -1695,6 +1702,159 @@ func (p *GetCategoriesResult) GetResult() interface{} {
 	return p.Success
 }
 
+func getCategoryHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(product.GetCategoryReq)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(product.ProductCatalogService).GetCategory(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *GetCategoryArgs:
+		success, err := handler.(product.ProductCatalogService).GetCategory(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*GetCategoryResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
+	}
+}
+func newGetCategoryArgs() interface{} {
+	return &GetCategoryArgs{}
+}
+
+func newGetCategoryResult() interface{} {
+	return &GetCategoryResult{}
+}
+
+type GetCategoryArgs struct {
+	Req *product.GetCategoryReq
+}
+
+func (p *GetCategoryArgs) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+	if !p.IsSetReq() {
+		p.Req = new(product.GetCategoryReq)
+	}
+	return p.Req.FastRead(buf, _type, number)
+}
+
+func (p *GetCategoryArgs) FastWrite(buf []byte) (n int) {
+	if !p.IsSetReq() {
+		return 0
+	}
+	return p.Req.FastWrite(buf)
+}
+
+func (p *GetCategoryArgs) Size() (n int) {
+	if !p.IsSetReq() {
+		return 0
+	}
+	return p.Req.Size()
+}
+
+func (p *GetCategoryArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *GetCategoryArgs) Unmarshal(in []byte) error {
+	msg := new(product.GetCategoryReq)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var GetCategoryArgs_Req_DEFAULT *product.GetCategoryReq
+
+func (p *GetCategoryArgs) GetReq() *product.GetCategoryReq {
+	if !p.IsSetReq() {
+		return GetCategoryArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *GetCategoryArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *GetCategoryArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type GetCategoryResult struct {
+	Success *product.GetCategoryResp
+}
+
+var GetCategoryResult_Success_DEFAULT *product.GetCategoryResp
+
+func (p *GetCategoryResult) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+	if !p.IsSetSuccess() {
+		p.Success = new(product.GetCategoryResp)
+	}
+	return p.Success.FastRead(buf, _type, number)
+}
+
+func (p *GetCategoryResult) FastWrite(buf []byte) (n int) {
+	if !p.IsSetSuccess() {
+		return 0
+	}
+	return p.Success.FastWrite(buf)
+}
+
+func (p *GetCategoryResult) Size() (n int) {
+	if !p.IsSetSuccess() {
+		return 0
+	}
+	return p.Success.Size()
+}
+
+func (p *GetCategoryResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *GetCategoryResult) Unmarshal(in []byte) error {
+	msg := new(product.GetCategoryResp)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *GetCategoryResult) GetSuccess() *product.GetCategoryResp {
+	if !p.IsSetSuccess() {
+		return GetCategoryResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *GetCategoryResult) SetSuccess(x interface{}) {
+	p.Success = x.(*product.GetCategoryResp)
+}
+
+func (p *GetCategoryResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *GetCategoryResult) GetResult() interface{} {
+	return p.Success
+}
+
 func decrStockHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
 	switch s := arg.(type) {
 	case *streaming.Args:
@@ -2106,6 +2266,16 @@ func (p *kClient) GetCategories(ctx context.Context, Req *product.GetCategoriesR
 	_args.Req = Req
 	var _result GetCategoriesResult
 	if err = p.c.Call(ctx, "GetCategories", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) GetCategory(ctx context.Context, Req *product.GetCategoryReq) (r *product.GetCategoryResp, err error) {
+	var _args GetCategoryArgs
+	_args.Req = Req
+	var _result GetCategoryResult
+	if err = p.c.Call(ctx, "GetCategory", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
