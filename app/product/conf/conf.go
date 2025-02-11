@@ -34,6 +34,7 @@ type Config struct {
 	Env      string
 	Kitex    Kitex    `yaml:"kitex"`
 	MySQL    MySQL    `yaml:"mysql"`
+	ES       ES       `yaml:"es"`
 	Redis    Redis    `yaml:"redis"`
 	Registry Registry `yaml:"registry"`
 	// Centralized Config Server
@@ -42,6 +43,11 @@ type Config struct {
 
 type MySQL struct {
 	DSN string `yaml:"dsn"`
+}
+
+type ES struct {
+	Address  string `yaml:"address"`
+	UserName string `yaml:"username"`
 }
 
 type Redis struct {

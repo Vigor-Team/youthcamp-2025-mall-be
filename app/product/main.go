@@ -15,10 +15,11 @@
 package main
 
 import (
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/infras/redis"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/infras/repository"
 	"net"
 	"strings"
 
-	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/biz/dal"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/conf"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/common/mtl"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/common/serversuite"
@@ -43,7 +44,8 @@ func main() {
 	})
 	mtl.InitTracing(serviceName)
 	mtl.InitMetric(serviceName, conf.GetConf().Kitex.MetricsPort, conf.GetConf().Registry.RegistryAddress[0])
-	dal.Init()
+	repository.Init()
+	redis.Init()
 	opts := kitexInit()
 
 	svr := productcatalogservice.NewServer(new(ProductCatalogServiceImpl), opts...)

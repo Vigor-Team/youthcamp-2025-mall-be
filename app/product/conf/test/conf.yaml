@@ -17,6 +17,10 @@ registry:
 mysql:
   dsn: "%s:%s@tcp(%s:3306)/product?charset=utf8mb4&parseTime=True&loc=Local"
 
+es:
+  address: "http://localhost:9200"
+  username: "elastic"
+
 redis:
   address: "127.0.0.1:6379"
   username: ""

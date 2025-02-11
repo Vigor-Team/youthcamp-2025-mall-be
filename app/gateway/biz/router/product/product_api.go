@@ -17,13 +17,30 @@ import (
 func Register(r *server.Hertz) {
 
 	root := r.Group("/", rootMw()...)
-	root.GET("/categories", append(_listcategoriesMw(), product.ListCategories)...)
-	_categories := root.Group("/categories", _categoriesMw()...)
-	_categories.GET("/:categoryId", append(_getcategoryMw(), product.GetCategory)...)
-	root.GET("/products", append(_listproductsMw(), product.ListProducts)...)
-	root.GET("/search", append(_searchproductsMw(), product.SearchProducts)...)
 	{
-		_products := root.Group("/products", _productsMw()...)
-		_products.GET("/:productId", append(_getproductMw(), product.GetProduct)...)
+		_api := root.Group("/api", _apiMw()...)
+		{
+			_v1 := _api.Group("/v1", _v1Mw()...)
+			_v1.GET("/categories", append(_listcategoriesMw(), product.ListCategories)...)
+			_categories := _v1.Group("/categories", _categoriesMw()...)
+			_categories.GET("/:categoryId", append(_getcategoryMw(), product.GetCategory)...)
+			_v1.GET("/search", append(_searchproductsMw(), product.SearchProducts)...)
+			_v1.GET("/products", append(_listproductsMw(), product.ListProducts)...)
+			_products := _v1.Group("/products", _productsMw()...)
+			_products.GET("/batch", append(_batchgetproductsMw(), product.BatchGetProducts)...)
+			_v1.POST("/products", append(_createproductMw(), product.CreateProduct)...)
+			_products0 := _v1.Group("/products", _products0Mw()...)
+			_products0.DELETE("/:productId", append(_deleteproductMw(), product.DeleteProduct)...)
+			_products0.GET("/:productId", append(_getproductMw(), product.GetProduct)...)
+			_products0.PUT("/:productId", append(_updateproductMw(), product.UpdateProduct)...)
+			_productid := _products0.Group("/:productId", _productidMw()...)
+			_productid.POST("/offline", append(_offlineproductMw(), product.OfflineProduct)...)
+			_productid.POST("/online", append(_onlineproductMw(), product.OnlineProduct)...)
+			{
+				_stock := _productid.Group("/stock", _stockMw()...)
+				_stock.PATCH("/decrease", append(_decreasestockMw(), product.DecreaseStock)...)
+				_stock.PATCH("/increase", append(_increasestockMw(), product.IncreaseStock)...)
+			}
+		}
 	}
 }

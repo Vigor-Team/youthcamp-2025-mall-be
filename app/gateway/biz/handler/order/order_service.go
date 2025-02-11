@@ -42,5 +42,5 @@ func OrderList(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	c.Set("data", resp)
+	utils.SuccessResponse(c, resp)
 }

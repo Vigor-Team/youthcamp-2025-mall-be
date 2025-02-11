@@ -61,3 +61,68 @@ func _searchproductsMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
+
+func _apiMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _v1Mw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _batchgetproductsMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _products0Mw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _createproductMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _deleteproductMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _productidMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _updateproductMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _offlineproductMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _onlineproductMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _stockMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _decreasestockMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _increasestockMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}

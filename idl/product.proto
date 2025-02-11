@@ -4,29 +4,88 @@ package product;
 
 option go_package = "/product";
 
-service ProductCatalogService {
-  rpc ListProducts(ListProductsReq) returns (ListProductsResp) {}
-  rpc GetProduct(GetProductReq) returns (GetProductResp) {}
-  rpc SearchProducts(SearchProductsReq) returns (SearchProductsResp) {}
-//  rpc GetCategories(Empty) returns (Empty) {}
+message Product {
+  uint32 id = 1;
+  string name = 2;
+  string spu_name = 3;
+  string description = 4;
+  string picture = 5;
+  float price = 6;
+  float spu_price = 7;
+  uint32 stock = 8;
+  Status status = 9;
+
+  repeated string categories = 10;
+}
+
+message Category {
+  uint32 id = 1;
+  string name = 2;
+  string description = 3;
+}
+
+enum Status {
+  ONLINE = 0;
+  OFFLINE = 1;
+  DELETED = 2;
+}
+
+message AddProductReq {
+  string name = 1;
+  string spu_name = 2;
+  string description = 3;
+  string picture = 4;
+  float price = 5;
+  float spu_price = 6;
+  uint32 stock = 7;
+  repeated uint32 category_ids = 8;
+}
+
+message AddProductResp {
+  uint32 id = 1;
+}
+
+message UpdateProductReq {
+  uint32 id = 1;
+  string name = 2;
+  string spu_name = 3;
+  string description = 4;
+  string picture = 5;
+  float price = 6;
+  float spu_price = 7;
+  uint32 stock = 8;
+  repeated uint32 category_ids = 9;
+}
+
+message UpdateProductResp {
+}
+
+message DeleteProductReq {
+  uint32 id = 1;
+}
+
+message DeleteProductResp {
+}
+
+message OnlineProductReq {
+  uint32 id = 1;
+}
+
+message OnlineProductResp {
+}
+
+message OfflineProductReq {
+  uint32 id = 1;
+}
+
+message OfflineProductResp {
 }
 
 message ListProductsReq{
   int32 page = 1;
   int64 pageSize = 2;
 
-  string categoryName = 3;
-}
-
-message Product {
-  uint32 id = 1;
-  string name = 2;
-  string description = 3;
-  string picture = 4;
-  float price = 5;
-  uint32 quantity = 6;
-
-  repeated string categories = 7;
+  uint32 category_id = 3;
 }
 
 message ListProductsResp {
@@ -41,6 +100,14 @@ message GetProductResp {
   Product product = 1;
 }
 
+message BatchGetProductsReq {
+  repeated uint32 ids = 1;
+}
+
+message BatchGetProductsResp {
+  map<uint32, Product> products = 1;
+}
+
 message SearchProductsReq {
   string query = 1;
 }
@@ -48,3 +115,52 @@ message SearchProductsReq {
 message SearchProductsResp {
   repeated Product results = 1;
 }
+
+message GetCategoriesReq {
+}
+
+message GetCategoriesResp {
+  repeated Category categories = 1;
+}
+
+message GetCategoryReq {
+  uint32 id = 1;
+}
+
+message GetCategoryResp {
+  Category category = 1;
+}
+
+message DecrStockReq {
+  uint32 id = 1;
+  uint32 decr = 2;
+}
+
+message DecrStockResp {
+}
+
+message IncrStockReq {
+  uint32 id = 1;
+  uint32 incr = 2;
+}
+
+message IncrStockResp {
+}
+
+service ProductCatalogService {
+  rpc AddProduct(AddProductReq) returns (AddProductResp) {}
+  rpc UpdateProduct(UpdateProductReq) returns (UpdateProductResp) {}
+  rpc DeleteProduct(DeleteProductReq) returns (DeleteProductResp) {}
+  rpc OnlineProduct(OnlineProductReq) returns (OnlineProductResp) {}
+  rpc OfflineProduct(OfflineProductReq) returns (OfflineProductResp) {}
+  rpc ListProducts(ListProductsReq) returns (ListProductsResp) {}
+  rpc GetProduct(GetProductReq) returns (GetProductResp) {}
+  rpc BatchGetProducts(BatchGetProductsReq) returns (BatchGetProductsResp) {}
+  rpc SearchProducts(SearchProductsReq) returns (SearchProductsResp) {}
+  rpc GetCategories(GetCategoriesReq) returns (GetCategoriesResp) {}
+  rpc GetCategory(GetCategoryReq) returns (GetCategoryResp) {}
+  rpc DecrStock(DecrStockReq) returns (DecrStockResp) {}
+  rpc IncrStock(IncrStockReq) returns (IncrStockResp) {}
+}
+
+

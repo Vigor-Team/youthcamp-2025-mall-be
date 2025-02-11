@@ -7,32 +7,145 @@ import "gateway/common.proto";
 
 option go_package = "gateway/product";
 
-message GetProductReq {
+message Product {
+  uint32 productId = 1;
+  string name = 2;
+  string spuName = 3;
+  string description = 4;
+  string picture = 5;
+  float price = 6;
+  float spuPrice = 7;
+  uint32 stock = 8;
+  string status = 9;
+  repeated string categories = 10;
+}
+
+message Category {
+  uint32 categoryId = 1;
+  string name = 2;
+  string description = 3;
+}
+
+message CreateProductReq {
+  string name = 1 [(api.body) = "name"];
+  string spuName = 2 [(api.body) = "spu_name"];
+  string description = 3 [(api.body) = "description"];
+  string picture = 4 [(api.body) = "picture"];
+  float price = 5 [(api.body) = "price"];
+  float spuPrice = 6 [(api.body) = "spu_price"];
+  uint32 stock = 7 [(api.body) = "stock"];
+  repeated uint32 categoryIds = 8 [(api.body) = "category_ids"];
+}
+
+message ProductIDReq {
   uint32 productId = 1 [(api.path) = "productId"];
 }
 
-message SearchProductsReq {
-  string q = 1 [(api.query) = "q"];
+message GetProductResp {
+  Product product = 1;
+}
+
+message UpdateProductReq {
+  uint32 productId = 1 [(api.path) = "productId"];
+  string name = 2 [(api.body) = "name"];
+  string spuName = 3 [(api.body) = "spu_name"];
+  string description = 4 [(api.body) = "description"];
+  string picture = 5 [(api.body) = "picture"];
+  float price = 6 [(api.body) = "price"];
+  float spuPrice = 7 [(api.body) = "spu_price"];
+  uint32 stock = 8 [(api.body) = "stock"];
+  repeated uint32 categoryIds = 9 [(api.body) = "category_ids"];
+}
+
+message StockOpReq {
+  uint32 productId = 1 [(api.path) = "productId"];
+  uint32 quantity = 2 [(api.body) = "quantity"];
+}
+
+message ListProductsReq {
+  int32 page = 1 [(api.query) = "page"];
+  int32 pageSize = 2 [(api.query) = "pageSize"];
+  uint32 categoryId = 3 [(api.query) = "categoryId"];
+}
+
+message ListProductsResp {
+  repeated Product products = 1;
+}
+
+message ListCategoriesResp {
+  repeated Category categories = 1;
+}
+
+message BatchProductsReq {
+  repeated uint32 ids = 1 [(api.query) = "ids"];
+}
+
+message BatchProductsResp {
+  map<uint32, Product> products = 1;
+}
+
+message SearchReq {
+  string query = 1 [(api.query) = "q"];
 }
 
 message GetCategoryReq {
   uint32 categoryId = 1 [(api.path) = "categoryId"];
 }
 
+message GetCategoryResp {
+  Category category = 1;
+}
+
 service ProductService {
-  rpc GetProduct(GetProductReq) returns (common.Empty) {
-    option (api.get) = "/products/:productId";
+  rpc CreateProduct(CreateProductReq) returns (common.Empty) {
+    option (api.post) = "/api/v1/products";
   }
-  rpc SearchProducts(SearchProductsReq) returns (common.Empty) {
-    option (api.get) = "/search";
+
+  rpc UpdateProduct(UpdateProductReq) returns (common.Empty) {
+    option (api.put) = "/api/v1/products/:productId";
   }
-  rpc ListProducts(common.Empty) returns (common.Empty) {
-    option (api.get) = "/products";
+
+  rpc DeleteProduct(ProductIDReq) returns (common.Empty) {
+    option (api.delete) = "/api/v1/products/:productId";
   }
-  rpc ListCategories(common.Empty) returns (common.Empty) {
-    option (api.get) = "/categories";
+
+  rpc OnlineProduct(ProductIDReq) returns (common.Empty) {
+    option (api.post) = "/api/v1/products/:productId/online";
   }
-  rpc GetCategory(GetCategoryReq) returns (common.Empty) {
-    option (api.get) = "/categories/:categoryId";
+
+  rpc OfflineProduct(ProductIDReq) returns (common.Empty) {
+    option (api.post) = "/api/v1/products/:productId/offline";
+  }
+
+  rpc DecreaseStock(StockOpReq) returns (common.Empty) {
+    option (api.patch) = "/api/v1/products/:productId/stock/decrease";
+  }
+
+  rpc IncreaseStock(StockOpReq) returns (common.Empty) {
+    option (api.patch) = "/api/v1/products/:productId/stock/increase";
+  }
+
+  rpc GetProduct(ProductIDReq) returns (GetProductResp) {
+    option (api.get) = "/api/v1/products/:productId";
+  }
+
+  rpc ListProducts(ListProductsReq) returns (ListProductsResp) {
+    option (api.get) = "/api/v1/products";
+  }
+
+  rpc BatchGetProducts(BatchProductsReq) returns (BatchProductsResp) {
+    option (api.get) = "/api/v1/products/batch";
+  }
+
+  rpc SearchProducts(SearchReq) returns (ListProductsResp) {
+    option (api.get) = "/api/v1/search";
+  }
+
+  rpc ListCategories(common.Empty) returns (ListCategoriesResp) {
+    option (api.get) = "/api/v1/categories";
+  }
+
+  rpc GetCategory(GetCategoryReq) returns (GetCategoryResp) {
+    option (api.get) = "/api/v1/categories/:categoryId";
   }
 }
