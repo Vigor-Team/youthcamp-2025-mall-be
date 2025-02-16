@@ -1,0 +1,11 @@
+package redis
+
+import "fmt"
+
+func GetProductStockKey(productId uint32) string {
+	return fmt.Sprintf("product:stock:%d", productId)
+}
+
+func GetSeckillTempKey(tempId string) string {
+	return fmt.Sprintf("seckill:temp:%s", tempId)
+}

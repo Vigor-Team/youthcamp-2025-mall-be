@@ -3,9 +3,9 @@ module github.com/Vigor-Team/youthcamp-2025-mall-be/app/order
 go 1.21
 
 replace (
-	github.com/apache/thrift => github.com/apache/thrift v0.13.0
 	github.com/Vigor-Team/youthcamp-2025-mall-be/common => ../../common
 	github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen => ../../rpc_gen
+	github.com/apache/thrift => github.com/apache/thrift v0.13.0
 )
 
 require (
@@ -16,6 +16,7 @@ require (
 	github.com/joho/godotenv v1.5.1
 	github.com/kr/pretty v0.3.1
 	github.com/redis/go-redis/v9 v9.3.1
+	github.com/streadway/amqp v1.1.0
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0
 	gopkg.in/validator.v2 v2.0.1
 	gopkg.in/yaml.v2 v2.4.0
@@ -88,6 +89,7 @@ require (
 	github.com/prometheus/client_model v0.5.0 // indirect
 	github.com/prometheus/common v0.48.0 // indirect
 	github.com/prometheus/procfs v0.12.0 // indirect
+	github.com/rabbitmq/amqp091-go v1.10.0 // indirect
 	github.com/rogpeppe/go-internal v1.12.0 // indirect
 	github.com/stretchr/testify v1.9.0 // indirect
 	github.com/tidwall/gjson v1.17.3 // indirect

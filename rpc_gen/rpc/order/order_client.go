@@ -2,7 +2,6 @@ package order
 
 import (
 	"context"
-
 	order "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/order"
 
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/order/orderservice"
@@ -16,6 +15,9 @@ type RPCClient interface {
 	PlaceOrder(ctx context.Context, Req *order.PlaceOrderReq, callOptions ...callopt.Option) (r *order.PlaceOrderResp, err error)
 	ListOrder(ctx context.Context, Req *order.ListOrderReq, callOptions ...callopt.Option) (r *order.ListOrderResp, err error)
 	MarkOrderPaid(ctx context.Context, Req *order.MarkOrderPaidReq, callOptions ...callopt.Option) (r *order.MarkOrderPaidResp, err error)
+	SeckillPrePlaceOrder(ctx context.Context, Req *order.SeckillPrePlaceOrderReq, callOptions ...callopt.Option) (r *order.SeckillPrePlaceOrderResp, err error)
+	SeckillPlaceOrder(ctx context.Context, Req *order.SeckillPlaceOrderReq, callOptions ...callopt.Option) (r *order.SeckillPlaceOrderResp, err error)
+	QueryOrder(ctx context.Context, Req *order.QueryOrderReq, callOptions ...callopt.Option) (r *order.QueryOrderResp, err error)
 }
 
 func NewRPCClient(dstService string, opts ...client.Option) (RPCClient, error) {
@@ -54,4 +56,16 @@ func (c *clientImpl) ListOrder(ctx context.Context, Req *order.ListOrderReq, cal
 
 func (c *clientImpl) MarkOrderPaid(ctx context.Context, Req *order.MarkOrderPaidReq, callOptions ...callopt.Option) (r *order.MarkOrderPaidResp, err error) {
 	return c.kitexClient.MarkOrderPaid(ctx, Req, callOptions...)
+}
+
+func (c *clientImpl) SeckillPrePlaceOrder(ctx context.Context, Req *order.SeckillPrePlaceOrderReq, callOptions ...callopt.Option) (r *order.SeckillPrePlaceOrderResp, err error) {
+	return c.kitexClient.SeckillPrePlaceOrder(ctx, Req, callOptions...)
+}
+
+func (c *clientImpl) SeckillPlaceOrder(ctx context.Context, Req *order.SeckillPlaceOrderReq, callOptions ...callopt.Option) (r *order.SeckillPlaceOrderResp, err error) {
+	return c.kitexClient.SeckillPlaceOrder(ctx, Req, callOptions...)
+}
+
+func (c *clientImpl) QueryOrder(ctx context.Context, Req *order.QueryOrderReq, callOptions ...callopt.Option) (r *order.QueryOrderResp, err error) {
+	return c.kitexClient.QueryOrder(ctx, Req, callOptions...)
 }

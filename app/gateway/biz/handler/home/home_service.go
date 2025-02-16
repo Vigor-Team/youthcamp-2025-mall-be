@@ -16,7 +16,6 @@ package home
 
 import (
 	"context"
-
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/biz/service"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/biz/utils"
 	common "github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/hertz_gen/gateway/common"
@@ -41,5 +40,6 @@ func Home(ctx context.Context, c *app.RequestContext) {
 		utils.ErrorResponse(c, consts.StatusOK, err.Error())
 		return
 	}
-	c.Set("data", resp)
+
+	utils.SuccessResponse(c, resp)
 }

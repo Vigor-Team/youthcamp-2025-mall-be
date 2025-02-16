@@ -52,16 +52,16 @@ func (o Order) TableName() string {
 	return "order"
 }
 
-func ListOrder(db *gorm.DB, ctx context.Context, userId uint32) (orders []Order, err error) {
+func ListOrder(db *gorm.DB, _ context.Context, userId uint32) (orders []Order, err error) {
 	err = db.Model(&Order{}).Where(&Order{UserId: userId}).Preload("OrderItems").Find(&orders).Error
 	return
 }
 
-func GetOrder(db *gorm.DB, ctx context.Context, userId uint32, orderId string) (order Order, err error) {
+func GetOrder(db *gorm.DB, _ context.Context, userId uint32, orderId string) (order Order, err error) {
 	err = db.Where(&Order{UserId: userId, OrderId: orderId}).First(&order).Error
 	return
 }
 
-func UpdateOrderState(db *gorm.DB, ctx context.Context, userId uint32, orderId string, state OrderState) error {
+func UpdateOrderState(db *gorm.DB, _ context.Context, userId uint32, orderId string, state OrderState) error {
 	return db.Model(&Order{}).Where(&Order{UserId: userId, OrderId: orderId}).Update("order_state", state).Error
 }
