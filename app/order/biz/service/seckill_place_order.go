@@ -20,18 +20,18 @@ func NewSeckillPlaceOrderService(ctx context.Context) *SeckillPlaceOrderService 
 // Run create note info
 func (s *SeckillPlaceOrderService) Run(req *order.SeckillPlaceOrderReq) (resp *order.SeckillPlaceOrderResp, err error) {
 	tempId := req.TempId
-	tempMeta, err := validateTempId(s.ctx, tempId)
+	tempMeta, err := validateTempId(s.ctx, tempId, req.UserId)
 	productId, err := strconv.ParseUint(tempMeta["product_id"], 10, 32)
 	if err != nil {
 		return nil, err
 	}
-	orderId, err := redis.NextId(s.ctx, "order_id")
+	orderId, err := redis.NextId(s.ctx, redis.OrderNode)
 	if err != nil {
 		return nil, err
 	}
 	producer := mq.NewProducer(mq.Client)
 	msg := mq.OrderMessage{
-		TempID:       tempId,
+		TempID:       strconv.Itoa(int(tempId)),
 		OrderId:      orderId,
 		UserCurrency: req.UserCurrency,
 		ProductId:    uint32(productId),
@@ -55,18 +55,17 @@ func (s *SeckillPlaceOrderService) Run(req *order.SeckillPlaceOrderReq) (resp *o
 	return
 }
 
-func validateTempId(ctx context.Context, tempId string) (map[string]string, error) {
-	if tempId == "" {
-		return nil, errors.New("invalid tempId")
+func validateTempId(ctx context.Context, tempId, userId uint32) (map[string]string, error) {
+	if tempId == 0 || userId == 0 {
+		return nil, errors.New("invalid param")
 	}
-	tempIdKey := redis.GetSeckillTempKey(tempId)
-	tempIdInfo, err := redis.RedisClient.HGetAll(ctx, tempIdKey).Result()
+	productOrderKey := redis.GetProductOrderKey(userId)
+	tempIdInfo, err := redis.RedisClient.HGetAll(ctx, productOrderKey).Result()
 	if err != nil || len(tempIdInfo) == 0 {
 		return nil, errors.New("invalid tempId")
 	}
 	if tempIdInfo["status"] != "pre_held" {
 		return nil, errors.New("status error")
 	}
-	redis.RedisClient.Del(ctx, tempIdKey)
 	return tempIdInfo, nil
 }

@@ -69,7 +69,7 @@ ReadFieldError:
 }
 
 func (x *SeckillPrePlaceOrderResp) fastReadField1(buf []byte, _type int8) (offset int, err error) {
-	x.TempId, offset, err = fastpb.ReadString(buf, _type)
+	x.TempId, offset, err = fastpb.ReadUint32(buf, _type)
 	return offset, err
 }
 
@@ -139,7 +139,7 @@ func (x *SeckillPlaceOrderReq) fastReadField4(buf []byte, _type int8) (offset in
 }
 
 func (x *SeckillPlaceOrderReq) fastReadField5(buf []byte, _type int8) (offset int, err error) {
-	x.TempId, offset, err = fastpb.ReadString(buf, _type)
+	x.TempId, offset, err = fastpb.ReadUint32(buf, _type)
 	return offset, err
 }
 
@@ -745,10 +745,10 @@ func (x *SeckillPrePlaceOrderResp) FastWrite(buf []byte) (offset int) {
 }
 
 func (x *SeckillPrePlaceOrderResp) fastWriteField1(buf []byte) (offset int) {
-	if x.TempId == "" {
+	if x.TempId == 0 {
 		return offset
 	}
-	offset += fastpb.WriteString(buf[offset:], 1, x.GetTempId())
+	offset += fastpb.WriteUint32(buf[offset:], 1, x.GetTempId())
 	return offset
 }
 
@@ -797,10 +797,10 @@ func (x *SeckillPlaceOrderReq) fastWriteField4(buf []byte) (offset int) {
 }
 
 func (x *SeckillPlaceOrderReq) fastWriteField5(buf []byte) (offset int) {
-	if x.TempId == "" {
+	if x.TempId == 0 {
 		return offset
 	}
-	offset += fastpb.WriteString(buf[offset:], 5, x.GetTempId())
+	offset += fastpb.WriteUint32(buf[offset:], 5, x.GetTempId())
 	return offset
 }
 
@@ -1232,10 +1232,10 @@ func (x *SeckillPrePlaceOrderResp) Size() (n int) {
 }
 
 func (x *SeckillPrePlaceOrderResp) sizeField1() (n int) {
-	if x.TempId == "" {
+	if x.TempId == 0 {
 		return n
 	}
-	n += fastpb.SizeString(1, x.GetTempId())
+	n += fastpb.SizeUint32(1, x.GetTempId())
 	return n
 }
 
@@ -1284,10 +1284,10 @@ func (x *SeckillPlaceOrderReq) sizeField4() (n int) {
 }
 
 func (x *SeckillPlaceOrderReq) sizeField5() (n int) {
-	if x.TempId == "" {
+	if x.TempId == 0 {
 		return n
 	}
-	n += fastpb.SizeString(5, x.GetTempId())
+	n += fastpb.SizeUint32(5, x.GetTempId())
 	return n
 }
 

@@ -1,32 +1,32 @@
-local product_key = KEYS[1]
-local temp_key = KEYS[2]
+local product_stock_key = KEYS[1]
+local product_order_key = KEYS[2]
 
 local user_id = ARGV[1]
 local product_id = ARGV[2]
-local expire_seconds = ARGV[3]
+local pre_order_id = ARGV[3]
+local expire_seconds = ARGV[4]
 
-
-if redis.call('SISMEMBER', product_key, user_id) == 1 then
+if redis.call('EXISTS', product_order_key) == 1 then
     return {err='DUPLICATE_USER'}
 end
 
-local stock = redis.call('GET', product_key)
+local stock = redis.call('GET', product_stock_key)
 if not stock or tonumber(stock) <= 0 then
     return {err='OUT_OF_STOCK'}
 end
 
-local remaining_stock = redis.call('DECRBY', product_key, 1)
+local remaining_stock = redis.call('DECRBY', product_stock_key, 1)
 
 if remaining_stock < 0 then
-    redis.call('INCRBY', product_key, 1)
+    redis.call('INCRBY', product_stock_key, 1)
     return {err='OUT_OF_STOCK'}
 end
 
-redis.call('HSET', temp_key,
+redis.call('HSET', product_order_key,
         'user_id', user_id,
         'product_id', product_id,
+        'pre_order_id', pre_order_id,
         'status', 'pre_held'
 )
-redis.call('EXPIRE', temp_key, expire_seconds)
 
 return remaining_stock

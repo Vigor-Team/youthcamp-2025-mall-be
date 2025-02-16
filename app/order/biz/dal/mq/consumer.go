@@ -74,7 +74,7 @@ func (c *Consumer) ConsumeOrders(ctx context.Context, handler func(context.Conte
 }
 
 func (c *Consumer) ConsumeDelay(ctx context.Context, handler func(context.Context, DelayMessage) error) error {
-	return c.consume(ctx, DelayQueue, func(d amqp.Delivery) error {
+	return c.consume(ctx, DLXQueue, func(d amqp.Delivery) error {
 		var msg DelayMessage
 		if err := sonic.Unmarshal(d.Body, &msg); err != nil {
 			return fmt.Errorf("延迟消息解析失败: %w", err)

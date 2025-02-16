@@ -10,6 +10,6 @@ func GetProductStockKey(productId uint32) string {
 	return fmt.Sprintf("product:stock:%d", productId)
 }
 
-func GetSeckillTempKey(tempId string) string {
-	return fmt.Sprintf("seckill:%s", tempId)
+func GetProductOrderKey(productId uint32) string {
+	return fmt.Sprintf("product:order:%d", productId)
 }

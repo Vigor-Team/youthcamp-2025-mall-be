@@ -40,11 +40,10 @@ func (p *Producer) PublishDelay(ctx context.Context, msg DelayMessage, delay tim
 		return err
 	}
 
-	headers := amqp.Table{
-		"x-delay": delay.Milliseconds(),
-	}
-
-	return p.publish(ctx, MainExchange, "delay", body, headers)
+	//headers := amqp.Table{
+	//	"x-delay": delay.Milliseconds(),
+	//}
+	return p.publish(ctx, MainExchange, "delay", body, nil)
 }
 
 func (p *Producer) publish(ctx context.Context, exchange, key string, body []byte, headers amqp.Table) error {

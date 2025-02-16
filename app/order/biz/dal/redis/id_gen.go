@@ -2,27 +2,36 @@ package redis
 
 import (
 	"context"
-	"fmt"
-	"time"
+	"github.com/bwmarrin/snowflake"
 )
 
-const (
-	BEGIN_TIMESTAMP = 1720876200
-	COUNT_BITS      = 32
+var (
+	OrderNode    *snowflake.Node
+	PreOrderNode *snowflake.Node
 )
 
-func NextId(ctx context.Context, keyPrefix string) (uint32, error) {
-	now := time.Now()
-	timeStamp := now.Unix() - BEGIN_TIMESTAMP
-
-	date := now.Format("2006:01:02")
-
-	key := fmt.Sprintf("icr:%s:%s", keyPrefix, date)
-	count, err := RedisClient.Incr(ctx, key).Result()
-	if err != nil {
-		return 0, fmt.Errorf("failed to increment redis key: %v", err)
+func InitSnowflake() error {
+	if OrderNode == nil {
+		node, err := snowflake.NewNode(111)
+		if err != nil {
+			return err
+		}
+		OrderNode = node
 	}
 
-	id := (timeStamp << COUNT_BITS) | count
-	return uint32(id), nil
+	if PreOrderNode == nil {
+		node, err := snowflake.NewNode(222)
+		if err != nil {
+			return err
+		}
+		PreOrderNode = node
+	}
+
+	return nil
+}
+
+func NextId(_ context.Context, node *snowflake.Node) (uint32, error) {
+	id := node.Generate()
+
+	return uint32(id.Int64() & 0xFFFFFFFF), nil
 }

@@ -17,8 +17,9 @@ import (
 )
 
 func handlePreOrder(ctx context.Context, msg PreOrderMessage) error {
+	// get distributed lock
 	key := redis.GetSeckillTempLockKey(msg.TempID)
-	if success := redis.TryLock(ctx, key, 10); !success {
+	if success := redis.TryLock(ctx, key, 20*time.Second); !success {
 		return errors.New("get lock failed")
 	}
 	defer func(ctx context.Context, lockKey string) {
@@ -28,13 +29,14 @@ func handlePreOrder(ctx context.Context, msg PreOrderMessage) error {
 		}
 	}(ctx, key)
 
+	// add preorder
 	id, err := strconv.Atoi(msg.TempID)
 	if err != nil {
 		return err
 	}
 	if err = model.AddPreOrder(mysql.DB, ctx, &model.PreOrder{
 		Base: model.Base{
-			ID:        id,
+			ID:        uint32(id),
 			CreatedAt: time.Now(),
 			UpdatedAt: time.Now(),
 		},
@@ -46,13 +48,14 @@ func handlePreOrder(ctx context.Context, msg PreOrderMessage) error {
 		return errors.New("add pre order failed")
 	}
 
+	// publish delay message
 	producer := NewProducer(Client)
 	delayMsg := DelayMessage{
 		TempID:     msg.TempID,
 		CreatedAt:  time.Now().Unix(),
 		ExpectedAt: time.Now().Add(10 * time.Minute).Unix(),
 	}
-	if err = producer.PublishDelay(ctx, delayMsg, 10*time.Minute); err != nil {
+	if err = producer.PublishDelay(ctx, delayMsg, 1*time.Second); err != nil {
 		return errors.New("publish delay message failed")
 	}
 	return nil
@@ -83,7 +86,7 @@ func handleOrder(ctx context.Context, msg OrderMessage) error {
 
 	// update pre order
 	if err := tx.Model(&model.PreOrder{}).Where("id = ?", msg.OrderId).Update("status", "completed").Error; err != nil {
-		return fmt.Errorf("update pre order failed: %w", err)
+		return fmt.Errorf("update pre order failed: %v", err)
 	}
 
 	// decrease product stock
@@ -92,7 +95,7 @@ func handleOrder(ctx context.Context, msg OrderMessage) error {
 		Decr: 1,
 	})
 	if err != nil {
-		return fmt.Errorf("decrease product stock failed: %w", err)
+		return fmt.Errorf("decrease product stock failed: %v", err)
 	}
 
 	// create order
@@ -121,16 +124,16 @@ func handleOrder(ctx context.Context, msg OrderMessage) error {
 		return err
 	}
 
-	// delete redis temp key
-	tempKey := redis.GetSeckillTempKey(msg.TempID)
-	err = redis.RedisClient.Del(ctx, tempKey).Err()
+	// delete redis key
+	productOrderKey := redis.GetProductOrderKey(msg.ProductId)
+	err = redis.RedisClient.Del(ctx, productOrderKey).Err()
 	if err != nil {
-		return fmt.Errorf("delete temp key failed: %w", err)
+		return fmt.Errorf("delete product order failed: %v", err)
 	}
 
 	// commit transaction
 	if err := tx.Commit().Error; err != nil {
-		return fmt.Errorf("commit transaction fail: %w", err)
+		return fmt.Errorf("commit transaction fail: %v", err)
 	}
 	return nil
 }
@@ -160,8 +163,18 @@ func handleDelayOrder(ctx context.Context, msg DelayMessage) error {
 
 	// 查询pre_order表
 	var preOrder model.PreOrder
-	if err := mysql.DB.Where("id = ?", msg.TempID).First(&preOrder); err != nil {
-		return fmt.Errorf("get pre order failed: %w", err)
+	if err := mysql.DB.Where("id = ?", msg.TempID).First(&preOrder).Error; err != nil {
+		return fmt.Errorf("get pre order failed: %v", err)
+	}
+
+	// 更新预占状态
+	if err := tx.Model(&model.PreOrder{}).Where("id = ?", msg.TempID).Update("status", "cancelled").Error; err != nil {
+		return fmt.Errorf("update pre order failed: %v", err)
+	}
+
+	// 更新订单状态
+	if err := tx.Model(&model.Order{}).Where("pre_order_id = ?", msg.TempID).Update("order_state", model.OrderStateCanceled).Error; err != nil {
+		return fmt.Errorf("update order failed: %v", err)
 	}
 
 	// 恢复库存
@@ -170,32 +183,22 @@ func handleDelayOrder(ctx context.Context, msg DelayMessage) error {
 		Incr: 1,
 	})
 	if err != nil {
-		return fmt.Errorf("increase product stock failed: %w", err)
-	}
-
-	// 更新预占状态
-	if err := tx.Model(&model.PreOrder{}).Where("id = ?", msg.TempID).Update("status", "cancelled").Error; err != nil {
-		return fmt.Errorf("update pre order failed: %w", err)
-	}
-
-	// 更新订单状态
-	if err := tx.Model(&model.Order{}).Where("pre_order_id = ?", msg.TempID).Update("order_state", model.OrderStateCanceled).Error; err != nil {
-		return fmt.Errorf("update order failed: %w", err)
+		return fmt.Errorf("increase product stock failed: %v", err)
 	}
 
 	// 回滚redis
-	tempKey := redis.GetSeckillTempKey(msg.TempID)
-	if err = redis.RedisClient.Del(ctx, tempKey).Err(); err != nil {
-		return fmt.Errorf("delete temp key failed: %w", err)
+	productOrderKey := redis.GetProductOrderKey(msg.ProductID)
+	if err = redis.RedisClient.Del(ctx, productOrderKey).Err(); err != nil {
+		return fmt.Errorf("delete product order key failed: %v", err)
 	}
 
 	if err = redis.RedisClient.Incr(ctx, redis.GetProductStockKey(msg.ProductID)).Err(); err != nil {
-		return fmt.Errorf("increase product stock failed: %w", err)
+		return fmt.Errorf("increase product stock failed: %v", err)
 	}
 
 	// 提交事务
 	if err := tx.Commit().Error; err != nil {
-		return fmt.Errorf("commit transaction fail: %w", err)
+		return fmt.Errorf("commit transaction fail: %v", err)
 	}
 
 	return nil

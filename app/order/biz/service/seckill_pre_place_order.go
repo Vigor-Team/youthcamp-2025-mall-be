@@ -15,6 +15,7 @@ import (
 type SeckillPrePlaceOrderService struct {
 	ctx context.Context
 } // NewSeckillPrePlaceOrderService new SeckillPrePlaceOrderService
+
 func NewSeckillPrePlaceOrderService(ctx context.Context) *SeckillPrePlaceOrderService {
 	return &SeckillPrePlaceOrderService{ctx: ctx}
 }
@@ -29,24 +30,25 @@ func (s *SeckillPrePlaceOrderService) Run(req *order.SeckillPrePlaceOrderReq) (r
 
 	// todo 限流检查
 
-	script, err := script.GetPreSeckillScript()
+	seckillScript, err := script.GetPreSeckillScript()
 	if err != nil {
 		return nil, err
 	}
 
-	// todo 生成tempId 分布式id
-	preOrderId, err := redis.NextId(s.ctx, "pre_order_id")
+	preOrderId, err := redis.NextId(s.ctx, redis.PreOrderNode)
+	fmt.Println("preOrderId: ", preOrderId)
 
 	productStockKey := redis.GetProductStockKey(productId)
-	tempKey := redis.GetSeckillTempKey(strconv.Itoa(int(preOrderId)))
+	productOrderKey := redis.GetProductOrderKey(productId)
 
 	// todo 临时过期时间
 	expireSeconds := 10 * 60
 
-	result, err := redis.RedisClient.Eval(s.ctx, script, []string{productStockKey, tempKey}, userId, productId, expireSeconds).Result()
+	result, err := redis.RedisClient.Eval(s.ctx, seckillScript, []string{productStockKey, productOrderKey}, userId, productId, preOrderId, expireSeconds).Result()
 	if err != nil {
 		return nil, err
 	}
+	fmt.Println("result: ", result)
 
 	if resultMap, ok := result.(map[string]interface{}); ok {
 		if errMsg, exists := resultMap["err"]; exists {
@@ -57,22 +59,22 @@ func (s *SeckillPrePlaceOrderService) Run(req *order.SeckillPrePlaceOrderReq) (r
 				return nil, kerrors.NewBizStatusError(2, "please do not repeat the operation")
 			}
 		}
-		// todo 发送预占消息到 RabbitMQ，失败则回滚
-		producer := mq.NewProducer(mq.Client)
-		msg := mq.PreOrderMessage{
-			TempID:    strconv.Itoa(int(preOrderId)),
-			UserID:    userId,
-			ProductID: productId,
-			Timestamp: time.Now().Unix(),
-		}
-		if err := producer.PublishPreOrder(s.ctx, msg); err != nil {
-			// todo 回滚
-			return nil, err
-		}
-
-		resp = &order.SeckillPrePlaceOrderResp{
-			TempId: strconv.Itoa(int(preOrderId)),
-		}
 	}
-	return nil, kerrors.NewBizStatusError(3, "system error")
+
+	producer := mq.NewProducer(mq.Client)
+	msg := mq.PreOrderMessage{
+		TempID:    strconv.Itoa(int(preOrderId)),
+		UserID:    userId,
+		ProductID: productId,
+		Timestamp: time.Now().Unix(),
+	}
+	if err := producer.PublishPreOrder(s.ctx, msg); err != nil {
+		// todo 回滚
+		return nil, err
+	}
+
+	resp = &order.SeckillPrePlaceOrderResp{
+		TempId: preOrderId,
+	}
+	return
 }
