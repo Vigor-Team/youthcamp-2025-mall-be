@@ -2,10 +2,14 @@ package redis
 
 import "fmt"
 
+func GetSeckillTempLockKey(tempId string) string {
+	return fmt.Sprintf("seckill:lock:%s", tempId)
+}
+
 func GetProductStockKey(productId uint32) string {
 	return fmt.Sprintf("product:stock:%d", productId)
 }
 
 func GetSeckillTempKey(tempId string) string {
-	return fmt.Sprintf("seckill:temp:%s", tempId)
+	return fmt.Sprintf("seckill:%s", tempId)
 }

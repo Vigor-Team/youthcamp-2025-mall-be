@@ -40,9 +40,10 @@ const (
 
 type Order struct {
 	Base
-	OrderId      string `gorm:"uniqueIndex;size:256"`
-	UserId       uint32
-	UserCurrency string
+	OrderId      string      `gorm:"uniqueIndex;size:256"`
+	PreOrderId   string      `json:"pre_order_id" gorm:"size:256"`
+	UserId       uint32      `json:"user_id"`
+	UserCurrency string      `json:"user_currency"`
 	Consignee    Consignee   `gorm:"embedded"`
 	OrderItems   []OrderItem `gorm:"foreignKey:OrderIdRefer;references:OrderId"`
 	OrderState   OrderState

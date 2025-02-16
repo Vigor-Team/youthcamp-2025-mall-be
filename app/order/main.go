@@ -15,6 +15,7 @@
 package main
 
 import (
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/infra/rpc"
 	"net"
 	"strings"
 
@@ -35,6 +36,7 @@ var serviceName = conf.GetConf().Kitex.Service
 
 func main() {
 	_ = godotenv.Load()
+	rpc.InitClient()
 	mtl.InitLog(&lumberjack.Logger{
 		Filename:   conf.GetConf().Kitex.LogFileName,
 		MaxSize:    conf.GetConf().Kitex.LogMaxSize,

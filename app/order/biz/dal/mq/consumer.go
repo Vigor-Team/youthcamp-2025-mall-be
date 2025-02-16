@@ -20,14 +20,27 @@ func NewConsumer(client *RabbitClient, prefetch int) *Consumer {
 	}
 }
 
-func (c *Consumer) ConsumePreOrders(ctx context.Context, handler func(PreOrderMessage) error) error {
+func StartConsumer(ctx context.Context, client *RabbitClient, prefetch int) {
+	consumer := NewConsumer(client, prefetch)
+	if err := consumer.ConsumePreOrders(ctx, handlePreOrder); err != nil {
+		log.Printf("消费预占消息失败: %v", err)
+	}
+	if err := consumer.ConsumeOrders(ctx, handleOrder); err != nil {
+		log.Printf("消费订单消息失败: %v", err)
+	}
+	if err := consumer.ConsumeDelay(ctx, handleDelayOrder); err != nil {
+		log.Printf("消费延迟消息失败: %v", err)
+	}
+}
+
+func (c *Consumer) ConsumePreOrders(ctx context.Context, handler func(context.Context, PreOrderMessage) error) error {
 	return c.consume(ctx, PreOrderQueue, func(d amqp.Delivery) error {
 		var msg PreOrderMessage
 		if err := sonic.Unmarshal(d.Body, &msg); err != nil {
 			return fmt.Errorf("消息解析失败: %w", err)
 		}
 
-		if err := handler(msg); err != nil {
+		if err := handler(ctx, msg); err != nil {
 			// 业务处理失败，重新入队
 			d.Nack(false, true)
 			return err
@@ -37,7 +50,7 @@ func (c *Consumer) ConsumePreOrders(ctx context.Context, handler func(PreOrderMe
 	})
 }
 
-func (c *Consumer) ConsumeOrders(ctx context.Context, handler func(OrderMessage) error) error {
+func (c *Consumer) ConsumeOrders(ctx context.Context, handler func(context.Context, OrderMessage) error) error {
 	return c.consume(ctx, OrderQueue, func(d amqp.Delivery) error {
 		var msg OrderMessage
 		if err := sonic.Unmarshal(d.Body, &msg); err != nil {
@@ -45,7 +58,7 @@ func (c *Consumer) ConsumeOrders(ctx context.Context, handler func(OrderMessage)
 			return fmt.Errorf("订单消息解析失败: %w", err)
 		}
 
-		if err := handler(msg); err != nil {
+		if err := handler(ctx, msg); err != nil {
 			//if errors.Is(err, ErrTransient) {
 			//	d.Nack(false, true)
 			//} else {
@@ -60,14 +73,14 @@ func (c *Consumer) ConsumeOrders(ctx context.Context, handler func(OrderMessage)
 	})
 }
 
-func (c *Consumer) ConsumeDelay(ctx context.Context, handler func(DelayMessage) error) error {
+func (c *Consumer) ConsumeDelay(ctx context.Context, handler func(context.Context, DelayMessage) error) error {
 	return c.consume(ctx, DelayQueue, func(d amqp.Delivery) error {
 		var msg DelayMessage
 		if err := sonic.Unmarshal(d.Body, &msg); err != nil {
 			return fmt.Errorf("延迟消息解析失败: %w", err)
 		}
 
-		if err := handler(msg); err != nil {
+		if err := handler(ctx, msg); err != nil {
 			log.Printf("处理延迟消息失败: %v", err)
 			d.Nack(false, false)
 			return err

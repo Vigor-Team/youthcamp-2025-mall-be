@@ -8,7 +8,7 @@ import (
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/biz/dal/redis/script"
 	order "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/order"
 	"github.com/cloudwego/kitex/pkg/kerrors"
-	"github.com/google/uuid"
+	"strconv"
 	"time"
 )
 
@@ -35,10 +35,10 @@ func (s *SeckillPrePlaceOrderService) Run(req *order.SeckillPrePlaceOrderReq) (r
 	}
 
 	// todo 生成tempId 分布式id
-	tempId := uuid.New().String()
+	preOrderId, err := redis.NextId(s.ctx, "pre_order_id")
 
 	productStockKey := redis.GetProductStockKey(productId)
-	tempKey := redis.GetSeckillTempKey(tempId)
+	tempKey := redis.GetSeckillTempKey(strconv.Itoa(int(preOrderId)))
 
 	// todo 临时过期时间
 	expireSeconds := 10 * 60
@@ -60,7 +60,7 @@ func (s *SeckillPrePlaceOrderService) Run(req *order.SeckillPrePlaceOrderReq) (r
 		// todo 发送预占消息到 RabbitMQ，失败则回滚
 		producer := mq.NewProducer(mq.Client)
 		msg := mq.PreOrderMessage{
-			TempID:    tempId,
+			TempID:    strconv.Itoa(int(preOrderId)),
 			UserID:    userId,
 			ProductID: productId,
 			Timestamp: time.Now().Unix(),
@@ -71,7 +71,7 @@ func (s *SeckillPrePlaceOrderService) Run(req *order.SeckillPrePlaceOrderReq) (r
 		}
 
 		resp = &order.SeckillPrePlaceOrderResp{
-			TempId: tempId,
+			TempId: strconv.Itoa(int(preOrderId)),
 		}
 	}
 	return nil, kerrors.NewBizStatusError(3, "system error")

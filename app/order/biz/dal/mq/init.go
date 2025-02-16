@@ -1,5 +1,7 @@
 package mq
 
+import "context"
+
 var Client *RabbitClient
 
 func Init() {
@@ -13,4 +15,6 @@ func Init() {
 	if err := qm.SetupQueues(); err != nil {
 		panic(err)
 	}
+
+	StartConsumer(context.Background(), Client, 10)
 }

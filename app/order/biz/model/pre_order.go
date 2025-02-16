@@ -1,16 +1,23 @@
 package model
 
-import "time"
+import (
+	"context"
+	"gorm.io/gorm"
+	"time"
+)
 
 type PreOrder struct {
 	Base
-	TempId    string `gorm:"uniqueIndex;size:256"`
 	ProductId uint32
 	UserId    uint32
-	ExpiredAt time.Time
 	Status    string
+	ExpiredAt time.Time
 }
 
 func (po PreOrder) TableName() string {
 	return "pre_order"
+}
+
+func AddPreOrder(db *gorm.DB, ctx context.Context, po *PreOrder) error {
+	return db.Model(&PreOrder{}).Create(po).Error
 }
