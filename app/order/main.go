@@ -15,6 +15,7 @@
 package main
 
 import (
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/biz/dal/redis"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/infra/rpc"
 	"net"
 	"strings"
@@ -46,6 +47,7 @@ func main() {
 	mtl.InitTracing(serviceName)
 	mtl.InitMetric(serviceName, conf.GetConf().Kitex.MetricsPort, conf.GetConf().Registry.RegistryAddress[0])
 	dal.Init()
+	_ = redis.InitSnowflake()
 	opts := kitexInit()
 
 	svr := orderservice.NewServer(new(OrderServiceImpl), opts...)
