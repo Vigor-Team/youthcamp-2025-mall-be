@@ -32,6 +32,5 @@ func InitSnowflake() error {
 
 func NextId(_ context.Context, node *snowflake.Node) (uint32, error) {
 	id := node.Generate()
-
 	return uint32(id.Int64() & 0xFFFFFFFF), nil
 }

@@ -78,7 +78,7 @@ func (qm *QueueManager) SetupQueues() error {
 		amqp.Table{
 			"x-dead-letter-exchange":    DLXExchange,
 			"x-dead-letter-routing-key": "order_timeout",
-			"x-message-ttl":             int32(10000), // 10s
+			"x-message-ttl":             int32(600000),
 		},
 	); err != nil {
 		return fmt.Errorf("声明中间队列失败: %w", err)
@@ -115,7 +115,7 @@ func (qm *QueueManager) SetupQueues() error {
 		Exchange string
 	}{
 		{PreOrderQueue, "pre_order", MainExchange},
-		{OrderQueue, "create_order", MainExchange},
+		{OrderQueue, "order_create", MainExchange},
 		{DelayQueue, "delay", MainExchange},
 		{DLXQueue, "order_timeout", DLXExchange},
 	}

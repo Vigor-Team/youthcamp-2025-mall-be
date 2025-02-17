@@ -62,8 +62,9 @@ func handlePreOrder(ctx context.Context, msg PreOrderMessage) error {
 }
 
 func handleOrder(ctx context.Context, msg OrderMessage) error {
+	// get distributed lock
 	key := redis.GetSeckillTempLockKey(msg.TempID)
-	if success := redis.TryLock(ctx, key, 10); !success {
+	if success := redis.TryLock(ctx, key, 20*time.Second); !success {
 		return errors.New("get lock failed")
 	}
 	defer func(ctx context.Context, lockKey string) {
@@ -73,19 +74,18 @@ func handleOrder(ctx context.Context, msg OrderMessage) error {
 		}
 	}(ctx, key)
 
+	// check order exists
 	_, err := model.GetOrder(mysql.DB, ctx, msg.UserID, strconv.Itoa(int(msg.OrderId)))
-	if err != nil {
-		return err
-	}
 	if !errors.Is(err, gorm.ErrRecordNotFound) {
 		return errors.New("order already exists")
 	}
 
+	// start transaction
 	tx := mysql.DB.Begin(&sql.TxOptions{Isolation: sql.LevelRepeatableRead})
 	defer tx.Rollback()
 
 	// update pre order
-	if err := tx.Model(&model.PreOrder{}).Where("id = ?", msg.OrderId).Update("status", "completed").Error; err != nil {
+	if err := tx.Model(&model.PreOrder{}).Where("id = ?", msg.TempID).Update("status", "completed").Update("order_id", msg.OrderId).Error; err != nil {
 		return fmt.Errorf("update pre order failed: %v", err)
 	}
 
@@ -113,6 +113,11 @@ func handleOrder(ctx context.Context, msg OrderMessage) error {
 			ZipCode:       msg.Consignee.ZipCode,
 		},
 	}
+	if err := tx.Create(o).Error; err != nil {
+		return err
+	}
+
+	// create order item
 	var itemList []*model.OrderItem
 	itemList = append(itemList, &model.OrderItem{
 		OrderIdRefer: o.OrderId,
@@ -139,6 +144,7 @@ func handleOrder(ctx context.Context, msg OrderMessage) error {
 }
 
 func handleDelayOrder(ctx context.Context, msg DelayMessage) error {
+	// get distributed lock
 	key := redis.GetSeckillTempLockKey(msg.TempID)
 	if success := redis.TryLock(ctx, key, 10); !success {
 		return errors.New("get lock failed")
@@ -188,8 +194,8 @@ func handleDelayOrder(ctx context.Context, msg DelayMessage) error {
 
 	// 回滚redis
 	productOrderKey := redis.GetProductOrderKey(msg.ProductID)
-	if err = redis.RedisClient.Del(ctx, productOrderKey).Err(); err != nil {
-		return fmt.Errorf("delete product order key failed: %v", err)
+	if err = redis.RedisClient.SRem(ctx, productOrderKey, msg.UserID).Err(); err != nil {
+		return fmt.Errorf("delete user buy record failed: %v", err)
 	}
 
 	if err = redis.RedisClient.Incr(ctx, redis.GetProductStockKey(msg.ProductID)).Err(); err != nil {

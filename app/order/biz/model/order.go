@@ -21,13 +21,13 @@ import (
 )
 
 type Consignee struct {
-	Email string
+	Email string `json:"email"`
 
-	StreetAddress string
-	City          string
-	State         string
-	Country       string
-	ZipCode       int32
+	StreetAddress string `json:"street_address"`
+	City          string `json:"city"`
+	State         string `json:"state"`
+	Country       string `json:"country"`
+	ZipCode       int32  `json:"zip_code"`
 }
 
 type OrderState string

@@ -8,10 +8,11 @@ import (
 
 type PreOrder struct {
 	Base
-	ProductId uint32
-	UserId    uint32
-	Status    string
-	ExpiredAt time.Time
+	ProductId uint32    `json:"product_id"`
+	UserId    uint32    `json:"user_id"`
+	OrderID   uint32    `json:"order_id"`
+	Status    string    `json:"status"`
+	ExpiredAt time.Time `json:"expired_at"`
 }
 
 func (po PreOrder) TableName() string {

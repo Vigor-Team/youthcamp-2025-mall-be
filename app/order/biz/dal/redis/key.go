@@ -13,3 +13,7 @@ func GetProductStockKey(productId uint32) string {
 func GetProductOrderKey(productId uint32) string {
 	return fmt.Sprintf("product:order:%d", productId)
 }
+
+func GetOrderPreOrderKey(preOrderID uint32) string {
+	return fmt.Sprintf("order:pre_order:%d", preOrderID)
+}

@@ -31,7 +31,7 @@ func (p *Producer) PublishOrder(ctx context.Context, msg OrderMessage) error {
 		return err
 	}
 
-	return p.publish(ctx, MainExchange, "creat_order", body, nil)
+	return p.publish(ctx, MainExchange, "order_create", body, nil)
 }
 
 func (p *Producer) PublishDelay(ctx context.Context, msg DelayMessage, delay time.Duration) error {

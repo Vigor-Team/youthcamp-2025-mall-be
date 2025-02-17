@@ -9,11 +9,25 @@ import (
 )
 
 func TestSeckillPlaceOrder_Run(t *testing.T) {
+	dal.Init()
+	_ = redis.InitSnowflake()
 	ctx := context.Background()
 	s := NewSeckillPlaceOrderService(ctx)
 	// init req and assert value
 
-	req := &order.SeckillPlaceOrderReq{}
+	req := &order.SeckillPlaceOrderReq{
+		UserId: 1,
+		TempId: 101572608,
+		Email:  "1231231",
+		Address: &order.Address{
+			StreetAddress: "1231",
+			City:          "1231",
+			State:         "123",
+			Country:       "123",
+			ZipCode:       1,
+		},
+		UserCurrency: "12312",
+	}
 	resp, err := s.Run(req)
 	t.Logf("err: %v", err)
 	t.Logf("resp: %v", resp)
@@ -24,6 +38,7 @@ func TestSeckillPlaceOrder_Run(t *testing.T) {
 
 func TestAddSeckillProduct(t *testing.T) {
 	dal.Init()
+	_ = redis.InitSnowflake()
 	ctx := context.Background()
 	// 加载商品
 	key := redis.GetProductStockKey(2629832704)

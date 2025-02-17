@@ -40,11 +40,9 @@ func (s *SeckillPrePlaceOrderService) Run(req *order.SeckillPrePlaceOrderReq) (r
 
 	productStockKey := redis.GetProductStockKey(productId)
 	productOrderKey := redis.GetProductOrderKey(productId)
+	preOrderKey := redis.GetOrderPreOrderKey(preOrderId)
 
-	// todo 临时过期时间
-	expireSeconds := 10 * 60
-
-	result, err := redis.RedisClient.Eval(s.ctx, seckillScript, []string{productStockKey, productOrderKey}, userId, productId, preOrderId, expireSeconds).Result()
+	result, err := redis.RedisClient.Eval(s.ctx, seckillScript, []string{productStockKey, productOrderKey, preOrderKey}, userId, productId).Result()
 	if err != nil {
 		return nil, err
 	}
