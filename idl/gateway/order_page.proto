@@ -11,4 +11,41 @@ service OrderService {
   rpc OrderList(common.Empty) returns (common.Empty) {
     option (api.get) = "/order";
   }
+  rpc SeckillPrePlaceOrder(SeckillPrePlaceOrderReq) returns (SeckillPrePlaceOrderResp) {
+    option (api.post) = "/order/seckill/pre";
+  }
+  rpc SeckillPlaceOrder(SeckillPlaceOrderReq) returns (SeckillPlaceOrderResp) {
+    option (api.post) = "/order/seckill";
+  }
+}
+
+message SeckillPrePlaceOrderReq {
+  uint32 user_id = 1;
+  uint32 product_id = 2;
+}
+
+message SeckillPrePlaceOrderResp {
+  uint32 temp_id = 1;
+}
+
+message SeckillPlaceOrderReq {
+  uint32 user_id = 1;
+  string user_currency = 2;
+  Address address = 3;
+  string email = 4;
+
+  uint32 temp_id = 5;
+}
+
+message SeckillPlaceOrderResp {
+  string status = 1;
+  string order_id = 2;
+}
+
+message Address {
+  string street_address = 1;
+  string city = 2;
+  string state = 3;
+  string country = 4;
+  int32 zip_code = 5;
 }

@@ -190,11 +190,6 @@ func (x *QueryOrderReq) FastRead(buf []byte, _type int8, number int32) (offset i
 		if err != nil {
 			goto ReadFieldError
 		}
-	case 3:
-		offset, err = x.fastReadField3(buf, _type)
-		if err != nil {
-			goto ReadFieldError
-		}
 	default:
 		offset, err = fastpb.Skip(buf, _type, number)
 		if err != nil {
@@ -218,25 +213,10 @@ func (x *QueryOrderReq) fastReadField2(buf []byte, _type int8) (offset int, err 
 	return offset, err
 }
 
-func (x *QueryOrderReq) fastReadField3(buf []byte, _type int8) (offset int, err error) {
-	var v OrderResult
-	offset, err = fastpb.ReadMessage(buf, _type, &v)
-	if err != nil {
-		return offset, err
-	}
-	x.Order = &v
-	return offset, nil
-}
-
 func (x *QueryOrderResp) FastRead(buf []byte, _type int8, number int32) (offset int, err error) {
 	switch number {
 	case 1:
 		offset, err = x.fastReadField1(buf, _type)
-		if err != nil {
-			goto ReadFieldError
-		}
-	case 2:
-		offset, err = x.fastReadField2(buf, _type)
 		if err != nil {
 			goto ReadFieldError
 		}
@@ -254,11 +234,6 @@ ReadFieldError:
 }
 
 func (x *QueryOrderResp) fastReadField1(buf []byte, _type int8) (offset int, err error) {
-	x.Status, offset, err = fastpb.ReadString(buf, _type)
-	return offset, err
-}
-
-func (x *QueryOrderResp) fastReadField2(buf []byte, _type int8) (offset int, err error) {
 	var v Order
 	offset, err = fastpb.ReadMessage(buf, _type, &v)
 	if err != nil {
@@ -835,7 +810,6 @@ func (x *QueryOrderReq) FastWrite(buf []byte) (offset int) {
 	}
 	offset += x.fastWriteField1(buf[offset:])
 	offset += x.fastWriteField2(buf[offset:])
-	offset += x.fastWriteField3(buf[offset:])
 	return offset
 }
 
@@ -855,36 +829,19 @@ func (x *QueryOrderReq) fastWriteField2(buf []byte) (offset int) {
 	return offset
 }
 
-func (x *QueryOrderReq) fastWriteField3(buf []byte) (offset int) {
-	if x.Order == nil {
-		return offset
-	}
-	offset += fastpb.WriteMessage(buf[offset:], 3, x.GetOrder())
-	return offset
-}
-
 func (x *QueryOrderResp) FastWrite(buf []byte) (offset int) {
 	if x == nil {
 		return offset
 	}
 	offset += x.fastWriteField1(buf[offset:])
-	offset += x.fastWriteField2(buf[offset:])
 	return offset
 }
 
 func (x *QueryOrderResp) fastWriteField1(buf []byte) (offset int) {
-	if x.Status == "" {
-		return offset
-	}
-	offset += fastpb.WriteString(buf[offset:], 1, x.GetStatus())
-	return offset
-}
-
-func (x *QueryOrderResp) fastWriteField2(buf []byte) (offset int) {
 	if x.Order == nil {
 		return offset
 	}
-	offset += fastpb.WriteMessage(buf[offset:], 2, x.GetOrder())
+	offset += fastpb.WriteMessage(buf[offset:], 1, x.GetOrder())
 	return offset
 }
 
@@ -1322,7 +1279,6 @@ func (x *QueryOrderReq) Size() (n int) {
 	}
 	n += x.sizeField1()
 	n += x.sizeField2()
-	n += x.sizeField3()
 	return n
 }
 
@@ -1342,36 +1298,19 @@ func (x *QueryOrderReq) sizeField2() (n int) {
 	return n
 }
 
-func (x *QueryOrderReq) sizeField3() (n int) {
-	if x.Order == nil {
-		return n
-	}
-	n += fastpb.SizeMessage(3, x.GetOrder())
-	return n
-}
-
 func (x *QueryOrderResp) Size() (n int) {
 	if x == nil {
 		return n
 	}
 	n += x.sizeField1()
-	n += x.sizeField2()
 	return n
 }
 
 func (x *QueryOrderResp) sizeField1() (n int) {
-	if x.Status == "" {
-		return n
-	}
-	n += fastpb.SizeString(1, x.GetStatus())
-	return n
-}
-
-func (x *QueryOrderResp) sizeField2() (n int) {
 	if x.Order == nil {
 		return n
 	}
-	n += fastpb.SizeMessage(2, x.GetOrder())
+	n += fastpb.SizeMessage(1, x.GetOrder())
 	return n
 }
 
@@ -1710,12 +1649,10 @@ var fieldIDToName_SeckillPlaceOrderResp = map[int32]string{
 var fieldIDToName_QueryOrderReq = map[int32]string{
 	1: "UserId",
 	2: "OrderId",
-	3: "Order",
 }
 
 var fieldIDToName_QueryOrderResp = map[int32]string{
-	1: "Status",
-	2: "Order",
+	1: "Order",
 }
 
 var fieldIDToName_Address = map[int32]string{

@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 	"errors"
-	"fmt"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/biz/dal/mq"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/biz/dal/redis"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/biz/model"
@@ -28,7 +27,6 @@ func (s *SeckillPlaceOrderService) Run(req *order.SeckillPlaceOrderReq) (resp *o
 	}
 
 	productId, err := strconv.ParseUint(tempMeta["product_id"], 10, 32)
-	fmt.Println("productId is ", productId)
 	if err != nil {
 		return nil, err
 	}
@@ -42,6 +40,7 @@ func (s *SeckillPlaceOrderService) Run(req *order.SeckillPlaceOrderReq) (resp *o
 	msg := mq.OrderMessage{
 		TempID:       strconv.Itoa(int(tempId)),
 		OrderId:      orderId,
+		UserID:       req.UserId,
 		UserCurrency: req.UserCurrency,
 		ProductId:    uint32(productId),
 		Consignee: model.Consignee{

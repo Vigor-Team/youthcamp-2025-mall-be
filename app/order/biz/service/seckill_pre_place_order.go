@@ -6,7 +6,7 @@ import (
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/biz/dal/mq"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/biz/dal/redis"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/biz/dal/redis/script"
-	order "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/order"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/order"
 	"github.com/cloudwego/kitex/pkg/kerrors"
 	"strconv"
 	"time"
@@ -14,8 +14,9 @@ import (
 
 type SeckillPrePlaceOrderService struct {
 	ctx context.Context
-} // NewSeckillPrePlaceOrderService new SeckillPrePlaceOrderService
+}
 
+// NewSeckillPrePlaceOrderService new SeckillPrePlaceOrderService
 func NewSeckillPrePlaceOrderService(ctx context.Context) *SeckillPrePlaceOrderService {
 	return &SeckillPrePlaceOrderService{ctx: ctx}
 }
@@ -67,7 +68,6 @@ func (s *SeckillPrePlaceOrderService) Run(req *order.SeckillPrePlaceOrderReq) (r
 		Timestamp: time.Now().Unix(),
 	}
 	if err := producer.PublishPreOrder(s.ctx, msg); err != nil {
-		// todo 回滚
 		return nil, err
 	}
 

@@ -41,12 +41,10 @@ message SeckillPlaceOrderResp {
 message QueryOrderReq {
   uint32 user_id = 1;
   string order_id = 2;
-  OrderResult order = 3;
 }
 
 message QueryOrderResp {
-  string status = 1;
-  Order order = 2;
+  Order order = 1;
 }
 
 message Address {

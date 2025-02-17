@@ -17,7 +17,7 @@ func TestSeckillPlaceOrder_Run(t *testing.T) {
 
 	req := &order.SeckillPlaceOrderReq{
 		UserId: 1,
-		TempId: 101572608,
+		TempId: 2618155008,
 		Email:  "1231231",
 		Address: &order.Address{
 			StreetAddress: "1231",
@@ -40,7 +40,6 @@ func TestAddSeckillProduct(t *testing.T) {
 	dal.Init()
 	_ = redis.InitSnowflake()
 	ctx := context.Background()
-	// 加载商品
 	key := redis.GetProductStockKey(2629832704)
 	_, err := redis.RedisClient.Set(ctx, key, 100, 0).Result()
 	if err != nil {

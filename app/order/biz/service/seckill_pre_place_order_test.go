@@ -2,12 +2,9 @@ package service
 
 import (
 	"context"
-	"fmt"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/biz/dal"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/biz/dal/mq"
-	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/biz/dal/mysql"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/biz/dal/redis"
-	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/biz/model"
 	order "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/order"
 	"testing"
 )
@@ -33,10 +30,15 @@ func TestSeckillPrePlaceOrder_Run(t *testing.T) {
 
 func TestSeckillPlaceOrderRun(t *testing.T) {
 	dal.Init()
-	var preOrder model.PreOrder
-	if err := mysql.DB.Where("id = ?", 2668486656).First(&preOrder).Error; err != nil {
-		t.Fatalf("get pre order failed: %v", err)
+	ctx := context.Background()
+	preOrderKey := redis.GetOrderPreOrderKey(3851280384)
+	productOrderKey := redis.GetProductOrderKey(2629832704)
+
+	if err := redis.RedisClient.SRem(ctx, productOrderKey, 1).Err(); err != nil {
+		t.Fatalf("remove product order failed: %v", err)
 	}
-	fmt.Println("preOrder: ", preOrder)
+	if err := redis.RedisClient.HDel(ctx, preOrderKey, "user_id", "product_id").Err(); err != nil {
+		t.Fatalf("remove pre order failed: %v", err)
+	}
 
 }

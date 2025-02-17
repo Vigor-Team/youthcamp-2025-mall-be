@@ -52,6 +52,8 @@ func handlePreOrder(ctx context.Context, msg PreOrderMessage) error {
 	producer := NewProducer(Client)
 	delayMsg := DelayMessage{
 		TempID:     msg.TempID,
+		UserID:     msg.UserID,
+		ProductID:  msg.ProductID,
 		CreatedAt:  time.Now().Unix(),
 		ExpectedAt: time.Now().Add(10 * time.Minute).Unix(),
 	}
@@ -85,7 +87,7 @@ func handleOrder(ctx context.Context, msg OrderMessage) error {
 	defer tx.Rollback()
 
 	// update pre order
-	if err := tx.Model(&model.PreOrder{}).Where("id = ?", msg.TempID).Update("status", "completed").Update("order_id", msg.OrderId).Error; err != nil {
+	if err := tx.Model(&model.PreOrder{}).Where("id = ?", msg.TempID).Update("status", "completed").Error; err != nil {
 		return fmt.Errorf("update pre order failed: %v", err)
 	}
 
@@ -130,10 +132,13 @@ func handleOrder(ctx context.Context, msg OrderMessage) error {
 	}
 
 	// delete redis key
-	productOrderKey := redis.GetProductOrderKey(msg.ProductId)
-	err = redis.RedisClient.Del(ctx, productOrderKey).Err()
+	preOrderID, err := strconv.ParseUint(msg.TempID, 10, 32)
 	if err != nil {
-		return fmt.Errorf("delete product order failed: %v", err)
+		return fmt.Errorf("parse temp id failed: %v", err)
+	}
+	preOrderKey := redis.GetOrderPreOrderKey(uint32(preOrderID))
+	if err := redis.RedisClient.HDel(ctx, preOrderKey, "user_id", "product_id").Err(); err != nil {
+		return fmt.Errorf("delete pre order failed: %v", err)
 	}
 
 	// commit transaction
@@ -192,13 +197,26 @@ func handleDelayOrder(ctx context.Context, msg DelayMessage) error {
 		return fmt.Errorf("increase product stock failed: %v", err)
 	}
 
-	// 回滚redis
-	productOrderKey := redis.GetProductOrderKey(msg.ProductID)
+	// rollback redis
+	preOrderID, err := strconv.ParseUint(msg.TempID, 10, 32)
+	if err != nil {
+		return fmt.Errorf("parse temp id failed: %v", err)
+	}
+	preOrderKey := redis.GetOrderPreOrderKey(uint32(preOrderID))
+	productOrderKey := redis.GetProductOrderKey(preOrder.ProductId)
+	stockKey := redis.GetProductStockKey(msg.ProductID)
+	fmt.Println("preOrderKey: ", preOrderKey)
+	fmt.Println("productOrderKey: ", productOrderKey)
+	fmt.Println("stockKey: ", stockKey)
+
 	if err = redis.RedisClient.SRem(ctx, productOrderKey, msg.UserID).Err(); err != nil {
 		return fmt.Errorf("delete user buy record failed: %v", err)
 	}
+	if err := redis.RedisClient.HDel(ctx, preOrderKey, "user_id", "product_id").Err(); err != nil {
+		return fmt.Errorf("delete pre order failed: %v", err)
+	}
 
-	if err = redis.RedisClient.Incr(ctx, redis.GetProductStockKey(msg.ProductID)).Err(); err != nil {
+	if err = redis.RedisClient.Incr(ctx, stockKey).Err(); err != nil {
 		return fmt.Errorf("increase product stock failed: %v", err)
 	}
 
