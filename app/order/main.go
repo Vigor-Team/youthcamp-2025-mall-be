@@ -15,8 +15,9 @@
 package main
 
 import (
-	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/biz/dal/redis"
+	"context"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/infra/rpc"
+	"github.com/cloudwego/kitex/pkg/kerrors"
 	"net"
 	"strings"
 
@@ -47,7 +48,6 @@ func main() {
 	mtl.InitTracing(serviceName)
 	mtl.InitMetric(serviceName, conf.GetConf().Kitex.MetricsPort, conf.GetConf().Registry.RegistryAddress[0])
 	dal.Init()
-	_ = redis.InitSnowflake()
 	opts := kitexInit()
 
 	svr := orderservice.NewServer(new(OrderServiceImpl), opts...)
@@ -72,5 +72,14 @@ func kitexInit() (opts []server.Option) {
 	opts = append(opts, server.WithServiceAddr(addr))
 
 	opts = append(opts, server.WithSuite(serversuite.CommonServerSuite{CurrentServiceName: serviceName, RegistryAddr: conf.GetConf().Registry.RegistryAddress[0]}))
+
+	// error handler
+	opts = append(opts, server.WithErrorHandler(func(ctx context.Context, err error) error {
+		klog.CtxInfof(ctx, "error: %v", err)
+		if kerrors.IsKitexError(err) {
+
+		}
+		return err
+	}))
 	return
 }

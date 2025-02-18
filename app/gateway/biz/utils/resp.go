@@ -16,6 +16,9 @@ package utils
 
 import (
 	"context"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/common/errno"
+	"github.com/cloudwego/hertz/pkg/common/hlog"
+	"github.com/cloudwego/kitex/pkg/kerrors"
 	"net/http"
 
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/infra/rpc"
@@ -40,6 +43,32 @@ func ErrorResponse(c *app.RequestContext, code int32, message string) {
 	c.JSON(http.StatusOK, GlobalResponse{
 		Code: code,
 		Msg:  message,
+		Data: nil,
+	})
+}
+
+func FailResponse(ctx context.Context, c *app.RequestContext, err error) {
+	if kerr, ok := kerrors.FromBizStatusError(err); ok {
+		hlog.CtxErrorf(ctx, "biz error: %v", kerr)
+		FailResponseWithCodeAndMsg(c, kerr.BizStatusCode(), kerr.BizMessage())
+		return
+	}
+	hlog.CtxErrorf(ctx, "unknown error: %v", err)
+	FailResponseWithMsg(c, "unknown error, please try again later")
+}
+
+func FailResponseWithMsg(c *app.RequestContext, msg string) {
+	c.JSON(http.StatusOK, GlobalResponse{
+		Code: errno.BadRequestCode,
+		Msg:  msg,
+		Data: nil,
+	})
+}
+
+func FailResponseWithCodeAndMsg(c *app.RequestContext, code int32, msg string) {
+	c.JSON(http.StatusOK, GlobalResponse{
+		Code: code,
+		Msg:  msg,
 		Data: nil,
 	})
 }

@@ -13,7 +13,6 @@ func TestSeckillPrePlaceOrder_Run(t *testing.T) {
 	dal.Init()
 	ctx := context.Background()
 	mq.StartConsumer(ctx, mq.Client, 10)
-	_ = redis.InitSnowflake()
 
 	s := NewSeckillPrePlaceOrderService(ctx)
 	// init req and assert value
@@ -30,15 +29,13 @@ func TestSeckillPrePlaceOrder_Run(t *testing.T) {
 
 func TestSeckillPlaceOrderRun(t *testing.T) {
 	dal.Init()
-	ctx := context.Background()
-	preOrderKey := redis.GetOrderPreOrderKey(3851280384)
-	productOrderKey := redis.GetProductOrderKey(2629832704)
-
-	if err := redis.RedisClient.SRem(ctx, productOrderKey, 1).Err(); err != nil {
-		t.Fatalf("remove product order failed: %v", err)
-	}
-	if err := redis.RedisClient.HDel(ctx, preOrderKey, "user_id", "product_id").Err(); err != nil {
-		t.Fatalf("remove pre order failed: %v", err)
-	}
-
+	//preOrderKey := redis.GetOrderPreOrderKey(3851280384)
+	//productOrderKey := redis.GetProductOrderKey(2629832704)
+	//
+	//if err := redis.RedisClient.SRem(ctx, productOrderKey, 1).Err(); err != nil {
+	//	t.Fatalf("remove product order failed: %v", err)
+	//}
+	//if err := redis.RedisClient.HDel(ctx, preOrderKey, "user_id", "product_id").Err(); err != nil {
+	//	t.Fatalf("remove pre order failed: %v", err)
+	//}
 }

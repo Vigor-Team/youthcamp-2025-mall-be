@@ -2,8 +2,8 @@ package mq
 
 import (
 	"context"
-	"encoding/json"
 	"github.com/bytedance/sonic"
+	"github.com/cloudwego/kitex/pkg/klog"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"time"
 )
@@ -19,6 +19,7 @@ func NewProducer(client *RabbitClient) *Producer {
 func (p *Producer) PublishPreOrder(ctx context.Context, msg PreOrderMessage) error {
 	body, err := sonic.Marshal(msg)
 	if err != nil {
+		klog.CtxErrorf(ctx, "sonic.Marshal.err: %v", err)
 		return err
 	}
 
@@ -28,6 +29,7 @@ func (p *Producer) PublishPreOrder(ctx context.Context, msg PreOrderMessage) err
 func (p *Producer) PublishOrder(ctx context.Context, msg OrderMessage) error {
 	body, err := sonic.Marshal(msg)
 	if err != nil {
+		klog.CtxErrorf(ctx, "sonic.Marshal.err: %v", err)
 		return err
 	}
 
@@ -35,20 +37,19 @@ func (p *Producer) PublishOrder(ctx context.Context, msg OrderMessage) error {
 }
 
 func (p *Producer) PublishDelay(ctx context.Context, msg DelayMessage, delay time.Duration) error {
-	body, err := json.Marshal(msg)
+	body, err := sonic.Marshal(msg)
 	if err != nil {
+		klog.CtxErrorf(ctx, "sonic.Marshal.err: %v", err)
 		return err
 	}
 
-	//headers := amqp.Table{
-	//	"x-delay": delay.Milliseconds(),
-	//}
 	return p.publish(ctx, MainExchange, "delay", body, nil)
 }
 
 func (p *Producer) publish(ctx context.Context, exchange, key string, body []byte, headers amqp.Table) error {
 	ch, err := p.client.Channel()
 	if err != nil {
+		klog.CtxErrorf(ctx, "client.Channel.err: %v", err)
 		return err
 	}
 

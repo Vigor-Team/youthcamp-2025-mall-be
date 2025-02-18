@@ -2,11 +2,13 @@ package service
 
 import (
 	"context"
-	"errors"
+	"fmt"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/biz/consts"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/biz/dal/mq"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/biz/dal/redis"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/biz/model"
 	order "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/order"
+	"github.com/cloudwego/kitex/pkg/klog"
 	"strconv"
 )
 
@@ -21,18 +23,21 @@ func NewSeckillPlaceOrderService(ctx context.Context) *SeckillPlaceOrderService 
 func (s *SeckillPlaceOrderService) Run(req *order.SeckillPlaceOrderReq) (resp *order.SeckillPlaceOrderResp, err error) {
 	// validate tempId
 	tempId := req.TempId
-	tempMeta, err := validateTempId(s.ctx, tempId, req.UserId)
+	tempMeta, err := validatePreOrderId(s.ctx, tempId, req.UserId)
 	if err != nil {
-		return nil, err
+		klog.CtxErrorf(s.ctx, "validatePreOrderId.err:%v", err)
+		return nil, consts.ErrInvalidParams
 	}
 
 	productId, err := strconv.ParseUint(tempMeta["product_id"], 10, 32)
 	if err != nil {
-		return nil, err
+		klog.CtxErrorf(s.ctx, "strconv.ParseUint.err:%v", err)
+		return nil, consts.ErrInvalidParams
 	}
-	orderId, err := redis.NextId(s.ctx, redis.OrderNode)
+	orderId, err := redis.NextId(s.ctx, "order")
 	if err != nil {
-		return nil, err
+		klog.CtxErrorf(s.ctx, "redis.NextId.err:%v", err)
+		return nil, consts.ErrRedis
 	}
 
 	// publish order message
@@ -54,7 +59,8 @@ func (s *SeckillPlaceOrderService) Run(req *order.SeckillPlaceOrderReq) (resp *o
 	}
 	err = producer.PublishOrder(s.ctx, msg)
 	if err != nil {
-		return nil, err
+		klog.CtxErrorf(s.ctx, "producer.PublishOrder.err:%v", err)
+		return nil, consts.ErrPublishMessage
 	}
 	resp = &order.SeckillPlaceOrderResp{
 		Status:  "processing",
@@ -63,18 +69,19 @@ func (s *SeckillPlaceOrderService) Run(req *order.SeckillPlaceOrderReq) (resp *o
 	return
 }
 
-func validateTempId(ctx context.Context, tempId, userId uint32) (map[string]string, error) {
+func validatePreOrderId(ctx context.Context, tempId, userId uint32) (map[string]string, error) {
 	if tempId == 0 || userId == 0 {
-		return nil, errors.New("invalid param")
+		return nil, fmt.Errorf("invalid params: tempId=%d, userId=%d", tempId, userId)
 	}
 	// get tempId info from redis
 	productOrderKey := redis.GetOrderPreOrderKey(tempId)
 	tempIdInfo, err := redis.RedisClient.HGetAll(ctx, productOrderKey).Result()
+	fmt.Println("tempIdInfo", tempIdInfo)
 	if err != nil || len(tempIdInfo) == 0 {
-		return nil, errors.New("invalid tempId")
+		return nil, fmt.Errorf("invalid tempId: %v", tempId)
 	}
-	if tempIdInfo["user_id"] != strconv.Itoa(int(userId)) {
-		return nil, errors.New("invalid tempId")
+	if tempIdInfo["user_id"] != strconv.Itoa(int(userId)) || tempIdInfo["product_id"] == "" {
+		return nil, fmt.Errorf("invalid tempId: %v", tempId)
 	}
 	return tempIdInfo, nil
 }

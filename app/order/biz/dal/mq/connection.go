@@ -1,8 +1,7 @@
 package mq
 
 import (
-	"fmt"
-	"log"
+	"github.com/cloudwego/kitex/pkg/klog"
 	"sync"
 
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -31,11 +30,13 @@ func (rc *RabbitClient) Connect() error {
 	var err error
 	rc.conn, err = amqp.Dial(rc.URL)
 	if err != nil {
-		return fmt.Errorf("failed to connect to RabbitMQ: %w", err)
+		klog.Errorf("failed to connect to RabbitMQ: %v", err)
+		return err
 	}
 	rc.channel, err = rc.conn.Channel()
 	if err != nil {
-		return fmt.Errorf("failed to open a channel: %w", err)
+		klog.Errorf("failed to open a channel: %v", err)
+		return err
 	}
 	rc.notifyClose = make(chan *amqp.Error)
 	rc.channel.NotifyClose(rc.notifyClose)
@@ -49,7 +50,7 @@ func (rc *RabbitClient) handleReconnect() {
 		select {
 		case err := <-rc.notifyClose:
 			if err != nil {
-				log.Printf("连接异常关闭: %v，尝试重连...", err)
+				klog.Errorf("RabbitMQ connection closed: %v", err)
 				_ = rc.Connect()
 			}
 		case <-rc.shutdownChan:

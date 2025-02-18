@@ -56,7 +56,7 @@ func TestSeckillPlaceOrder(t *testing.T) {
 	h := server.Default()
 	h.POST("/order/seckill", SeckillPlaceOrder)
 	path := "/order/seckill"                                  // todo: you can customize query
-	body := &ut.Body{Body: bytes.NewBufferString(""), Len: 1} // todo: you can customize body
+	body := &ut.Body{Body: bytes.NewBufferString(``), Len: 1} // todo: you can customize body
 	header := ut.Header{}                                     // todo: you can customize header
 	w := ut.PerformRequest(h.Engine, "POST", path, body, header)
 	resp := w.Result()

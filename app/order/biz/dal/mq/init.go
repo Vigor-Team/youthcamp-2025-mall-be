@@ -1,11 +1,18 @@
 package mq
 
-import "context"
+import (
+	"context"
+	"fmt"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/biz/consts"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/conf"
+	"os"
+)
 
 var Client *RabbitClient
 
 func Init() {
-	Client = NewRabbitClient("amqp://guest:guest@localhost:5672/")
+	url := fmt.Sprintf("amqp://%s:%s@%s/", os.Getenv("RABBITMQ_USER"), os.Getenv("RABBITMQ_PASSWORD"), conf.GetConf().MQ.Address)
+	Client = NewRabbitClient(url)
 
 	if err := Client.Connect(); err != nil {
 		panic(err)
@@ -16,5 +23,5 @@ func Init() {
 		panic(err)
 	}
 
-	StartConsumer(context.Background(), Client, 10)
+	StartConsumer(context.Background(), Client, consts.MqConsumerPreFetchCount)
 }

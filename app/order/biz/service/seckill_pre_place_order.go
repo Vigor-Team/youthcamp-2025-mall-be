@@ -2,12 +2,13 @@ package service
 
 import (
 	"context"
-	"fmt"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/biz/consts"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/biz/dal/mq"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/biz/dal/redis"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/biz/dal/redis/script"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/order"
 	"github.com/cloudwego/kitex/pkg/kerrors"
+	"github.com/cloudwego/kitex/pkg/klog"
 	"strconv"
 	"time"
 )
@@ -26,36 +27,40 @@ func (s *SeckillPrePlaceOrderService) Run(req *order.SeckillPrePlaceOrderReq) (r
 	userId := req.UserId
 	productId := req.ProductId
 	if userId == 0 || productId == 0 {
-		return nil, fmt.Errorf("invalid request")
+		klog.CtxErrorf(s.ctx, "invalid params: userId=%d, productId=%d", userId, productId)
+		return nil, consts.ErrInvalidParams
 	}
 
-	// todo 限流检查
+	// todo rate limit
 
 	seckillScript, err := script.GetPreSeckillScript()
 	if err != nil {
-		return nil, err
+		klog.CtxErrorf(s.ctx, "get pre seckill script failed: %v", err)
+		return nil, kerrors.ErrBiz.WithCause(err)
 	}
 
-	preOrderId, err := redis.NextId(s.ctx, redis.PreOrderNode)
-	fmt.Println("preOrderId: ", preOrderId)
-
+	preOrderId, err := redis.NextId(s.ctx, "pre_order")
+	if err != nil {
+		klog.CtxErrorf(s.ctx, "redis.NextId.err:%v", err)
+		return nil, consts.ErrRedis
+	}
 	productStockKey := redis.GetProductStockKey(productId)
 	productOrderKey := redis.GetProductOrderKey(productId)
 	preOrderKey := redis.GetOrderPreOrderKey(preOrderId)
 
 	result, err := redis.RedisClient.Eval(s.ctx, seckillScript, []string{productStockKey, productOrderKey, preOrderKey}, userId, productId).Result()
 	if err != nil {
-		return nil, err
+		klog.CtxErrorf(s.ctx, "redis.RedisClient.Eval.err:%v", err)
+		return nil, consts.ErrRedis
 	}
-	fmt.Println("result: ", result)
 
 	if resultMap, ok := result.(map[string]interface{}); ok {
 		if errMsg, exists := resultMap["err"]; exists {
 			switch errMsg {
 			case "OUT_OF_STOCK":
-				return nil, kerrors.NewBizStatusError(1, "out of stock")
+				return nil, consts.ErrInventoryShortage
 			case "DUPLICATE_USER":
-				return nil, kerrors.NewBizStatusError(2, "please do not repeat the operation")
+				return nil, consts.ErrDuplicateUser
 			}
 		}
 	}
@@ -68,7 +73,8 @@ func (s *SeckillPrePlaceOrderService) Run(req *order.SeckillPrePlaceOrderReq) (r
 		Timestamp: time.Now().Unix(),
 	}
 	if err := producer.PublishPreOrder(s.ctx, msg); err != nil {
-		return nil, err
+		klog.CtxErrorf(s.ctx, "producer.PublishPreOrder.err:%v", err)
+		return nil, consts.ErrPublishMessage
 	}
 
 	resp = &order.SeckillPrePlaceOrderResp{

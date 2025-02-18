@@ -10,7 +10,6 @@ import (
 
 func TestSeckillPlaceOrder_Run(t *testing.T) {
 	dal.Init()
-	_ = redis.InitSnowflake()
 	ctx := context.Background()
 	s := NewSeckillPlaceOrderService(ctx)
 	// init req and assert value
@@ -38,7 +37,6 @@ func TestSeckillPlaceOrder_Run(t *testing.T) {
 
 func TestAddSeckillProduct(t *testing.T) {
 	dal.Init()
-	_ = redis.InitSnowflake()
 	ctx := context.Background()
 	key := redis.GetProductStockKey(2629832704)
 	_, err := redis.RedisClient.Set(ctx, key, 100, 0).Result()

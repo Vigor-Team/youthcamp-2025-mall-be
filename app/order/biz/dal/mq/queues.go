@@ -1,7 +1,7 @@
 package mq
 
 import (
-	"fmt"
+	"github.com/cloudwego/kitex/pkg/klog"
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
@@ -29,8 +29,8 @@ func (qm *QueueManager) SetupQueues() error {
 	}
 
 	// exchange
-	// 死信交换机
-	if err := ch.ExchangeDeclare(
+	// dlx
+	if err = ch.ExchangeDeclare(
 		DLXExchange,
 		amqp.ExchangeDirect,
 		true,
@@ -39,11 +39,11 @@ func (qm *QueueManager) SetupQueues() error {
 		false,
 		nil,
 	); err != nil {
-		return fmt.Errorf("声明死信交换机失败: %w", err)
+		klog.Errorf("failed to declare dlx exchange: %v", err)
 	}
 
-	// 主交换机
-	if err := ch.ExchangeDeclare(
+	// main
+	if err = ch.ExchangeDeclare(
 		MainExchange,
 		amqp.ExchangeDirect,
 		true,
@@ -52,11 +52,12 @@ func (qm *QueueManager) SetupQueues() error {
 		false,
 		nil,
 	); err != nil {
-		return fmt.Errorf("声明主交换机失败: %w", err)
+		klog.Errorf("failed to declare main exchange: %v", err)
+		return err
 	}
 
 	// queue
-	// 预占队列
+	// pre order
 	if _, err := ch.QueueDeclare(
 		PreOrderQueue,
 		true,
@@ -65,11 +66,12 @@ func (qm *QueueManager) SetupQueues() error {
 		false,
 		nil,
 	); err != nil {
-		return fmt.Errorf("声明预占队列失败: %w", err)
+		klog.Errorf("failed to declare pre order queue: %v", err)
+		return err
 	}
 
-	// 中间队列
-	if _, err := ch.QueueDeclare(
+	// delay
+	if _, err = ch.QueueDeclare(
 		DelayQueue,
 		true,
 		false,
@@ -81,11 +83,12 @@ func (qm *QueueManager) SetupQueues() error {
 			"x-message-ttl":             int32(20000),
 		},
 	); err != nil {
-		return fmt.Errorf("声明中间队列失败: %w", err)
+		klog.Errorf("failed to declare delay queue: %v", err)
+		return err
 	}
 
-	// 订单队列
-	if _, err := ch.QueueDeclare(
+	// order
+	if _, err = ch.QueueDeclare(
 		OrderQueue,
 		true,
 		false,
@@ -93,11 +96,12 @@ func (qm *QueueManager) SetupQueues() error {
 		false,
 		nil,
 	); err != nil {
-		return fmt.Errorf("声明订单队列失败: %w", err)
+		klog.Errorf("failed to declare order queue: %v", err)
+		return err
 	}
 
-	// 死信队列
-	if _, err := ch.QueueDeclare(
+	// dlx
+	if _, err = ch.QueueDeclare(
 		DLXQueue,
 		true,
 		false,
@@ -105,7 +109,8 @@ func (qm *QueueManager) SetupQueues() error {
 		false,
 		nil,
 	); err != nil {
-		return fmt.Errorf("声明延迟队列失败: %w", err)
+		klog.Errorf("failed to declare dlx queue: %v", err)
+		return err
 	}
 
 	// binding
@@ -121,14 +126,15 @@ func (qm *QueueManager) SetupQueues() error {
 	}
 
 	for _, b := range bindings {
-		if err := ch.QueueBind(
+		if err = ch.QueueBind(
 			b.Queue,
 			b.Key,
 			b.Exchange,
 			false,
 			nil,
 		); err != nil {
-			return fmt.Errorf("绑定队列失败: %w", err)
+			klog.Errorf("failed to bind queue: %v", err)
+			return err
 		}
 	}
 

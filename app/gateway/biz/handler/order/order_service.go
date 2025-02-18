@@ -16,7 +16,6 @@ package order
 
 import (
 	"context"
-
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/biz/service"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/biz/utils"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/hertz_gen/gateway/common"
@@ -56,11 +55,9 @@ func SeckillPrePlaceOrder(ctx context.Context, c *app.RequestContext) {
 		utils.ErrorResponse(c, consts.StatusOK, err.Error())
 		return
 	}
-
 	resp, err := service.NewSeckillPrePlaceOrderService(ctx, c).Run(&req)
-
 	if err != nil {
-		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		utils.FailResponse(ctx, c, err)
 		return
 	}
 	utils.SuccessResponse(c, resp)
@@ -80,7 +77,7 @@ func SeckillPlaceOrder(ctx context.Context, c *app.RequestContext) {
 	resp, err := service.NewSeckillPlaceOrderService(ctx, c).Run(&req)
 
 	if err != nil {
-		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		utils.FailResponse(ctx, c, err)
 		return
 	}
 	utils.SuccessResponse(c, resp)
