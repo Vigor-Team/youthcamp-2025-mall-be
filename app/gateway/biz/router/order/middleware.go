@@ -17,16 +17,41 @@
 package order
 
 import (
-	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/middleware"
 	"github.com/cloudwego/hertz/pkg/app"
 )
 
 func rootMw() []app.HandlerFunc {
 	// your code...
-	return []app.HandlerFunc{middleware.Auth()}
+	//return []app.HandlerFunc{middleware.Auth()}
+	return nil
 }
 
 func _orderlistMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _orderMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _queryorderMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _seckillplaceorderMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _seckillMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _seckillpreplaceorderMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }

@@ -45,22 +45,28 @@ import (
 )
 
 func main() {
+	// load env
 	_ = godotenv.Load()
 
+	// init mtl rpc
 	mtl.InitMtl()
 	rpc.InitClient()
+
 	address := conf.GetConf().Hertz.Address
 
+	// init prometheus
 	p := hertzotelprovider.NewOpenTelemetryProvider(
 		hertzotelprovider.WithSdkTracerProvider(mtl.TracerProvider),
 		hertzotelprovider.WithEnableMetrics(false),
 	)
 	defer p.Shutdown(context.Background())
 
+	// init tracer
 	tracer, cfg := hertzoteltracing.NewServerTracer(hertzoteltracing.WithCustomResponseHandler(func(ctx context.Context, c *app.RequestContext) {
 		c.Header("shop-trace-id", oteltrace.SpanFromContext(ctx).SpanContext().TraceID().String())
 	}))
 
+	// init hertz server
 	h := server.New(server.WithHostPorts(address), server.WithTracer(
 		hertzprom.NewServerTracer(
 			"",
@@ -72,6 +78,7 @@ func main() {
 		tracer,
 	)
 
+	// register middleware
 	h.Use(hertzoteltracing.ServerMiddleware(cfg))
 	registerMiddleware(h)
 
@@ -81,6 +88,7 @@ func main() {
 		ctx.JSON(consts.StatusOK, utils.H{"ping": "pong"})
 	})
 
+	// register router
 	router.GeneratedRegister(h)
 
 	if os.Getenv("GO_ENV") != "online" {

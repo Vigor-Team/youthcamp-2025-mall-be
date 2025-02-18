@@ -35,6 +35,7 @@ type Config struct {
 	Kitex    Kitex    `yaml:"kitex"`
 	MySQL    MySQL    `yaml:"mysql"`
 	Redis    Redis    `yaml:"redis"`
+	MQ       MQ       `yaml:"mq"`
 	Registry Registry `yaml:"registry"`
 }
 
@@ -47,6 +48,10 @@ type Redis struct {
 	Username string `yaml:"username"`
 	Password string `yaml:"password"`
 	DB       int    `yaml:"db"`
+}
+
+type MQ struct {
+	Address string `yaml:"address"`
 }
 
 type Kitex struct {

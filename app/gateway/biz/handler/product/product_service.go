@@ -8,7 +8,6 @@ import (
 	common "github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/hertz_gen/gateway/common"
 	product "github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/hertz_gen/gateway/product"
 	"github.com/cloudwego/hertz/pkg/app"
-	"github.com/cloudwego/hertz/pkg/protocol/consts"
 )
 
 // CreateProduct .
@@ -18,14 +17,14 @@ func CreateProduct(ctx context.Context, c *app.RequestContext) {
 	var req product.CreateProductReq
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		utils.FailResponse(ctx, c, err)
 		return
 	}
 
 	resp := &common.Empty{}
 	resp, err = service.NewCreateProductService(ctx, c).Run(&req)
 	if err != nil {
-		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		utils.FailResponse(ctx, c, err)
 		return
 	}
 
@@ -39,14 +38,14 @@ func UpdateProduct(ctx context.Context, c *app.RequestContext) {
 	var req product.UpdateProductReq
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		utils.FailResponse(ctx, c, err)
 		return
 	}
 
 	resp := &common.Empty{}
 	resp, err = service.NewUpdateProductService(ctx, c).Run(&req)
 	if err != nil {
-		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		utils.FailResponse(ctx, c, err)
 		return
 	}
 
@@ -60,14 +59,14 @@ func DeleteProduct(ctx context.Context, c *app.RequestContext) {
 	var req product.ProductIDReq
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		utils.FailResponse(ctx, c, err)
 		return
 	}
 
 	resp := &common.Empty{}
 	resp, err = service.NewDeleteProductService(ctx, c).Run(&req)
 	if err != nil {
-		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		utils.FailResponse(ctx, c, err)
 		return
 	}
 
@@ -81,14 +80,14 @@ func OnlineProduct(ctx context.Context, c *app.RequestContext) {
 	var req product.ProductIDReq
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		utils.FailResponse(ctx, c, err)
 		return
 	}
 
 	resp := &common.Empty{}
 	resp, err = service.NewOnlineProductService(ctx, c).Run(&req)
 	if err != nil {
-		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		utils.FailResponse(ctx, c, err)
 		return
 	}
 
@@ -102,14 +101,14 @@ func OfflineProduct(ctx context.Context, c *app.RequestContext) {
 	var req product.ProductIDReq
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		utils.FailResponse(ctx, c, err)
 		return
 	}
 
 	resp := &common.Empty{}
 	resp, err = service.NewOfflineProductService(ctx, c).Run(&req)
 	if err != nil {
-		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		utils.FailResponse(ctx, c, err)
 		return
 	}
 
@@ -123,14 +122,14 @@ func DecreaseStock(ctx context.Context, c *app.RequestContext) {
 	var req product.StockOpReq
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		utils.FailResponse(ctx, c, err)
 		return
 	}
 
 	resp := &common.Empty{}
 	resp, err = service.NewDecreaseStockService(ctx, c).Run(&req)
 	if err != nil {
-		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		utils.FailResponse(ctx, c, err)
 		return
 	}
 
@@ -144,14 +143,14 @@ func IncreaseStock(ctx context.Context, c *app.RequestContext) {
 	var req product.StockOpReq
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		utils.FailResponse(ctx, c, err)
 		return
 	}
 
 	resp := &common.Empty{}
 	resp, err = service.NewIncreaseStockService(ctx, c).Run(&req)
 	if err != nil {
-		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		utils.FailResponse(ctx, c, err)
 		return
 	}
 
@@ -165,14 +164,14 @@ func GetProduct(ctx context.Context, c *app.RequestContext) {
 	var req product.ProductIDReq
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		utils.FailResponse(ctx, c, err)
 		return
 	}
 
 	resp := &product.GetProductResp{}
 	resp, err = service.NewGetProductService(ctx, c).Run(&req)
 	if err != nil {
-		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		utils.FailResponse(ctx, c, err)
 		return
 	}
 
@@ -186,14 +185,14 @@ func ListProducts(ctx context.Context, c *app.RequestContext) {
 	var req product.ListProductsReq
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		utils.FailResponse(ctx, c, err)
 		return
 	}
 
 	resp := &product.ListProductsResp{}
 	resp, err = service.NewListProductsService(ctx, c).Run(&req)
 	if err != nil {
-		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		utils.FailResponse(ctx, c, err)
 		return
 	}
 
@@ -207,14 +206,14 @@ func BatchGetProducts(ctx context.Context, c *app.RequestContext) {
 	var req product.BatchProductsReq
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		utils.FailResponse(ctx, c, err)
 		return
 	}
 
 	resp := &product.BatchProductsResp{}
 	resp, err = service.NewBatchGetProductsService(ctx, c).Run(&req)
 	if err != nil {
-		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		utils.FailResponse(ctx, c, err)
 		return
 	}
 
@@ -228,14 +227,14 @@ func SearchProducts(ctx context.Context, c *app.RequestContext) {
 	var req product.SearchReq
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		utils.FailResponse(ctx, c, err)
 		return
 	}
 
 	resp := &product.ListProductsResp{}
 	resp, err = service.NewSearchProductsService(ctx, c).Run(&req)
 	if err != nil {
-		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		utils.FailResponse(ctx, c, err)
 		return
 	}
 
@@ -249,14 +248,14 @@ func ListCategories(ctx context.Context, c *app.RequestContext) {
 	var req common.Empty
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		utils.FailResponse(ctx, c, err)
 		return
 	}
 
 	resp := &product.ListCategoriesResp{}
 	resp, err = service.NewListCategoriesService(ctx, c).Run(&req)
 	if err != nil {
-		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		utils.FailResponse(ctx, c, err)
 		return
 	}
 
@@ -270,14 +269,14 @@ func GetCategory(ctx context.Context, c *app.RequestContext) {
 	var req product.GetCategoryReq
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		utils.FailResponse(ctx, c, err)
 		return
 	}
 
 	resp := &product.GetCategoryResp{}
 	resp, err = service.NewGetCategoryService(ctx, c).Run(&req)
 	if err != nil {
-		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		utils.FailResponse(ctx, c, err)
 		return
 	}
 

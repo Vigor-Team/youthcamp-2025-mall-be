@@ -25,7 +25,7 @@ func (s *StockRepositoryImpl) updateStock(ctx context.Context, productId, change
 	if tx.Error != nil {
 		return tx.Error
 	}
-	// todo add distributed lock
+	// todo add distributed lock 乐观锁
 	if err := tx.Clauses(clause.Locking{Strength: "Update"}).Where("id = ?", productId).Find(&productPOs).Error; err != nil {
 		tx.Rollback()
 		return err

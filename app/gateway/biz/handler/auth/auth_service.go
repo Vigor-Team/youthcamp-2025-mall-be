@@ -33,7 +33,7 @@ func Register(ctx context.Context, c *app.RequestContext) {
 	var req auth.RegisterReq
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		utils.FailResponse(ctx, c, err)
 		return
 	}
 
@@ -51,13 +51,13 @@ func Login(ctx context.Context, c *app.RequestContext) {
 	var req auth.LoginReq
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		utils.FailResponse(ctx, c, err)
 		return
 	}
 
 	resp, err := service.NewLoginService(ctx, c, middleware.GetJwtMd()).Run(&req)
 	if err != nil {
-		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		utils.FailResponse(ctx, c, err)
 		return
 	}
 	utils.SuccessResponse(c, resp)
@@ -70,13 +70,13 @@ func Logout(ctx context.Context, c *app.RequestContext) {
 	var req common.Empty
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		utils.FailResponse(ctx, c, err)
 		return
 	}
 
 	_, err = service.NewLogoutService(ctx, c).Run(&req)
 	if err != nil {
-		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		utils.FailResponse(ctx, c, err)
 		return
 	}
 }
@@ -87,7 +87,7 @@ func Me(ctx context.Context, c *app.RequestContext) {
 	resp, err := service.NewMeService(ctx, c).Run()
 
 	if err != nil {
-		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		utils.FailResponse(ctx, c, err)
 		return
 	}
 	utils.SuccessResponse(c, resp)
@@ -98,7 +98,7 @@ func Me(ctx context.Context, c *app.RequestContext) {
 func Refresh(ctx context.Context, c *app.RequestContext) {
 	resp, err := service.NewRefreshService(ctx, c, middleware.GetJwtMd()).Run()
 	if err != nil {
-		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		utils.FailResponse(ctx, c, err)
 		return
 	}
 	utils.SuccessResponse(c, resp)

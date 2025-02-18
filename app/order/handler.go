@@ -44,3 +44,24 @@ func (s *OrderServiceImpl) MarkOrderPaid(ctx context.Context, req *order.MarkOrd
 
 	return resp, err
 }
+
+// SeckillPlaceOrder implements the OrderServiceImpl interface.
+func (s *OrderServiceImpl) SeckillPlaceOrder(ctx context.Context, req *order.SeckillPlaceOrderReq) (resp *order.SeckillPlaceOrderResp, err error) {
+	resp, err = service.NewSeckillPlaceOrderService(ctx).Run(req)
+
+	return resp, err
+}
+
+// SeckillPrePlaceOrder implements the OrderServiceImpl interface.
+func (s *OrderServiceImpl) SeckillPrePlaceOrder(ctx context.Context, req *order.SeckillPrePlaceOrderReq) (resp *order.SeckillPrePlaceOrderResp, err error) {
+	resp, err = service.NewSeckillPrePlaceOrderService(ctx).Run(req)
+
+	return resp, err
+}
+
+// QueryOrder implements the OrderServiceImpl interface.
+func (s *OrderServiceImpl) QueryOrder(ctx context.Context, req *order.QueryOrderReq) (resp *order.QueryOrderResp, err error) {
+	resp, err = service.NewQueryOrderService(ctx).Run(req)
+
+	return resp, err
+}

@@ -16,12 +16,14 @@ package service
 
 import (
 	"context"
-	"fmt"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/biz/consts"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/biz/dal/redis"
+	"github.com/cloudwego/kitex/pkg/klog"
+	"strconv"
 
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/biz/dal/mysql"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/biz/model"
 	order "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/order"
-	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -36,15 +38,20 @@ func NewPlaceOrderService(ctx context.Context) *PlaceOrderService {
 func (s *PlaceOrderService) Run(req *order.PlaceOrderReq) (resp *order.PlaceOrderResp, err error) {
 	// Finish your business logic.
 	if len(req.OrderItems) == 0 {
-		err = fmt.Errorf("OrderItems empty")
+		klog.CtxErrorf(s.ctx, "OrderItems empty")
+		err = consts.ErrInvalidParams
 		return
 	}
 
 	err = mysql.DB.Transaction(func(tx *gorm.DB) error {
-		orderId, _ := uuid.NewUUID()
+		orderId, err := redis.NextId(s.ctx, "order")
+		if err != nil {
+			klog.CtxErrorf(s.ctx, "redis.NextId.err: %v", err)
+			return consts.ErrRedis
+		}
 
 		o := &model.Order{
-			OrderId:      orderId.String(),
+			OrderId:      strconv.Itoa(int(orderId)),
 			OrderState:   model.OrderStatePlaced,
 			UserId:       req.UserId,
 			UserCurrency: req.UserCurrency,
@@ -60,7 +67,8 @@ func (s *PlaceOrderService) Run(req *order.PlaceOrderReq) (resp *order.PlaceOrde
 			o.Consignee.StreetAddress = a.StreetAddress
 		}
 		if err := tx.Create(o).Error; err != nil {
-			return err
+			klog.CtxErrorf(s.ctx, "tx.Create.err: %v", err)
+			return consts.ErrMysql
 		}
 
 		var itemList []*model.OrderItem
@@ -73,16 +81,16 @@ func (s *PlaceOrderService) Run(req *order.PlaceOrderReq) (resp *order.PlaceOrde
 			})
 		}
 		if err := tx.Create(&itemList).Error; err != nil {
-			return err
+			klog.CtxErrorf(s.ctx, "tx.Create.err: %v", err)
+			return consts.ErrMysql
 		}
 		resp = &order.PlaceOrderResp{
 			Order: &order.OrderResult{
-				OrderId: orderId.String(),
+				OrderId: strconv.Itoa(int(orderId)),
 			},
 		}
 
 		return nil
 	})
-
 	return
 }

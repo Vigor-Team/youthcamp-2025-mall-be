@@ -10,6 +10,41 @@ service OrderService {
   rpc PlaceOrder(PlaceOrderReq) returns (PlaceOrderResp) {}
   rpc ListOrder(ListOrderReq) returns (ListOrderResp) {}
   rpc MarkOrderPaid(MarkOrderPaidReq) returns (MarkOrderPaidResp) {}
+  rpc SeckillPrePlaceOrder(SeckillPrePlaceOrderReq) returns (SeckillPrePlaceOrderResp) {}
+  rpc SeckillPlaceOrder(SeckillPlaceOrderReq) returns (SeckillPlaceOrderResp) {}
+  rpc QueryOrder(QueryOrderReq) returns (QueryOrderResp) {}
+}
+
+message SeckillPrePlaceOrderReq {
+  uint32 user_id = 1;
+  uint32 product_id = 2;
+}
+
+message SeckillPrePlaceOrderResp {
+  uint32 temp_id = 1;
+}
+
+message SeckillPlaceOrderReq {
+  uint32 user_id = 1;
+  string user_currency = 2;
+  Address address = 3;
+  string email = 4;
+
+  uint32 temp_id = 5;
+}
+
+message SeckillPlaceOrderResp {
+  string status = 1;
+  string order_id = 2;
+}
+
+message QueryOrderReq {
+  uint32 user_id = 1;
+  string order_id = 2;
+}
+
+message QueryOrderResp {
+  Order order = 1;
 }
 
 message Address {
@@ -53,7 +88,8 @@ message Order {
   string user_currency = 4;
   Address address = 5;
   string email = 6;
-  int32 created_at = 7;
+  string status = 7;
+  int32 created_at = 8;
 }
 
 message ListOrderResp {

@@ -2,7 +2,6 @@ package order
 
 import (
 	"context"
-
 	order "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/order"
 	"github.com/cloudwego/kitex/client/callopt"
 	"github.com/cloudwego/kitex/pkg/klog"
@@ -30,6 +29,33 @@ func MarkOrderPaid(ctx context.Context, req *order.MarkOrderPaidReq, callOptions
 	resp, err = defaultClient.MarkOrderPaid(ctx, req, callOptions...)
 	if err != nil {
 		klog.CtxErrorf(ctx, "MarkOrderPaid call failed,err =%+v", err)
+		return nil, err
+	}
+	return resp, nil
+}
+
+func SeckillPrePlaceOrder(ctx context.Context, req *order.SeckillPrePlaceOrderReq, callOptions ...callopt.Option) (resp *order.SeckillPrePlaceOrderResp, err error) {
+	resp, err = defaultClient.SeckillPrePlaceOrder(ctx, req, callOptions...)
+	if err != nil {
+		klog.CtxErrorf(ctx, "SeckillPrePlaceOrder call failed,err =%+v", err)
+		return nil, err
+	}
+	return resp, nil
+}
+
+func SeckillPlaceOrder(ctx context.Context, req *order.SeckillPlaceOrderReq, callOptions ...callopt.Option) (resp *order.SeckillPlaceOrderResp, err error) {
+	resp, err = defaultClient.SeckillPlaceOrder(ctx, req, callOptions...)
+	if err != nil {
+		klog.CtxErrorf(ctx, "SeckillPlaceOrder call failed,err =%+v", err)
+		return nil, err
+	}
+	return resp, nil
+}
+
+func QueryOrder(ctx context.Context, req *order.QueryOrderReq, callOptions ...callopt.Option) (resp *order.QueryOrderResp, err error) {
+	resp, err = defaultClient.QueryOrder(ctx, req, callOptions...)
+	if err != nil {
+		klog.CtxErrorf(ctx, "QueryOrder call failed,err =%+v", err)
 		return nil, err
 	}
 	return resp, nil

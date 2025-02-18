@@ -16,6 +16,7 @@ package service
 
 import (
 	"context"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/biz/consts"
 
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/biz/dal/mysql"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/biz/model"
@@ -36,8 +37,8 @@ func (s *ListOrderService) Run(req *order.ListOrderReq) (resp *order.ListOrderRe
 	// Finish your business logic.
 	orders, err := model.ListOrder(mysql.DB, s.ctx, req.UserId)
 	if err != nil {
-		klog.Errorf("model.ListOrder.err:%v", err)
-		return nil, err
+		klog.CtxErrorf(s.ctx, "model.ListOrder.err:%v", err)
+		return nil, consts.ErrMysql
 	}
 	var list []*order.Order
 	for _, v := range orders {

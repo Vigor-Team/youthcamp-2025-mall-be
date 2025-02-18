@@ -16,10 +16,10 @@ package order
 
 import (
 	"context"
-
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/biz/service"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/biz/utils"
-	common "github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/hertz_gen/gateway/common"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/hertz_gen/gateway/common"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/hertz_gen/gateway/order"
 	"github.com/cloudwego/hertz/pkg/app"
 	hertzUtils "github.com/cloudwego/hertz/pkg/common/utils"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
@@ -32,7 +32,7 @@ func OrderList(ctx context.Context, c *app.RequestContext) {
 	var req common.Empty
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		utils.FailResponse(ctx, c, err)
 		return
 	}
 
@@ -42,5 +42,63 @@ func OrderList(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
+	utils.SuccessResponse(c, resp)
+}
+
+// SeckillPrePlaceOrder .
+// @router /order/seckill/pre [POST]
+func SeckillPrePlaceOrder(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req order.SeckillPrePlaceOrderReq
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		utils.FailResponse(ctx, c, err)
+		return
+	}
+	resp, err := service.NewSeckillPrePlaceOrderService(ctx, c).Run(&req)
+	if err != nil {
+		utils.FailResponse(ctx, c, err)
+		return
+	}
+	utils.SuccessResponse(c, resp)
+}
+
+// SeckillPlaceOrder .
+// @router /order/seckill [POST]
+func SeckillPlaceOrder(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req order.SeckillPlaceOrderReq
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		utils.FailResponse(ctx, c, err)
+		return
+	}
+
+	resp, err := service.NewSeckillPlaceOrderService(ctx, c).Run(&req)
+
+	if err != nil {
+		utils.FailResponse(ctx, c, err)
+		return
+	}
+	utils.SuccessResponse(c, resp)
+}
+
+// QueryOrder .
+// @router /order/:order_id [GET]
+func QueryOrder(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req order.QueryOrderReq
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		utils.FailResponse(ctx, c, err)
+		return
+	}
+
+	resp, err := service.NewQueryOrderService(ctx, c).Run(&req)
+
+	if err != nil {
+		utils.FailResponse(ctx, c, err)
+		return
+	}
 	utils.SuccessResponse(c, resp)
 }

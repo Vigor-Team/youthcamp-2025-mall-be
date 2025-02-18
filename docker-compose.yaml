@@ -39,6 +39,15 @@ services:
         soft: -1
         hard: -1
 
+  rabbitmq:
+    image: rabbitmq:management
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+
   kibana:
     image: docker.elastic.co/kibana/kibana:8.17.1
     depends_on:

@@ -16,7 +16,7 @@ package service
 
 import (
 	"context"
-	"fmt"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/biz/consts"
 
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/biz/dal/mysql"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/biz/model"
@@ -35,18 +35,19 @@ func NewMarkOrderPaidService(ctx context.Context) *MarkOrderPaidService {
 func (s *MarkOrderPaidService) Run(req *order.MarkOrderPaidReq) (resp *order.MarkOrderPaidResp, err error) {
 	// Finish your business logic.
 	if req.UserId == 0 || req.OrderId == "" {
-		err = fmt.Errorf("user_id or order_id can not be empty")
+		klog.CtxErrorf(s.ctx, "userId or orderId empty")
+		err = consts.ErrInvalidParams
 		return
 	}
 	_, err = model.GetOrder(mysql.DB, s.ctx, req.UserId, req.OrderId)
 	if err != nil {
-		klog.Errorf("model.ListOrder.err:%v", err)
-		return nil, err
+		klog.CtxErrorf(s.ctx, "model.ListOrder.err:%v", err)
+		return nil, consts.ErrMysql
 	}
 	err = model.UpdateOrderState(mysql.DB, s.ctx, req.UserId, req.OrderId, model.OrderStatePaid)
 	if err != nil {
-		klog.Errorf("model.ListOrder.err:%v", err)
-		return nil, err
+		klog.CtxErrorf(s.ctx, "model.ListOrder.err:%v", err)
+		return nil, consts.ErrMysql
 	}
 	resp = &order.MarkOrderPaidResp{}
 	return

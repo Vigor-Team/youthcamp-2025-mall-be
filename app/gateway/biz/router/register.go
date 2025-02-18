@@ -20,7 +20,6 @@ import (
 	about "github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/biz/router/about"
 	auth "github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/biz/router/auth"
 	cart "github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/biz/router/cart"
-	category "github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/biz/router/category"
 	checkout "github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/biz/router/checkout"
 	home "github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/biz/router/home"
 	llm "github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/biz/router/llm"
@@ -43,8 +42,6 @@ func GeneratedRegister(r *server.Hertz) {
 	auth.Register(r)
 
 	cart.Register(r)
-
-	category.Register(r)
 
 	product.Register(r)
 
