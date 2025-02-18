@@ -33,13 +33,13 @@ func AddCartItem(ctx context.Context, c *app.RequestContext) {
 	var req cart.AddCartReq
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		utils.FailResponse(ctx, c, err)
 		return
 	}
 
 	_, err = service.NewAddCartItemService(ctx, c).Run(&req)
 	if err != nil {
-		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		utils.FailResponse(ctx, c, err)
 		return
 	}
 
@@ -62,5 +62,5 @@ func GetCart(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	c.Set("data", resp)
+	utils.SuccessResponse(c, resp)
 }

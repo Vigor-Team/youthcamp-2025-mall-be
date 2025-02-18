@@ -32,7 +32,7 @@ func OrderList(ctx context.Context, c *app.RequestContext) {
 	var req common.Empty
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		utils.FailResponse(ctx, c, err)
 		return
 	}
 
@@ -52,7 +52,7 @@ func SeckillPrePlaceOrder(ctx context.Context, c *app.RequestContext) {
 	var req order.SeckillPrePlaceOrderReq
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		utils.FailResponse(ctx, c, err)
 		return
 	}
 	resp, err := service.NewSeckillPrePlaceOrderService(ctx, c).Run(&req)
@@ -70,7 +70,7 @@ func SeckillPlaceOrder(ctx context.Context, c *app.RequestContext) {
 	var req order.SeckillPlaceOrderReq
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		utils.FailResponse(ctx, c, err)
 		return
 	}
 
@@ -90,14 +90,14 @@ func QueryOrder(ctx context.Context, c *app.RequestContext) {
 	var req order.QueryOrderReq
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		utils.FailResponse(ctx, c, err)
 		return
 	}
 
 	resp, err := service.NewQueryOrderService(ctx, c).Run(&req)
 
 	if err != nil {
-		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		utils.FailResponse(ctx, c, err)
 		return
 	}
 	utils.SuccessResponse(c, resp)

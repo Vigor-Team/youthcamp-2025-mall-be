@@ -8,7 +8,6 @@ import (
 	llm "github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/hertz_gen/gateway/llm"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
-	"github.com/cloudwego/hertz/pkg/protocol/consts"
 	"github.com/hertz-contrib/sse"
 	"io"
 	"net/http"
@@ -21,14 +20,14 @@ func SendMessage(ctx context.Context, c *app.RequestContext) {
 	var req llm.ChatRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		utils.FailResponse(ctx, c, err)
 		return
 	}
 
 	resp := &llm.ChatResponse{}
 	resp, err = service.NewSendMessageService(ctx, c).Run(&req)
 	if err != nil {
-		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		utils.FailResponse(ctx, c, err)
 		return
 	}
 
@@ -42,14 +41,14 @@ func StreamMessage(ctx context.Context, c *app.RequestContext) {
 	var req llm.ChatRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		utils.FailResponse(ctx, c, err)
 		return
 	}
 	c.Response.Header.Set("X-Accel-Buffering", "no")
 
 	stream, err := service.NewStreamMessageService(ctx, c).Run(&req)
 	if err != nil {
-		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		utils.FailResponse(ctx, c, err)
 		return
 	}
 
@@ -100,14 +99,14 @@ func GetHistory(ctx context.Context, c *app.RequestContext) {
 	var req llm.GetHistoryRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		utils.FailResponse(ctx, c, err)
 		return
 	}
 
 	resp, err := service.NewGetHistoryService(ctx, c).Run(&req)
 
 	if err != nil {
-		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		utils.FailResponse(ctx, c, err)
 		return
 	}
 	utils.SuccessResponse(c, resp)
@@ -120,14 +119,14 @@ func GetConversationIds(ctx context.Context, c *app.RequestContext) {
 	var req llm.GetConversationIdsRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		utils.FailResponse(ctx, c, err)
 		return
 	}
 
 	resp, err := service.NewGetConversationIdsService(ctx, c).Run(&req)
 
 	if err != nil {
-		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		utils.FailResponse(ctx, c, err)
 		return
 	}
 	utils.SuccessResponse(c, resp)
@@ -140,14 +139,14 @@ func DeleteMessage(ctx context.Context, c *app.RequestContext) {
 	var req llm.DeleteHistoryRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		utils.FailResponse(ctx, c, err)
 		return
 	}
 
 	resp, err := service.NewDeleteMessageService(ctx, c).Run(&req)
 
 	if err != nil {
-		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		utils.FailResponse(ctx, c, err)
 		return
 	}
 	utils.SuccessResponse(c, resp)

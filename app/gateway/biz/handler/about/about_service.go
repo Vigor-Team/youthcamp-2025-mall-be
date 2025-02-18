@@ -21,7 +21,6 @@ import (
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/biz/utils"
 	common "github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/hertz_gen/gateway/common"
 	"github.com/cloudwego/hertz/pkg/app"
-	"github.com/cloudwego/hertz/pkg/protocol/consts"
 )
 
 // About .
@@ -31,15 +30,15 @@ func About(ctx context.Context, c *app.RequestContext) {
 	var req common.Empty
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		utils.FailResponse(ctx, c, err)
 		return
 	}
 
 	resp, err := service.NewAboutService(ctx, c).Run(&req)
 	if err != nil {
-		utils.ErrorResponse(c, consts.StatusOK, err.Error())
+		utils.FailResponse(ctx, c, err)
 		return
 	}
 
-	c.Set("data", resp)
+	utils.SuccessResponse(c, resp)
 }
