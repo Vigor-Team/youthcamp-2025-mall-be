@@ -5,7 +5,7 @@ import (
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/biz/dal/mysql"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/biz/model"
 
-	auth "github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/hertz_gen/gateway/auth"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/hertz_gen/gateway/auth"
 	"github.com/cloudwego/hertz/pkg/app"
 )
 

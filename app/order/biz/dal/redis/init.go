@@ -2,6 +2,7 @@ package redis
 
 import (
 	"context"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/conf"
 
 	"github.com/redis/go-redis/v9"
 )
@@ -9,17 +10,11 @@ import (
 var RedisClient *redis.Client
 
 func Init() {
-	//RedisClient = redis.NewClient(&redis.Options{
-	//	Addr:     conf.GetConf().Redis.Address,
-	//	Username: conf.GetConf().Redis.Username,
-	//	Password: conf.GetConf().Redis.Password,
-	//	DB:       conf.GetConf().Redis.DB,
-	//})
 	RedisClient = redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379",
-		Username: "",
-		Password: "",
-		DB:       0,
+		Addr:     conf.GetConf().Redis.Address,
+		Username: conf.GetConf().Redis.Username,
+		Password: conf.GetConf().Redis.Password,
+		DB:       conf.GetConf().Redis.DB,
 	})
 	if err := RedisClient.Ping(context.Background()).Err(); err != nil {
 		panic(err)
