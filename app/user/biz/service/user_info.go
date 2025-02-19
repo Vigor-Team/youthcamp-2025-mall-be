@@ -21,5 +21,5 @@ func (s *UserInfoService) Run(req *user.UserInfoReq) (resp *user.UserInfoResp, e
 	if err != nil {
 		return
 	}
-	return &user.UserInfoResp{Email: userRow.Email, Role: userRow.Role}, nil
+	return &user.UserInfoResp{Email: userRow.Email}, nil
 }

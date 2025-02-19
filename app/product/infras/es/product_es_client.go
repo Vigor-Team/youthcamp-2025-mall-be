@@ -56,7 +56,7 @@ func (c *ProductESClient) BatchGetProductById(ctx context.Context, productIds []
 }
 
 func (c *ProductESClient) SearchProduct(ctx context.Context, keyword string) ([]*entity.ProductEntity, error) {
-	size := 1000
+	size := 100
 	resp, err := GetESClient().Search().
 		Index("product").
 		Request(&search.Request{

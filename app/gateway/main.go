@@ -18,6 +18,7 @@ package main
 
 import (
 	"context"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/biz/dal"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"os"
 
@@ -48,9 +49,13 @@ func main() {
 	// load env
 	_ = godotenv.Load()
 
+	// init dal
+	dal.Init()
+
 	// init mtl rpc
 	mtl.InitMtl()
 	rpc.InitClient()
+	middleware.InitCasbin()
 
 	address := conf.GetConf().Hertz.Address
 

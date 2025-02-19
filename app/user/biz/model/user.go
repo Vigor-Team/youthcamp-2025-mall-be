@@ -23,7 +23,6 @@ import (
 type User struct {
 	gorm.Model
 	Email          string `gorm:"unique"`
-	Role           string
 	PasswordHashed string
 }
 
