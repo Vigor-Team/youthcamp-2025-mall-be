@@ -55,12 +55,12 @@ message CreatePermissionReq {
 }
 
 message CreatePermissionResp {
-  Permission permission = 3;
+  Permission permission = 1;
 }
 
 message BindPermissionRoleReq {
-  string pid = 1 [(api.body) = "pid", (api.form) = "pid", (api.vd) = "($ > 0 && $ < 100)"];
-  string rid = 2 [(api.body) = "rid", (api.form) = "rid", (api.vd) = "($ > 0 && $ < 100)"];
+  int64 pid = 1 [(api.body) = "pid", (api.form) = "pid", (api.vd) = "($ > 0 && $ < 100)"];
+  int64 rid = 2 [(api.body) = "rid", (api.form) = "rid", (api.vd) = "($ > 0 && $ < 100)"];
 }
 
 message BindPermissionRoleResp {
@@ -90,8 +90,8 @@ message CreateRoleResp {
 }
 
 message BindRoleUserReq {
-  string uid = 1 [(api.body) = "uid", (api.form) = "uid", (api.vd) = "($ > 0 && $ < 100)"];
-  string rid = 2 [(api.body) = "rid", (api.form) = "rid", (api.vd) = "($ > 0 && $ < 100)"];
+  int64 uid = 1 [(api.body) = "uid", (api.form) = "uid", (api.vd) = "($ > 0 && $ < 100)"];
+  int64 rid = 2 [(api.body) = "rid", (api.form) = "rid", (api.vd) = "($ > 0 && $ < 100)"];
 }
 
 message BindRoleUserResp {

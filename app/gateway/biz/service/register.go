@@ -48,7 +48,10 @@ func (h *RegisterService) Run(req *auth.RegisterReq) (resp *common.Empty, err er
 	if err != nil {
 		return nil, err
 	}
-	err = model.CreateUserRole(mysql.DB, h.Context, int64(userID.UserId), role.ID)
+	err = model.BindUserRole(mysql.DB, h.Context, &model.UserRole{
+		UID: int64(userID.UserId),
+		RID: role.ID,
+	})
 	if err != nil {
 		return nil, err
 	}

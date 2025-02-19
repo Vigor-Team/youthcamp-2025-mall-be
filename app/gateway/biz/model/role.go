@@ -40,6 +40,11 @@ func GetRoleByName(db *gorm.DB, _ context.Context, name string) (*Role, error) {
 	return &role, err
 }
 
-func CreateUserRole(db *gorm.DB, _ context.Context, uid, rid int64) error {
-	return db.Create(&UserRole{UID: uid, RID: rid}).Error
+func BindUserRole(db *gorm.DB, _ context.Context, userRole *UserRole) error {
+	return db.Create(userRole).Error
+}
+
+func CreateRole(db *gorm.DB, _ context.Context, role *Role) (*Role, error) {
+	err := db.Create(role).Error
+	return role, err
 }

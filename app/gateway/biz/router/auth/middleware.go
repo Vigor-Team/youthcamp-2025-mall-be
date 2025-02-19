@@ -72,3 +72,33 @@ func _refreshMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
+
+func _permissionMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _bindpermissionroleMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _createpermissionMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _roleMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _bindroleuserMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _createroleMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
