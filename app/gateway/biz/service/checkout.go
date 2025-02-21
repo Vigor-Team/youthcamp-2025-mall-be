@@ -16,15 +16,12 @@ package service
 
 import (
 	"context"
-	"strconv"
-
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/hertz_gen/gateway/checkout"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/infra/rpc"
 	gatewayutils "github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/utils"
-	rpccart "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/cart"
-	rpcproduct "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/product"
+	rpccheckout "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/checkout"
+	rpcpayment "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/payment"
 	"github.com/cloudwego/hertz/pkg/app"
-	"github.com/cloudwego/hertz/pkg/common/utils"
 )
 
 type CheckoutService struct {
@@ -36,37 +33,35 @@ func NewCheckoutService(Context context.Context, RequestContext *app.RequestCont
 	return &CheckoutService{RequestContext: RequestContext, Context: Context}
 }
 
-func (h *CheckoutService) Run(req *checkout.CheckoutReq) (resp map[string]any, err error) {
-	var items []map[string]string
-	userId := gatewayutils.GetUserIdFromCtx(h.Context)
-
-	carts, err := rpc.CartClient.GetCart(h.Context, &rpccart.GetCartReq{UserId: userId})
+func (h *CheckoutService) Run(req *checkout.CheckoutReq) (resp *checkout.CheckoutResp, err error) {
+	userId := gatewayutils.GetUserIdFromCtx(h.RequestContext)
+	// Checkout
+	res, err := rpc.CheckoutClient.Checkout(h.Context, &rpccheckout.CheckoutReq{
+		UserId:    userId,
+		Email:     req.Email,
+		Firstname: req.Firstname,
+		Lastname:  req.Lastname,
+		Address: &rpccheckout.Address{
+			Country:       req.Country,
+			ZipCode:       req.Zipcode,
+			City:          req.City,
+			State:         req.Province,
+			StreetAddress: req.Street,
+		},
+		CreditCard: &rpcpayment.CreditCardInfo{
+			CreditCardNumber:          req.CardNum,
+			CreditCardExpirationYear:  req.ExpirationYear,
+			CreditCardExpirationMonth: req.ExpirationMonth,
+			CreditCardCvv:             req.Cvv,
+		},
+		PaymentMethod: req.PaymentMethod,
+	})
 	if err != nil {
 		return nil, err
 	}
-	var total float32
-	for _, v := range carts.Cart.Items {
-		productResp, err := rpc.ProductClient.GetProduct(h.Context, &rpcproduct.GetProductReq{Id: v.ProductId})
-		if err != nil {
-			return nil, err
-		}
-		if productResp.Product == nil {
-			continue
-		}
-		p := productResp.Product
-		items = append(items, map[string]string{
-			"Name":    p.Name,
-			"Price":   strconv.FormatFloat(float64(p.Price), 'f', 2, 64),
-			"Picture": p.Picture,
-			"Qty":     strconv.Itoa(int(v.Quantity)),
-		})
-		total += float32(v.Quantity) * p.Price
+	resp = &checkout.CheckoutResp{
+		OrderId:       res.OrderId,
+		TransactionId: res.TransactionId,
 	}
-
-	return utils.H{
-		"title":    "Checkout",
-		"items":    items,
-		"cart_num": len(items),
-		"total":    strconv.FormatFloat(float64(total), 'f', 2, 64),
-	}, nil
+	return
 }

@@ -38,7 +38,7 @@ func NewOrderListService(Context context.Context, RequestContext *app.RequestCon
 }
 
 func (h *OrderListService) Run(req *common.Empty) (resp map[string]any, err error) {
-	userId := gatewayutils.GetUserIdFromCtx(h.Context)
+	userId := gatewayutils.GetUserIdFromCtx(h.RequestContext)
 	var orders []*types.Order
 	listOrderResp, err := rpc.OrderClient.ListOrder(h.Context, &rpcorder.ListOrderReq{UserId: userId})
 	if err != nil {

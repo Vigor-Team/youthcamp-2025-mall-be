@@ -86,7 +86,7 @@ func initJwtMd() (middleware *jwt.HertzJWTMiddleware, err error) {
 			}, nil
 		},
 		Unauthorized: func(ctx context.Context, c *app.RequestContext, code int, message string) {
-			utils.ErrorResponse(c, int32(code), message)
+			utils.FailResponseWithCodeAndMsg(c, int32(code), message)
 		},
 		TokenLookup:   "header: Authorization, query: token, cookie: jwt",
 		TokenHeadName: "Bearer",

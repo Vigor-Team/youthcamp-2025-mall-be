@@ -36,7 +36,8 @@ func NewCheckoutWaitingService(Context context.Context, RequestContext *app.Requ
 }
 
 func (h *CheckoutWaitingService) Run(req *checkout.CheckoutReq) (resp map[string]any, err error) {
-	userId := gatewayutils.GetUserIdFromCtx(h.Context)
+	userId := gatewayutils.GetUserIdFromCtx(h.RequestContext)
+	// Checkout
 	_, err = rpc.CheckoutClient.Checkout(h.Context, &rpccheckout.CheckoutReq{
 		UserId:    userId,
 		Email:     req.Email,

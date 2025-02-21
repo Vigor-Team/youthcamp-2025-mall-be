@@ -1,17 +1,3 @@
-// Copyright 2024 CloudWeGo Authors
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 package service
 
 import (
@@ -54,7 +40,6 @@ func NewCheckoutService(ctx context.Context) *CheckoutService {
 7. finish
 */
 func (s *CheckoutService) Run(req *checkout.CheckoutReq) (resp *checkout.CheckoutResp, err error) {
-	// Finish your business logic.
 	// Idempotent
 	// get cart
 	cartResult, err := rpc.CartClient.GetCart(s.ctx, &cart.GetCartReq{UserId: req.UserId})
@@ -89,6 +74,7 @@ func (s *CheckoutService) Run(req *checkout.CheckoutReq) (resp *checkout.Checkou
 			Cost: cost,
 		})
 	}
+
 	// create order
 	orderReq := &order.PlaceOrderReq{
 		UserId:       req.UserId,
@@ -113,6 +99,7 @@ func (s *CheckoutService) Run(req *checkout.CheckoutReq) (resp *checkout.Checkou
 		return
 	}
 	klog.Info("orderResult", orderResult)
+
 	// empty cart
 	emptyResult, err := rpc.CartClient.EmptyCart(s.ctx, &cart.EmptyCartReq{UserId: req.UserId})
 	if err != nil {
@@ -120,6 +107,7 @@ func (s *CheckoutService) Run(req *checkout.CheckoutReq) (resp *checkout.Checkou
 		return
 	}
 	klog.Info(emptyResult)
+
 	// charge
 	var orderId string
 	if orderResult != nil || orderResult.Order != nil {
@@ -135,6 +123,7 @@ func (s *CheckoutService) Run(req *checkout.CheckoutReq) (resp *checkout.Checkou
 			CreditCardExpirationMonth: req.CreditCard.CreditCardExpirationMonth,
 			CreditCardCvv:             req.CreditCard.CreditCardCvv,
 		},
+		PaymentMethod: req.PaymentMethod,
 	}
 	paymentResult, err := rpc.PaymentClient.Charge(s.ctx, payReq)
 	if err != nil {

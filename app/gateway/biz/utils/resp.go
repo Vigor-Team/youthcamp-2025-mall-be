@@ -21,10 +21,6 @@ import (
 	"github.com/cloudwego/kitex/pkg/kerrors"
 	"net/http"
 
-	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/infra/rpc"
-	gatewayutils "github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/utils"
-	"github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/cart"
-
 	"github.com/cloudwego/hertz/pkg/app"
 )
 
@@ -37,14 +33,6 @@ type GlobalResponse struct {
 	Code int32  `json:"code"`
 	Msg  string `json:"msg"`
 	Data any    `json:"data"`
-}
-
-func ErrorResponse(c *app.RequestContext, code int32, message string) {
-	c.JSON(http.StatusOK, GlobalResponse{
-		Code: code,
-		Msg:  message,
-		Data: nil,
-	})
 }
 
 func FailResponse(ctx context.Context, c *app.RequestContext, err error) {
@@ -79,16 +67,4 @@ func SuccessResponse(c *app.RequestContext, data interface{}) {
 		Msg:  defaultSuccessMsg,
 		Data: data,
 	})
-}
-
-func WarpResponse(ctx context.Context, c *app.RequestContext, content map[string]any) map[string]any {
-	var cartNum int
-	userId := gatewayutils.GetUserIdFromCtx(ctx)
-	cartResp, _ := rpc.CartClient.GetCart(ctx, &cart.GetCartReq{UserId: userId})
-	if cartResp != nil && cartResp.Cart != nil {
-		cartNum = len(cartResp.Cart.Items)
-	}
-	content["user_id"] = ctx.Value(gatewayutils.UserIdKey)
-	content["cart_num"] = cartNum
-	return content
 }

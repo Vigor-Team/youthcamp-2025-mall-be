@@ -25,6 +25,7 @@ message CheckoutReq {
   string email = 4;
   Address address = 5;
   payment.CreditCardInfo credit_card = 6;
+  string payment_method = 7;
 }
 
 message CheckoutResp {

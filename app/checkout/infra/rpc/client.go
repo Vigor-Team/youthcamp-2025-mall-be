@@ -17,7 +17,6 @@ package rpc
 import (
 	"sync"
 
-	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/checkout/conf"
 	checkoututils "github.com/Vigor-Team/youthcamp-2025-mall-be/app/checkout/utils"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/common/clientsuite"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/cart/cartservice"
@@ -41,8 +40,10 @@ var (
 
 func InitClient() {
 	once.Do(func() {
-		registryAddr = conf.GetConf().Registry.RegistryAddress[0]
-		serviceName = conf.GetConf().Kitex.Service
+		//registryAddr = conf.GetConf().Registry.RegistryAddress[0]
+		//serviceName = conf.GetConf().Kitex.Service
+		registryAddr = "127.0.0.1:8500"
+		serviceName = "checkout"
 		commonSuite = client.WithSuite(clientsuite.CommonGrpcClientSuite{
 			CurrentServiceName: serviceName,
 			RegistryAddr:       registryAddr,

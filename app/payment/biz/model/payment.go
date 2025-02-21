@@ -27,6 +27,7 @@ type PaymentLog struct {
 	OrderId       string    `json:"order_id"`
 	TransactionId string    `json:"transaction_id"`
 	Amount        float32   `json:"amount"`
+	PaymentMethod string    `json:"payment_method"`
 	PayAt         time.Time `json:"pay_at"`
 }
 
