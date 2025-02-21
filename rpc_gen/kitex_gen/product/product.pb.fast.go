@@ -569,6 +569,11 @@ func (x *ListProductsReq) FastRead(buf []byte, _type int8, number int32) (offset
 		if err != nil {
 			goto ReadFieldError
 		}
+	case 4:
+		offset, err = x.fastReadField4(buf, _type)
+		if err != nil {
+			goto ReadFieldError
+		}
 	default:
 		offset, err = fastpb.Skip(buf, _type, number)
 		if err != nil {
@@ -594,6 +599,11 @@ func (x *ListProductsReq) fastReadField2(buf []byte, _type int8) (offset int, er
 
 func (x *ListProductsReq) fastReadField3(buf []byte, _type int8) (offset int, err error) {
 	x.CategoryId, offset, err = fastpb.ReadUint32(buf, _type)
+	return offset, err
+}
+
+func (x *ListProductsReq) fastReadField4(buf []byte, _type int8) (offset int, err error) {
+	x.Role, offset, err = fastpb.ReadString(buf, _type)
 	return offset, err
 }
 
@@ -1421,6 +1431,7 @@ func (x *ListProductsReq) FastWrite(buf []byte) (offset int) {
 	offset += x.fastWriteField1(buf[offset:])
 	offset += x.fastWriteField2(buf[offset:])
 	offset += x.fastWriteField3(buf[offset:])
+	offset += x.fastWriteField4(buf[offset:])
 	return offset
 }
 
@@ -1445,6 +1456,14 @@ func (x *ListProductsReq) fastWriteField3(buf []byte) (offset int) {
 		return offset
 	}
 	offset += fastpb.WriteUint32(buf[offset:], 3, x.GetCategoryId())
+	return offset
+}
+
+func (x *ListProductsReq) fastWriteField4(buf []byte) (offset int) {
+	if x.Role == "" {
+		return offset
+	}
+	offset += fastpb.WriteString(buf[offset:], 4, x.GetRole())
 	return offset
 }
 
@@ -2107,6 +2126,7 @@ func (x *ListProductsReq) Size() (n int) {
 	n += x.sizeField1()
 	n += x.sizeField2()
 	n += x.sizeField3()
+	n += x.sizeField4()
 	return n
 }
 
@@ -2131,6 +2151,14 @@ func (x *ListProductsReq) sizeField3() (n int) {
 		return n
 	}
 	n += fastpb.SizeUint32(3, x.GetCategoryId())
+	return n
+}
+
+func (x *ListProductsReq) sizeField4() (n int) {
+	if x.Role == "" {
+		return n
+	}
+	n += fastpb.SizeString(4, x.GetRole())
 	return n
 }
 
@@ -2454,6 +2482,7 @@ var fieldIDToName_ListProductsReq = map[int32]string{
 	1: "Page",
 	2: "PageSize",
 	3: "CategoryId",
+	4: "Role",
 }
 
 var fieldIDToName_ListProductsResp = map[int32]string{

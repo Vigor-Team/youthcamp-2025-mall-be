@@ -67,9 +67,9 @@ func CasbinAuth() app.HandlerFunc {
 		var isAuth = false
 
 		for _, r := range roles.([]interface{}) {
-			fmt.Println("role", r)
-			fmt.Println("fullpath", c.FullPath())
-			fmt.Println("method", string(c.Request.Header.Method()))
+			fmt.Println("role: ", r)
+			fmt.Println("path: ", c.FullPath())
+			fmt.Println("method: ", string(c.Request.Header.Method()))
 			res, err := Authorize(r.(string), c.FullPath(), string(c.Request.Header.Method()))
 			if err != nil {
 				hlog.CtxErrorf(ctx, "Authorize is error: %v", err)
@@ -78,6 +78,7 @@ func CasbinAuth() app.HandlerFunc {
 				return
 			}
 			if res {
+				ctx = context.WithValue(ctx, "role", r.(string))
 				isAuth = true
 				break
 			}
