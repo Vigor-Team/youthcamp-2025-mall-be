@@ -78,7 +78,6 @@ func CasbinAuth() app.HandlerFunc {
 				return
 			}
 			if res {
-				ctx = context.WithValue(ctx, "role", r.(string))
 				isAuth = true
 				break
 			}

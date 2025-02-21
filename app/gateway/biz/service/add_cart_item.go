@@ -18,9 +18,7 @@ import (
 	"context"
 
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/hertz_gen/gateway/cart"
-	common "github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/hertz_gen/gateway/common"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/infra/rpc"
-	gatewayutils "github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/utils"
 	rpccart "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/cart"
 	"github.com/cloudwego/hertz/pkg/app"
 )
@@ -34,9 +32,9 @@ func NewAddCartItemService(Context context.Context, RequestContext *app.RequestC
 	return &AddCartItemService{RequestContext: RequestContext, Context: Context}
 }
 
-func (h *AddCartItemService) Run(req *cart.AddCartReq) (resp *common.Empty, err error) {
+func (h *AddCartItemService) Run(req *cart.AddCartReq) (resp *cart.AddCartResp, err error) {
 	_, err = rpc.CartClient.AddItem(h.Context, &rpccart.AddItemReq{
-		UserId: gatewayutils.GetUserIdFromCtx(h.Context),
+		UserId: uint32(h.RequestContext.Value("user_id").(int32)),
 		Item: &rpccart.CartItem{
 			ProductId: req.ProductId,
 			Quantity:  req.ProductNum,

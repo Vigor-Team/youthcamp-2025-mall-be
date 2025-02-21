@@ -20,7 +20,7 @@ func NewListProductsService(Context context.Context, RequestContext *app.Request
 func (h *ListProductsService) Run(req *product.ListProductsReq) (resp *product.ListProductsResp, err error) {
 	r, err := rpc.ProductClient.ListProducts(h.Context, &rpcproduct.ListProductsReq{
 		CategoryId: req.CategoryId,
-		Role:       h.Context.Value("role").(string),
+		Role:       h.RequestContext.Value("roles").([]interface{})[0].(string),
 	})
 	if err != nil {
 		return

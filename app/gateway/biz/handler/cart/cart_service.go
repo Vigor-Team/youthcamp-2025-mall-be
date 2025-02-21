@@ -20,10 +20,7 @@ import (
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/biz/service"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/biz/utils"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/hertz_gen/gateway/cart"
-	common "github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/hertz_gen/gateway/common"
 	"github.com/cloudwego/hertz/pkg/app"
-	hertzUtils "github.com/cloudwego/hertz/pkg/common/utils"
-	"github.com/cloudwego/hertz/pkg/protocol/consts"
 )
 
 // AddCartItem .
@@ -37,11 +34,13 @@ func AddCartItem(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	_, err = service.NewAddCartItemService(ctx, c).Run(&req)
+	resp, err := service.NewAddCartItemService(ctx, c).Run(&req)
 	if err != nil {
 		utils.FailResponse(ctx, c, err)
 		return
 	}
+
+	utils.SuccessResponse(c, resp)
 
 }
 
@@ -49,16 +48,16 @@ func AddCartItem(ctx context.Context, c *app.RequestContext) {
 // @router /cart [GET]
 func GetCart(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req common.Empty
+	var req cart.GetCartReq
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.HTML(consts.StatusOK, "cart", utils.WarpResponse(ctx, c, hertzUtils.H{"warning": err}))
+		utils.FailResponse(ctx, c, err)
 		return
 	}
 
 	resp, err := service.NewGetCartService(ctx, c).Run(&req)
 	if err != nil {
-		c.HTML(consts.StatusOK, "cart", utils.WarpResponse(ctx, c, hertzUtils.H{"error": err}))
+		utils.FailResponse(ctx, c, err)
 		return
 	}
 

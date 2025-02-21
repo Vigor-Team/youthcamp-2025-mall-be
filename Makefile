@@ -15,20 +15,20 @@ init: ## Just copy `.env.example` to `.env` with one click, executed once.
 ##@ Build
 
 .PHONY: gen
-gen: ## gen client code of {svc}. example: make gen svc=user
+gen: ## gen client code of {svc}. example: make gen svc=product
 	@scripts/gen.sh ${svc}
 
 .PHONY: gen-client
-gen-client: ## gen client code of {svc}. example: make gen-client svc=user
+gen-client: ## gen client code of {svc}. example: make gen-client svc=product
 	@cd rpc_gen && cwgo client --type RPC --service ${svc} --module github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen  -I ../idl  --idl ../idl/${svc}.proto
 
 .PHONY: gen-server
-gen-server: ## gen service code of {svc}. example: make gen-server svc=user
+gen-server: ## gen service code of {svc}. example: make gen-server svc=product
 	@cd app/${svc} && cwgo server --type RPC --service ${svc} --module github.com/Vigor-Team/youthcamp-2025-mall-be/app/${svc} --pass "-use github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen"  -I ../../idl  --idl ../../idl/${svc}.proto
 
 .PHONY: gen-gateway
 gen-gateway:
-	@cd app/gateway && cwgo server --type HTTP --idl ../../idl/gateway/auth_api.proto --service gateway --module github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway -I ../../idl
+	@cd app/gateway && cwgo server --type HTTP --idl ../../idl/gateway/cart_api.proto --service gateway --module github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway -I ../../idl
 
 ##@ Build
 
@@ -54,7 +54,7 @@ lint-fix: ## run `golangci-lint` for all go module
 	@scripts/fix.sh
 
 .PHONY: run
-run: ## run {svc} server. example: make run svc=user
+run: ## run {svc} server. example: make run svc=product
 	@scripts/run.sh ${svc}
 
 ##@ Development Env
@@ -90,7 +90,7 @@ open-prometheus: ## open `prometheus ui` in the default browser
 	@open "http://localhost:9090"
 
 
-.PHONY: gen-user
-gen-user:
-	@cd rpc_gen && cwgo client --type RPC --service user --module github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen --I ../idl --idl ../idl/user.proto
-	@cd app/user && cwgo server --type RPC --service user --module github.com/Vigor-Team/youthcamp-2025-mall-be/app/user --pass "-use github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen" -I ../../idl --idl ../../idl/user.proto
+.PHONY: gen-product
+gen-product:
+	@cd rpc_gen && cwgo client --type RPC --service product --module github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen --I ../idl --idl ../idl/product.proto
+	@cd app/product && cwgo server --type RPC --service product --module github.com/Vigor-Team/youthcamp-2025-mall-be/app/product --pass "-use github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen" -I ../../idl --idl ../../idl/product.proto
