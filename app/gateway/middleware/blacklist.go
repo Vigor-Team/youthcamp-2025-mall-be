@@ -17,7 +17,7 @@ func BlacklistMiddleware() app.HandlerFunc {
 			c.Abort()
 			return
 		}
-		userIDKey := redis.GetBlacklistUserIDKey(userID.(int64))
+		userIDKey := redis.GetBlacklistUserIDKey(userID.(int32))
 		if redis.RedisClient.Exists(ctx, userIDKey).Val() == 1 {
 			utils.FailResponse(ctx, c, kerrors.NewBizStatusError(1, "user is blacklisted"))
 			c.Abort()

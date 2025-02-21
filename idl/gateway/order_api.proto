@@ -9,16 +9,16 @@ option go_package = "/gateway/order";
 
 service OrderService {
   rpc OrderList(common.Empty) returns (common.Empty) {
-    option (api.get) = "/order";
+    option (api.get) = "/api/v1/order";
   }
   rpc SeckillPrePlaceOrder(SeckillPrePlaceOrderReq) returns (SeckillPrePlaceOrderResp) {
-    option (api.post) = "/order/seckill/pre";
+    option (api.post) = "/api/v1/order/seckill/pre";
   }
   rpc SeckillPlaceOrder(SeckillPlaceOrderReq) returns (SeckillPlaceOrderResp) {
-    option (api.post) = "/order/seckill";
+    option (api.post) = "/api/v1/order/seckill";
   }
   rpc QueryOrder(QueryOrderReq) returns (QueryOrderResp) {
-    option (api.get) = "/order/:order_id";
+    option (api.get) = "/api/v1/order/:order_id";
   }
 }
 

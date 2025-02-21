@@ -1,21 +1,8 @@
-// Copyright 2024 CloudWeGo Authors
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 package mtl
 
 import (
 	"context"
+	"github.com/cloudwego/hertz/pkg/common/hlog"
 
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/utils"
 	"github.com/cloudwego/hertz/pkg/route"
@@ -36,12 +23,13 @@ func InitTracing() route.CtxCallback {
 	processor := tracesdk.NewBatchSpanProcessor(exporter)
 	res, err := resource.New(context.Background(), resource.WithAttributes(semconv.ServiceNameKey.String(utils.ServiceName)))
 	if err != nil {
+		hlog.Errorf("failed to create resource: %v", err)
 		res = resource.Default()
 	}
 	TracerProvider = tracesdk.NewTracerProvider(tracesdk.WithSpanProcessor(processor), tracesdk.WithResource(res))
 	otel.SetTracerProvider(TracerProvider)
 
-	return route.CtxCallback(func(ctx context.Context) {
+	return func(ctx context.Context) {
 		exporter.Shutdown(ctx) //nolint:errcheck
-	})
+	}
 }

@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"context"
+	"fmt"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/biz/dal/mysql"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/biz/model"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/biz/utils"
@@ -41,6 +42,7 @@ func initJwtMd() (middleware *jwt.HertzJWTMiddleware, err error) {
 		MaxRefresh:  refreshTokenExpire,
 		IdentityKey: UserID,
 		PayloadFunc: func(data interface{}) jwt.MapClaims {
+			fmt.Println(data)
 			if claim, ok := data.(map[string]interface{}); ok {
 				return jwt.MapClaims{
 					UserID: claim[UserID],

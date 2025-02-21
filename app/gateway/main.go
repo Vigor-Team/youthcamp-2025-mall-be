@@ -19,9 +19,6 @@ package main
 import (
 	"context"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/biz/dal"
-	"github.com/cloudwego/hertz/pkg/common/hlog"
-	"os"
-
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/biz/router"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/conf"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/infra/mtl"
@@ -30,6 +27,7 @@ import (
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/app/middlewares/server/recovery"
 	"github.com/cloudwego/hertz/pkg/app/server"
+	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/cloudwego/hertz/pkg/common/utils"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 	"github.com/hertz-contrib/cors"
@@ -39,8 +37,6 @@ import (
 	hertzotelprovider "github.com/hertz-contrib/obs-opentelemetry/provider"
 	hertzoteltracing "github.com/hertz-contrib/obs-opentelemetry/tracing"
 	"github.com/hertz-contrib/pprof"
-	"github.com/hertz-contrib/sessions"
-	"github.com/hertz-contrib/sessions/redis"
 	"github.com/joho/godotenv"
 	oteltrace "go.opentelemetry.io/otel/trace"
 )
@@ -96,13 +92,6 @@ func main() {
 	// register router
 	router.GeneratedRegister(h)
 
-	if os.Getenv("GO_ENV") != "online" {
-		h.GET("/robots.txt", func(ctx context.Context, c *app.RequestContext) {
-			c.Data(consts.StatusOK, "text/plain", []byte(`User-agent: *
-Disallow: /`))
-		})
-	}
-
 	h.Spin()
 }
 
@@ -111,18 +100,6 @@ func registerMiddleware(h *server.Hertz) {
 	if conf.GetConf().Hertz.EnablePprof {
 		pprof.Register(h)
 	}
-
-	store, err := redis.NewStore(100, "tcp", conf.GetConf().Redis.Address, "", []byte(os.Getenv("SESSION_SECRET")))
-	if err != nil {
-		panic(err)
-	}
-
-	store.Options(sessions.Options{MaxAge: 86400, Path: "/"})
-	rs, err := redis.GetRedisStore(store)
-	if err == nil {
-		rs.SetSerializer(sessions.JSONSerializer{})
-	}
-	h.Use(sessions.New("cloudwego-shop", store))
 
 	// gzip
 	if conf.GetConf().Hertz.EnableGzip {
@@ -141,5 +118,6 @@ func registerMiddleware(h *server.Hertz) {
 
 	// cores
 	h.Use(cors.Default())
+
 	middleware.RegisterMiddleware(h)
 }

@@ -22,10 +22,12 @@ import (
 )
 
 func rootMw() []app.HandlerFunc {
-	// your code...
-	return []app.HandlerFunc{middleware.Auth()}
+	var mws []app.HandlerFunc
+	mws = append(mws, middleware.GetJwtMd().MiddlewareFunc())
+	mws = append(mws, middleware.BlacklistMiddleware())
+	mws = append(mws, middleware.CasbinAuth())
+	return mws
 }
-
 func _checkoutMw() []app.HandlerFunc {
 	// your code...
 	return nil

@@ -24,6 +24,7 @@ import (
 func rootMw() []app.HandlerFunc {
 	var mws []app.HandlerFunc
 	mws = append(mws, middleware.GetJwtMd().MiddlewareFunc())
+	mws = append(mws, middleware.BlacklistMiddleware())
 	mws = append(mws, middleware.CasbinAuth())
 	return mws
 }

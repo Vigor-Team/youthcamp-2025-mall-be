@@ -1,7 +1,5 @@
 package redis
 
-import "strconv"
-
-func GetBlacklistUserIDKey(userID int64) string {
-	return "blacklist:userid:" + strconv.FormatInt(userID, 10)
+func GetBlacklistUserIDKey(userID int32) string {
+	return "blacklist:userid:" + string(userID)
 }
