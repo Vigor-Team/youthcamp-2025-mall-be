@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/infra/rpc"
+	gatewayutils "github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/utils"
 	rpcorder "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/order"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 
@@ -25,7 +26,7 @@ func (h *SeckillPlaceOrderService) Run(req *order.SeckillPlaceOrderReq) (resp *o
 		hlog.CtxInfof(h.Context, "resp = %+v", resp)
 	}()
 	seckill, err := rpc.OrderClient.SeckillPlaceOrder(h.Context, &rpcorder.SeckillPlaceOrderReq{
-		UserId:       req.UserId,
+		UserId:       gatewayutils.GetUserIdFromCtx(h.RequestContext),
 		UserCurrency: req.UserCurrency,
 		Address: &rpcorder.Address{
 			StreetAddress: req.Address.StreetAddress,

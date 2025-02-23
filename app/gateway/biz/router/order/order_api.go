@@ -17,12 +17,18 @@ import (
 func Register(r *server.Hertz) {
 
 	root := r.Group("/", rootMw()...)
-	root.GET("/order", append(_orderlistMw(), order.OrderList)...)
-	_order := root.Group("/order", _orderMw()...)
-	_order.GET("/:order_id", append(_queryorderMw(), order.QueryOrder)...)
-	_order.POST("/seckill", append(_seckillplaceorderMw(), order.SeckillPlaceOrder)...)
 	{
-		_seckill := _order.Group("/seckill", _seckillMw()...)
-		_seckill.POST("/pre", append(_seckillpreplaceorderMw(), order.SeckillPrePlaceOrder)...)
+		_api := root.Group("/api", _apiMw()...)
+		{
+			_v1 := _api.Group("/v1", _v1Mw()...)
+			_v1.GET("/order", append(_orderlistMw(), order.OrderList)...)
+			_order := _v1.Group("/order", _orderMw()...)
+			_order.GET("/:order_id", append(_queryorderMw(), order.QueryOrder)...)
+			_order.POST("/seckill", append(_seckillplaceorderMw(), order.SeckillPlaceOrder)...)
+			{
+				_seckill := _order.Group("/seckill", _seckillMw()...)
+				_seckill.POST("/pre", append(_seckillpreplaceorderMw(), order.SeckillPrePlaceOrder)...)
+			}
+		}
 	}
 }

@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql
+spec:
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+        - name: mysql
+          image: "mysql:latest"
+          imagePullPolicy: IfNotPresent
+          resources:
+            limits:
+              memory: "500Mi"
+              cpu: "500m"
+          ports:
+            - containerPort: 3306
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-paasword
+                  key: password
+          volumeMounts:
+            - mountPath: /docker-entrypoint-initdb.d
+              name: initdb
+            - name: mysql-data
+              mountPath: /mysql/data
+      volumes:
+        - name: initdb
+          hostPath:
+            path: /opt/gomall/db/sql/ini
+            type: Directory
+        - name: mysql-data
+          persistentVolumeClaim:
+            claimName: mysql-data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-svc
+spec:
+  selector:
+    app: mysql
+  ports:
+    - port: 3306
+      targetPort: 3306
+      protocol: TCP
+      nodePort: 30089
+  type: NodePort

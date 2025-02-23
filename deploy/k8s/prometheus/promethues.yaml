@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus
+spec:
+  selector:
+    matchLabels:
+      app: prometheus
+  template:
+    metadata:
+      labels:
+        app: prometheus
+    spec:
+      containers:
+        - name: prometheus
+          image: "prom/prometheus:latest"
+          imagePullPolicy: IfNotPresent
+          args:
+            - "--config.file=/etc/prometheus/prometheus.yml"
+          resources:
+            limits:
+              memory: "500Mi"
+              cpu: "500m"
+          ports:
+            - containerPort: 9090
+          volumeMounts:
+            - mountPath: /etc/prometheus/prometheus.yml
+              name: prom-config
+      volumes:
+        - name: prom-config
+          hostPath:
+            path: /opt/youthcamp-2025-mall-be/deploy/config/prometheus.yml
+            type: File
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus-svc
+spec:
+  selector:
+    app: prometheus
+  ports:
+    - port: 9090
+      targetPort: 9090
+      name: "9090"

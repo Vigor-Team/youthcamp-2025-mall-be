@@ -31,12 +31,11 @@ message SeckillPrePlaceOrderResp {
 }
 
 message SeckillPlaceOrderReq {
-  uint32 user_id = 1 [(api.body) = "user_id"];
-  string user_currency = 2 [(api.body) = "user_currency"];
-  Address address = 3 [(api.body) = "address"];
-  string email = 4 [(api.body) = "email"];
+  string user_currency = 1 [(api.body) = "user_currency"];
+  Address address = 2 [(api.body) = "address"];
+  string email = 3 [(api.body) = "email"];
 
-  uint32 temp_id = 5;
+  uint32 temp_id = 4;
 }
 
 message SeckillPlaceOrderResp {

@@ -23,8 +23,8 @@ end
 
 redis.call('SADD', product_order_key, user_id)
 redis.call('HSET', pre_order_key,
-    "user_id", user_id,
-    "product_id", product_id
+        "user_id", user_id,
+        "product_id", product_id
 )
 
 return remaining_stock

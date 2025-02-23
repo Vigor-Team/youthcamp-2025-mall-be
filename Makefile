@@ -15,20 +15,20 @@ init: ## Just copy `.env.example` to `.env` with one click, executed once.
 ##@ Build
 
 .PHONY: gen
-gen: ## gen client code of {svc}. example: make gen svc=checkout
+gen: ## gen client code of {svc}. example: make gen svc=order
 	@scripts/gen.sh ${svc}
 
 .PHONY: gen-client
-gen-client: ## gen client code of {svc}. example: make gen-client svc=checkout
+gen-client: ## gen client code of {svc}. example: make gen-client svc=order
 	@cd rpc_gen && cwgo client --type RPC --service ${svc} --module github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen  -I ../idl  --idl ../idl/${svc}.proto
 
 .PHONY: gen-server
-gen-server: ## gen service code of {svc}. example: make gen-server svc=checkout
+gen-server: ## gen service code of {svc}. example: make gen-server svc=order
 	@cd app/${svc} && cwgo server --type RPC --service ${svc} --module github.com/Vigor-Team/youthcamp-2025-mall-be/app/${svc} --pass "-use github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen"  -I ../../idl  --idl ../../idl/${svc}.proto
 
 .PHONY: gen-gateway
 gen-gateway:
-	@cd app/gateway && cwgo server --type HTTP --idl ../../idl/gateway/checkout_api.proto --service gateway --module github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway -I ../../idl
+	@cd app/gateway && cwgo server --type HTTP --idl ../../idl/gateway/order_api.proto --service gateway --module github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway -I ../../idl
 
 ##@ Build
 
@@ -54,7 +54,7 @@ lint-fix: ## run `golangci-lint` for all go module
 	@scripts/fix.sh
 
 .PHONY: run
-run: ## run {svc} server. example: make run svc=checkout
+run: ## run {svc} server. example: make run svc=order
 	@scripts/run.sh ${svc}
 
 ##@ Development Env
@@ -71,26 +71,18 @@ env-stop: ## stop all docker
 clean: ## clern up all the tmp files
 	@rm -r app/**/log/ app/**/tmp/
 
-##@ Open Browser
+.PHONY: build-all
+build-all:
+	docker build -f ./deploy/Dockerfile.frontend -t frontend:${v} .
+	docker build -f ./deploy/Dockerfile.svc -t cart:${v} --build-arg SVC=cart .
+	docker build -f ./deploy/Dockerfile.svc -t checkout:${v} --build-arg SVC=checkout .
+	docker build -f ./deploy/Dockerfile.svc -t email:${v} --build-arg SVC=email .
+	docker build -f ./deploy/Dockerfile.svc -t order:${v} --build-arg SVC=order .
+	docker build -f ./deploy/Dockerfile.svc -t payment:${v} --build-arg SVC=payment .
+	docker build -f ./deploy/Dockerfile.svc -t product:${v} --build-arg SVC=product .
+	docker build -f ./deploy/Dockerfile.svc -t user:${v} --build-arg SVC=user .
 
-.PHONY: open.gomall
-open-gomall: ## open `gomall` website in the default browser
-	@open "http://localhost:8080/"
-
-.PHONY: open.consul
-open-consul: ## open `consul ui` in the default browser
-	@open "http://localhost:8500/ui/"
-
-.PHONY: open.jaeger
-open-jaeger: ## open `jaeger ui` in the default browser
-	@open "http://localhost:16686/search"
-
-.PHONY: open.prometheus
-open-prometheus: ## open `prometheus ui` in the default browser
-	@open "http://localhost:9090"
-
-
-.PHONY: gen-checkout
-gen-checkout:
-	@cd rpc_gen && cwgo client --type RPC --service checkout --module github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen --I ../idl --idl ../idl/checkout.proto
-	@cd app/checkout && cwgo server --type RPC --service checkout --module github.com/Vigor-Team/youthcamp-2025-mall-be/app/checkout --pass "-use github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen" -I ../../idl --idl ../../idl/checkout.proto
+.PHONY: gen-order
+gen-order:
+	@cd rpc_gen && cwgo client --type RPC --service order --module github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen --I ../idl --idl ../idl/order.proto
+	@cd app/order && cwgo server --type RPC --service order --module github.com/Vigor-Team/youthcamp-2025-mall-be/app/order --pass "-use github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen" -I ../../idl --idl ../../idl/order.proto

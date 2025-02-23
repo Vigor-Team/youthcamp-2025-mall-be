@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nats
+spec:
+  selector:
+    matchLabels:
+      app: nats
+  template:
+    metadata:
+      labels:
+        app: nats
+    spec:
+      containers:
+        - name: nats
+          image: "nats:latest"
+          imagePullPolicy: IfNotPresent
+          resources:
+            limits:
+              memory: "500Mi"
+              cpu: "500m"
+          ports:
+            - containerPort: 4222
+            - containerPort: 8222
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nats-svc
+spec:
+  selector:
+    app: nats
+  ports:
+    - port: 4222
+      targetPort: 4222
+      name: "4222"
+    - port: 8222
+      targetPort: 8222
+      name: "8222"
