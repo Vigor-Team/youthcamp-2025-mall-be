@@ -35,4 +35,76 @@ service AuthService {
   rpc refresh(common.Empty) returns (common.Empty) {
     option (api.get) = "/api/v1/refresh";
   }
+  rpc banUser(common.Empty) returns (common.Empty) {
+    option (api.post) = "/api/v1/ban";
+  }
+}
+
+message Permission {
+  int64 id = 1;
+  string v1 = 2;
+  string v2 = 3;
+}
+
+message PermissionRole {
+  int64 id = 1;
+  int64 rid = 2;
+  int64 pid = 3;
+}
+
+message CreatePermissionReq {
+  string v1 = 1 [(api.body) = "v1", (api.form) = "v1", (api.vd) = "(len($) > 0 && len($) < 100)"];
+  string v2 = 2 [(api.body) = "v2", (api.form) = "v2", (api.vd) = "(len($) > 0 && len($) < 100)"];
+}
+
+message CreatePermissionResp {
+  Permission permission = 1;
+}
+
+message BindPermissionRoleReq {
+  int64 pid = 1 [(api.body) = "pid", (api.form) = "pid", (api.vd) = "($ > 0 && $ < 100)"];
+  int64 rid = 2 [(api.body) = "rid", (api.form) = "rid", (api.vd) = "($ > 0 && $ < 100)"];
+}
+
+message BindPermissionRoleResp {
+  PermissionRole permissionRole = 3;
+}
+
+service PermissionService {
+  rpc createPermission(CreatePermissionReq) returns (CreatePermissionResp) {
+    option (api.post) = "/api/v1/permission/create";
+  }
+  rpc bindPermissionRole(BindPermissionRoleReq) returns (BindPermissionRoleResp) {
+    option (api.post) = "/api/v1/permission/bind";
+  }
+}
+
+message Role {
+  int64 id = 1;
+  string name = 2;
+}
+
+message CreateRoleReq {
+  string name = 1 [(api.body) = "name", (api.form) = "name", (api.vd) = "(len($) > 0 && len($) < 100)"];
+}
+
+message CreateRoleResp {
+  Role role = 3;
+}
+
+message BindRoleUserReq {
+  int64 uid = 1 [(api.body) = "uid", (api.form) = "uid", (api.vd) = "($ > 0 && $ < 100)"];
+  int64 rid = 2 [(api.body) = "rid", (api.form) = "rid", (api.vd) = "($ > 0 && $ < 100)"];
+}
+
+message BindRoleUserResp {
+}
+
+service RoleService {
+  rpc createRole(CreateRoleReq) returns (CreateRoleResp) {
+    option (api.post) = "/api/v1/role/create";
+  }
+  rpc bindRoleUser(BindRoleUserReq) returns (BindRoleUserResp) {
+    option (api.post) = "/api/v1/role/bind";
+  }
 }

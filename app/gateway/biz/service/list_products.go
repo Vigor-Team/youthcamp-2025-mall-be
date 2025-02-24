@@ -2,11 +2,9 @@ package service
 
 import (
 	"context"
+	product "github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/hertz_gen/gateway/product"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/infra/rpc"
 	rpcproduct "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/product"
-	"github.com/cloudwego/hertz/pkg/common/hlog"
-
-	product "github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/hertz_gen/gateway/product"
 	"github.com/cloudwego/hertz/pkg/app"
 )
 
@@ -20,12 +18,9 @@ func NewListProductsService(Context context.Context, RequestContext *app.Request
 }
 
 func (h *ListProductsService) Run(req *product.ListProductsReq) (resp *product.ListProductsResp, err error) {
-	defer func() {
-		hlog.CtxInfof(h.Context, "req = %+v", req)
-		hlog.CtxInfof(h.Context, "resp = %+v", resp)
-	}()
 	r, err := rpc.ProductClient.ListProducts(h.Context, &rpcproduct.ListProductsReq{
 		CategoryId: req.CategoryId,
+		Role:       h.RequestContext.Value("roles").([]interface{})[0].(string),
 	})
 	if err != nil {
 		return

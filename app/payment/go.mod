@@ -3,9 +3,9 @@ module github.com/Vigor-Team/youthcamp-2025-mall-be/app/payment
 go 1.21
 
 replace (
-	github.com/apache/thrift => github.com/apache/thrift v0.13.0
 	github.com/Vigor-Team/youthcamp-2025-mall-be/common => ../../common
 	github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen => ../../rpc_gen
+	github.com/apache/thrift => github.com/apache/thrift v0.13.0
 )
 
 require (

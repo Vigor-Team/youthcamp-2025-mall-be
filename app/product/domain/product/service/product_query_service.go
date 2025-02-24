@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/common/model/entity"
 	productrepo "github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/domain/product/repository"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/domain/product/strategy"
 )
 
 type ProductQueryService struct {
@@ -23,14 +24,15 @@ func (s *ProductQueryService) GetProductById(ctx context.Context, productId uint
 	return id, nil
 }
 
-func (s *ProductQueryService) ListProducts(ctx context.Context, categoryId uint32) ([]*entity.ProductEntity, error) {
+func (s *ProductQueryService) ListProducts(ctx context.Context, categoryId uint32, role string) ([]*entity.ProductEntity, error) {
 	filterParam := make(map[string]interface{}, 1)
 	if categoryId != 0 {
 		filterParam["category_id"] = categoryId
 	} else {
 		filterParam = nil
 	}
-	products, err := productrepo.GetFactory().GetProductRepository().ListProducts(ctx, filterParam)
+	listingStrategy := strategy.NewListingStrategy(role, filterParam)
+	products, err := productrepo.GetFactory().GetProductRepository().ListProducts(ctx, listingStrategy)
 	if err != nil {
 		return nil, err
 	}

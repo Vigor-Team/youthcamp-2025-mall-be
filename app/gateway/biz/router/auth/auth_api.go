@@ -26,6 +26,16 @@ func Register(r *server.Hertz) {
 			_v1.GET("/me", append(_meMw(), auth.Me)...)
 			_v1.GET("/refresh", append(_refreshMw(), auth.Refresh)...)
 			_v1.POST("/register", append(_registerMw(), auth.Register)...)
+			{
+				_permission := _v1.Group("/permission", _permissionMw()...)
+				_permission.POST("/bind", append(_bindpermissionroleMw(), auth.BindPermissionRole)...)
+				_permission.POST("/create", append(_createpermissionMw(), auth.CreatePermission)...)
+			}
+			{
+				_role := _v1.Group("/role", _roleMw()...)
+				_role.POST("/bind", append(_bindroleuserMw(), auth.BindRoleUser)...)
+				_role.POST("/create", append(_createroleMw(), auth.CreateRole)...)
+			}
 		}
 	}
 }

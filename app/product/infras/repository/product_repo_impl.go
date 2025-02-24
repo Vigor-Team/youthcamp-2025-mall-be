@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/common/model/entity"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/common/model/po"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/domain/product/strategy"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/infras/es"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/infras/repository/converter"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/infras/repository/differ"
@@ -71,20 +72,30 @@ func (p *ProductRepositoryImpl) GetProductById(ctx context.Context, productId ui
 	return do, nil
 }
 
-func (p *ProductRepositoryImpl) ListProducts(ctx context.Context, filterParam map[string]interface{}) ([]*entity.ProductEntity, error) {
+func (p *ProductRepositoryImpl) ListProducts(ctx context.Context, strategy strategy.ListingStrategy) ([]*entity.ProductEntity, error) {
+	filterParam := strategy.Filter()
 	products := make([]*po.Product, 0)
 	productEntities := make([]*entity.ProductEntity, 0)
+
 	db := p.db.Debug().WithContext(ctx)
+
 	if categoryId, exists := filterParam["category_id"]; exists {
 		delete(filterParam, "category_id")
 		db = db.Joins("JOIN product_category ON product_category.product_id = product.id").
 			Joins("JOIN category ON category.id = product_category.category_id").
 			Where("category.id = ?", categoryId)
 	}
+
+	allowedStatuses := strategy.AllowedStatuses()
+	fmt.Println("allowedStatuses: ", allowedStatuses)
+	if len(allowedStatuses) > 0 {
+		db = db.Where("product.status IN ?", allowedStatuses)
+	}
+
 	for k, v := range filterParam {
 		db = db.Where(k+" = ?", v)
 	}
-	if err := db.Scopes(AvailableProducts).Preload("Categories").Find(&products).Error; err != nil {
+	if err = db.Scopes(AvailableProducts).Preload("Categories").Find(&products).Error; err != nil {
 		return nil, err
 	}
 	for _, product := range products {

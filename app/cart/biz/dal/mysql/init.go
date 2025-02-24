@@ -16,15 +16,14 @@ package mysql
 
 import (
 	"fmt"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/cart/conf"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/common/mtl"
+	"gorm.io/plugin/opentelemetry/tracing"
 	"os"
 
-	"github.com/Vigor-Team/youthcamp-2025-mall-be/common/mtl"
-
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/cart/biz/model"
-	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/cart/conf"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	"gorm.io/plugin/opentelemetry/tracing"
 )
 
 var (
@@ -33,7 +32,8 @@ var (
 )
 
 func Init() {
-	DB, err = gorm.Open(mysql.Open(fmt.Sprintf(conf.GetConf().MySQL.DSN, os.Getenv("MYSQL_USER"), os.Getenv("MYSQL_PASSWORD"), os.Getenv("MYSQL_HOST"))),
+	dsn := fmt.Sprintf(conf.GetConf().MySQL.DSN, os.Getenv("MYSQL_USER"), os.Getenv("MYSQL_PASSWORD"), os.Getenv("MYSQL_HOST"))
+	DB, err = gorm.Open(mysql.Open(dsn),
 		&gorm.Config{
 			PrepareStmt:            true,
 			SkipDefaultTransaction: true,
@@ -42,7 +42,7 @@ func Init() {
 	if err != nil {
 		panic(err)
 	}
-	if err := DB.Use(tracing.NewPlugin(tracing.WithoutMetrics(), tracing.WithTracerProvider(mtl.TracerProvider))); err != nil {
+	if err = DB.Use(tracing.NewPlugin(tracing.WithoutMetrics(), tracing.WithTracerProvider(mtl.TracerProvider))); err != nil {
 		panic(err)
 	}
 	if os.Getenv("GO_ENV") != "online" {

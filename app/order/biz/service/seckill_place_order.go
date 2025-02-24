@@ -77,10 +77,8 @@ func validatePreOrderId(ctx context.Context, tempId, userId uint32) (map[string]
 	productOrderKey := redis.GetOrderPreOrderKey(tempId)
 	tempIdInfo, err := redis.RedisClient.HGetAll(ctx, productOrderKey).Result()
 	fmt.Println("tempIdInfo", tempIdInfo)
-	if err != nil || len(tempIdInfo) == 0 {
-		return nil, fmt.Errorf("invalid tempId: %v", tempId)
-	}
-	if tempIdInfo["user_id"] != strconv.Itoa(int(userId)) || tempIdInfo["product_id"] == "" {
+	if err != nil || len(tempIdInfo) == 0 || tempIdInfo["user_id"] != strconv.Itoa(int(userId)) || tempIdInfo["product_id"] == "" {
+		klog.CtxErrorf(ctx, "redis map: user_id:%v, product_id:%v", tempIdInfo["user_id"], tempIdInfo["product_id"])
 		return nil, fmt.Errorf("invalid tempId: %v", tempId)
 	}
 	return tempIdInfo, nil

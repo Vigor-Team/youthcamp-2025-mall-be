@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+package gateway.checkout;
+
+import "api.proto";
+
+option go_package = "/gateway/checkout";
+
+message CheckoutReq {
+  string email = 1 [(api.body) = "email"];
+  string firstname = 2 [(api.body) = "firstname"];
+  string lastname = 3 [(api.body) = "lastname"];
+  string street = 4 [(api.body) = "street"];
+  string zipcode = 5 [(api.body) = "zipcode"];
+  string province = 6 [(api.body) = "province"];
+  string country = 7 [(api.body) = "country"];
+  string city = 8 [(api.body) = "city"];
+  string card_num = 9 [(api.body) = "cardNum"];
+  int32 expiration_month = 10 [(api.body) = "expirationMonth"];
+  int32 expiration_year = 11 [(api.body) = "expirationYear"];
+  int32 cvv = 12 [(api.body) = "cvv"];
+  string paymentMethod = 13 [(api.body) = "paymentMethod"];
+}
+
+message CheckoutResp {
+  string order_id = 1;
+  string transaction_id = 2;
+}
+
+message GetCheckoutPreviewReq {
+}
+
+message GetCheckoutPreviewResp {
+  int32 cart_num = 1;
+  repeated Item items = 2;
+  float total = 3;
+}
+
+message Item {
+  string name = 1;
+  string picture = 2;
+  float price = 3;
+  int32 quantity = 4;
+}
+
+service CheckoutService {
+
+  rpc GetCheckoutPreview(GetCheckoutPreviewReq) returns (GetCheckoutPreviewResp) {
+    option (api.get) = "/api/v1/checkout/preview";
+  }
+  rpc Checkout(CheckoutReq) returns (CheckoutResp) {
+    option (api.post) = "/api/v1/checkout";
+  }
+}
+
+

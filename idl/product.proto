@@ -86,6 +86,7 @@ message ListProductsReq{
   int64 pageSize = 2;
 
   uint32 category_id = 3;
+  string role = 4;
 }
 
 message ListProductsResp {

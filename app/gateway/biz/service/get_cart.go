@@ -16,15 +16,11 @@ package service
 
 import (
 	"context"
-	"strconv"
-
-	common "github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/hertz_gen/gateway/common"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/hertz_gen/gateway/cart"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/infra/rpc"
-	gatewayutils "github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/utils"
 	rpccart "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/cart"
 	rpcproduct "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/product"
 	"github.com/cloudwego/hertz/pkg/app"
-	"github.com/cloudwego/hertz/pkg/common/utils"
 )
 
 type GetCartService struct {
@@ -36,31 +32,41 @@ func NewGetCartService(Context context.Context, RequestContext *app.RequestConte
 	return &GetCartService{RequestContext: RequestContext, Context: Context}
 }
 
-func (h *GetCartService) Run(req *common.Empty) (resp map[string]any, err error) {
-	var items []map[string]string
+func (h *GetCartService) Run(_ *cart.GetCartReq) (resp *cart.GetCartResp, err error) {
 	carts, err := rpc.CartClient.GetCart(h.Context, &rpccart.GetCartReq{
-		UserId: uint32(h.Context.Value(gatewayutils.UserIdKey).(float64)),
+		UserId: uint32(h.RequestContext.Value("user_id").(int32)),
 	})
 	if err != nil {
 		return nil, err
 	}
-	var total float32
-	for _, v := range carts.Cart.Items {
-		productResp, err := rpc.ProductClient.GetProduct(h.Context, &rpcproduct.GetProductReq{Id: v.GetProductId()})
+
+	items := make([]*cart.CartItem, 0, carts.Cart.Size())
+	for _, i := range carts.Cart.Items {
+		product, err := rpc.ProductClient.GetProduct(h.Context, &rpcproduct.GetProductReq{
+			Id: i.GetProductId(),
+		})
 		if err != nil {
-			continue
+			return nil, err
 		}
-		if productResp.Product == nil {
-			continue
-		}
-		p := productResp.Product
-		items = append(items, map[string]string{"Name": p.Name, "Description": p.Description, "Picture": p.Picture, "Price": strconv.FormatFloat(float64(p.Price), 'f', 2, 64), "Qty": strconv.Itoa(int(v.Quantity))})
-		total += float32(v.Quantity) * p.Price
+		items = append(items, &cart.CartItem{
+			ProductId:   i.GetProductId(),
+			Name:        product.Product.Name,
+			Price:       product.Product.Price,
+			SpuName:     product.Product.SpuName,
+			Description: product.Product.Description,
+			Picture:     product.Product.Picture,
+			SpuPrice:    product.Product.SpuPrice,
+			Stock:       product.Product.Stock,
+			Categories:  product.Product.Categories,
+			Quantity:    i.GetQuantity(),
+		})
 	}
 
-	return utils.H{
-		"title": "Cart",
-		"items": items,
-		"total": strconv.FormatFloat(float64(total), 'f', 2, 64),
-	}, nil
+	resp = &cart.GetCartResp{
+		Cart: &cart.Cart{
+			UserId: carts.Cart.UserId,
+			Items:  items,
+		},
+	}
+	return
 }

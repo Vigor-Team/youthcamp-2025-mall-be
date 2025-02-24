@@ -15,24 +15,26 @@
 package service
 
 import (
+	"context"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/user/biz/dal"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/user"
 	"testing"
 )
 
 func TestLogin_Run(t *testing.T) {
-	// ctx := context.Background()
-	// s := NewLoginService(ctx)
-	// // init req and assert value
+	dal.Init()
+	ctx := context.Background()
+	s := NewLoginService(ctx)
+	// init req and assert value
 
-	// req := &user.LoginReq{
-	// 	Email:    "1111@qq.com",
-	// 	Password: "123",
-	// }
-	// resp, err := s.Run(req)
-	// if err != nil {
-	// 	t.Errorf("unexpected error: %v", err)
-	// }
-	// if resp == nil {
-	// 	t.Errorf("unexpected nil response")
-	// }
-	// // todo: edit your unit test
+	req := &user.LoginReq{
+		Email:    "1664915115@qq.com",
+		Password: "123123",
+	}
+	resp, err := s.Run(req)
+	if err != nil {
+		t.Errorf("unexpected error: %v", err)
+	}
+	t.Logf("resp: %+v", resp)
+
 }

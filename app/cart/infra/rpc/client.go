@@ -15,11 +15,11 @@
 package rpc
 
 import (
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/cart/conf"
 	"sync"
 
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/common/clientsuite"
 
-	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/cart/conf"
 	cartutils "github.com/Vigor-Team/youthcamp-2025-mall-be/app/cart/utils"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/product/productcatalogservice"
 	"github.com/cloudwego/kitex/client"

@@ -71,24 +71,16 @@ env-stop: ## stop all docker
 clean: ## clern up all the tmp files
 	@rm -r app/**/log/ app/**/tmp/
 
-##@ Open Browser
-
-.PHONY: open.gomall
-open-gomall: ## open `gomall` website in the default browser
-	@open "http://localhost:8080/"
-
-.PHONY: open.consul
-open-consul: ## open `consul ui` in the default browser
-	@open "http://localhost:8500/ui/"
-
-.PHONY: open.jaeger
-open-jaeger: ## open `jaeger ui` in the default browser
-	@open "http://localhost:16686/search"
-
-.PHONY: open.prometheus
-open-prometheus: ## open `prometheus ui` in the default browser
-	@open "http://localhost:9090"
-
+.PHONY: build-all
+build-all:
+	docker build -f ./deploy/Dockerfile.frontend -t frontend:${v} .
+	docker build -f ./deploy/Dockerfile.svc -t cart:${v} --build-arg SVC=cart .
+	docker build -f ./deploy/Dockerfile.svc -t checkout:${v} --build-arg SVC=checkout .
+	docker build -f ./deploy/Dockerfile.svc -t email:${v} --build-arg SVC=email .
+	docker build -f ./deploy/Dockerfile.svc -t order:${v} --build-arg SVC=order .
+	docker build -f ./deploy/Dockerfile.svc -t payment:${v} --build-arg SVC=payment .
+	docker build -f ./deploy/Dockerfile.svc -t product:${v} --build-arg SVC=product .
+	docker build -f ./deploy/Dockerfile.svc -t user:${v} --build-arg SVC=user .
 
 .PHONY: gen-order
 gen-order:

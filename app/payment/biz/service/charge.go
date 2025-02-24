@@ -21,7 +21,7 @@ import (
 
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/payment/biz/dal/mysql"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/payment/biz/model"
-	payment "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/payment"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/payment"
 	"github.com/cloudwego/kitex/pkg/kerrors"
 	creditcard "github.com/durango/go-credit-card"
 	"github.com/google/uuid"
@@ -58,10 +58,8 @@ func (s *ChargeService) Run(req *payment.ChargeReq) (resp *payment.ChargeResp, e
 		TransactionId: translationId.String(),
 		Amount:        req.Amount,
 		PayAt:         time.Now(),
+		PaymentMethod: req.PaymentMethod,
 	})
-	if err != nil {
-		return nil, err
-	}
 	if err != nil {
 		return nil, err
 	}

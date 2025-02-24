@@ -17,7 +17,6 @@
 package auth
 
 import (
-	"context"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/middleware"
 	"github.com/cloudwego/hertz/pkg/app"
 )
@@ -27,23 +26,12 @@ func rootMw() []app.HandlerFunc {
 	return nil
 }
 
-func _authMw() []app.HandlerFunc {
-	// your code...
+func _loginMw() []app.HandlerFunc {
 	return nil
 }
 
-func _loginMw() []app.HandlerFunc {
-	var mws []app.HandlerFunc
-	mws = append(mws, func(c context.Context, ctx *app.RequestContext) {
-		middleware.GetJwtMd().LoginHandler(c, ctx)
-	})
-	return mws
-}
-
 func _logoutMw() []app.HandlerFunc {
-	var mws []app.HandlerFunc
-	mws = append(mws, middleware.GetJwtMd().MiddlewareFunc())
-	return mws
+	return nil
 }
 
 func _registerMw() []app.HandlerFunc {
@@ -62,13 +50,45 @@ func _v1Mw() []app.HandlerFunc {
 }
 
 func _meMw() []app.HandlerFunc {
-	//var mws []app.HandlerFunc
-	//mws = append(mws, middleware.GetJwtMd().MiddlewareFunc())
-	//return mws
-	return nil
+	var mws []app.HandlerFunc
+	mws = append(mws, middleware.GetJwtMd().MiddlewareFunc())
+	mws = append(mws, middleware.BlacklistMiddleware())
+	mws = append(mws, middleware.CasbinAuth())
+	return mws
 }
 
 func _refreshMw() []app.HandlerFunc {
-	// your code...
+	return nil
+}
+
+func _permissionMw() []app.HandlerFunc {
+	var mws []app.HandlerFunc
+	mws = append(mws, middleware.GetJwtMd().MiddlewareFunc())
+	mws = append(mws, middleware.BlacklistMiddleware())
+	mws = append(mws, middleware.CasbinAuth())
+	return mws
+}
+
+func _bindpermissionroleMw() []app.HandlerFunc {
+	return nil
+}
+
+func _createpermissionMw() []app.HandlerFunc {
+	return nil
+}
+
+func _roleMw() []app.HandlerFunc {
+	var mws []app.HandlerFunc
+	mws = append(mws, middleware.GetJwtMd().MiddlewareFunc())
+	mws = append(mws, middleware.BlacklistMiddleware())
+	mws = append(mws, middleware.CasbinAuth())
+	return mws
+}
+
+func _bindroleuserMw() []app.HandlerFunc {
+	return nil
+}
+
+func _createroleMw() []app.HandlerFunc {
 	return nil
 }

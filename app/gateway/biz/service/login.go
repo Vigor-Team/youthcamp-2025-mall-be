@@ -34,14 +34,13 @@ func NewLoginService(Context context.Context, RequestContext *app.RequestContext
 	return &LoginService{RequestContext: RequestContext, Context: Context, jwtMd: jwtMd}
 }
 
-func (h *LoginService) Run(req *auth.LoginReq) (resp *types.Token, err error) {
+func (h *LoginService) Run(_ *auth.LoginReq) (resp *types.Token, err error) {
 	authRes, err := h.jwtMd.Authenticator(h.Context, h.RequestContext)
 	if err != nil {
 		hlog.CtxErrorf(h.Context, "login error: %v", err)
 		return nil, err
 	}
-	userId := authRes.(int32)
-	token, _, err := h.jwtMd.TokenGenerator(userId)
+	token, _, err := h.jwtMd.TokenGenerator(authRes)
 	if err != nil {
 		hlog.CtxErrorf(h.Context, "accessToken gen error: %v", err)
 		return nil, err

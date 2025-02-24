@@ -16,7 +16,7 @@ func NewListProductsService(ctx context.Context) *ListProductsService {
 
 // Run create note info
 func (s *ListProductsService) Run(req *product.ListProductsReq) (resp *product.ListProductsResp, err error) {
-	get, err := productservice.GetProductQueryService().ListProducts(s.ctx, req.CategoryId)
+	get, err := productservice.GetProductQueryService().ListProducts(s.ctx, req.CategoryId, req.Role)
 	if err != nil {
 		return nil, err
 	}

@@ -7,6 +7,7 @@ services:
       - MYSQL_ROOT_PASSWORD=root
     volumes:
       - ./db/sql/ini:/docker-entrypoint-initdb.d
+
   mongo:
     image: 'mongo:latest'
     ports:
@@ -15,6 +16,7 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: root
+
   redis:
     image: 'redis:latest'
     ports:
@@ -40,7 +42,7 @@ services:
         hard: -1
 
   rabbitmq:
-    image: rabbitmq:management
+    image: rabbitmq:3-management
     ports:
       - "15672:15672"
       - "5672:5672"
@@ -79,13 +81,13 @@ services:
       - "--config.file=/etc/prometheus/prometheus.yml"
     ports:
       - "9090:9090"
-  etcd:
-    image: docker.io/bitnami/etcd:3.5
-    environment:
-      - ALLOW_NONE_AUTHENTICATION=yes
-    ports:
-      - 2379:2379
-      - 2380:2380
+#  etcd:
+#    image: docker.io/bitnami/etcd:3.5
+#    environment:
+#      - ALLOW_NONE_AUTHENTICATION=yes
+#    ports:
+#      - 2379:2379
+#      - 2380:2380
   nats:
     image: nats:latest
     ports:

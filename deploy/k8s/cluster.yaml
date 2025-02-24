@@ -1,0 +1,28 @@
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+name: mall-dev
+nodes:
+  - role: control-plane
+    image: kindest/node:v1.30.0
+    extraMounts:
+      - hostPath: ./db/sql/ini
+        containerPath: /opt/youthcamp-2025-mall-be/db/sql/ini
+      - hostPath: ./deploy/config
+        containerPath: /opt/youthcamp-2025-mall-be/deploy/config
+
+  - role: worker
+    image: kindest/node:v1.30.0
+    extraMounts:
+      - hostPath: ./db/sql/ini
+        containerPath: /opt/youthcamp-2025-mall-be/db/sql/ini
+      - hostPath: ./deploy/config
+        containerPath: /opt/youthcamp-2025-mall-be/deploy/config
+
+  # image for China: registry.cn-hangzhou.aliyuncs.com/kindest/node:v1.30.0
+  - role: worker
+    image: kindest/node:v1.30.0
+    extraMounts:
+      - hostPath: ./db/sql/ini
+        containerPath: /opt/youthcamp-2025-mall-be/db/sql/ini
+      - hostPath: ./deploy/config
+        containerPath: /opt/youthcamp-2025-mall-be/deploy/config

@@ -17,12 +17,16 @@
 package home
 
 import (
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/middleware"
 	"github.com/cloudwego/hertz/pkg/app"
 )
 
 func rootMw() []app.HandlerFunc {
-	// your code...
-	return nil
+	var mws []app.HandlerFunc
+	mws = append(mws, middleware.GetJwtMd().MiddlewareFunc())
+	mws = append(mws, middleware.BlacklistMiddleware())
+	mws = append(mws, middleware.CasbinAuth())
+	return mws
 }
 
 func _homeMw() []app.HandlerFunc {

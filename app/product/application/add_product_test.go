@@ -14,41 +14,41 @@ func TestAddProduct_Run(t *testing.T) {
 	// init req and assert value
 	reqs := []*product.AddProductReq{}
 	reqs = append(reqs, &product.AddProductReq{
-		Name:        "Wireless Bluetooth Earphones",
-		Description: "High-quality wireless Bluetooth earphones, clear sound, long battery life.",
+		Name:        "无线蓝牙耳机",
+		Description: "高质量无线蓝牙耳机，音质清晰，电池续航长。",
 		Price:       299,
 		Stock:       50,
-		SpuName:     "Bluetooth Earphone Series",
+		SpuName:     "蓝牙耳机系列",
 		SpuPrice:    299,
 		Picture:     "https://example.com/earphone.jpg",
 		CategoryIds: []uint32{1, 2},
 	})
 	reqs = append(reqs, &product.AddProductReq{
-		Name:        "Smartwatch",
-		Description: "Multi-functional smartwatch with heart rate monitoring, GPS, and waterproof design.",
+		Name:        "智能手表",
+		Description: "多功能智能手表，支持心率监测，GPS定位，防水设计。",
 		Price:       899,
 		Stock:       30,
-		SpuName:     "Watch Series",
+		SpuName:     "手表系列",
 		SpuPrice:    899,
 		Picture:     "https://example.com/smartwatch.jpg",
 		CategoryIds: []uint32{1, 3},
 	})
 	reqs = append(reqs, &product.AddProductReq{
-		Name:        "Sports Shoes",
-		Description: "Comfortable sports shoes, suitable for running and everyday wear, breathable design.",
+		Name:        "运动鞋",
+		Description: "舒适的运动鞋，适合跑步和日常穿着，透气设计。",
 		Price:       399,
 		Stock:       100,
-		SpuName:     "Footwear Series",
+		SpuName:     "鞋类系列",
 		SpuPrice:    399,
 		Picture:     "https://example.com/sportsshoes.jpg",
 		CategoryIds: []uint32{2, 3},
 	})
 	reqs = append(reqs, &product.AddProductReq{
-		Name:        "Leather Wallet",
-		Description: "Premium leather wallet with multiple compartments, stylish and durable.",
+		Name:        "皮革钱包",
+		Description: "优质皮革钱包，多个隔层，时尚耐用。",
 		Price:       129,
 		Stock:       200,
-		SpuName:     "Wallet Series",
+		SpuName:     "钱包系列",
 		SpuPrice:    129,
 		Picture:     "https://example.com/wallet.jpg",
 		CategoryIds: []uint32{1, 3},

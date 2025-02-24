@@ -16,6 +16,8 @@ package service
 
 import (
 	"context"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/biz/dal/mysql"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/biz/model"
 
 	auth "github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/hertz_gen/gateway/auth"
 	common "github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/hertz_gen/gateway/common"
@@ -34,10 +36,21 @@ func NewRegisterService(Context context.Context, RequestContext *app.RequestCont
 }
 
 func (h *RegisterService) Run(req *auth.RegisterReq) (resp *common.Empty, err error) {
-	_, err = rpc.UserClient.Register(h.Context, &rpcuser.RegisterReq{
+	userID, err := rpc.UserClient.Register(h.Context, &rpcuser.RegisterReq{
 		Email:           req.Email,
 		Password:        req.Password,
 		ConfirmPassword: req.Password,
+	})
+	if err != nil {
+		return nil, err
+	}
+	role, err := model.GetRoleByName(mysql.DB, h.Context, "Guest")
+	if err != nil {
+		return nil, err
+	}
+	err = model.BindUserRole(mysql.DB, h.Context, &model.UserRole{
+		UID: int64(userID.UserId),
+		RID: role.ID,
 	})
 	if err != nil {
 		return nil, err

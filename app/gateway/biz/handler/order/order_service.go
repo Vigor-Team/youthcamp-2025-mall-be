@@ -21,8 +21,6 @@ import (
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/hertz_gen/gateway/common"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/hertz_gen/gateway/order"
 	"github.com/cloudwego/hertz/pkg/app"
-	hertzUtils "github.com/cloudwego/hertz/pkg/common/utils"
-	"github.com/cloudwego/hertz/pkg/protocol/consts"
 )
 
 // OrderList .
@@ -38,7 +36,7 @@ func OrderList(ctx context.Context, c *app.RequestContext) {
 
 	resp, err := service.NewOrderListService(ctx, c).Run(&req)
 	if err != nil {
-		c.HTML(consts.StatusOK, "order", hertzUtils.H{"error": err})
+		utils.FailResponse(ctx, c, err)
 		return
 	}
 

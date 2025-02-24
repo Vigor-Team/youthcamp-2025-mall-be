@@ -22,8 +22,6 @@ import (
 	common "github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/hertz_gen/gateway/common"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/middleware"
 	"github.com/cloudwego/hertz/pkg/app"
-	hertzUtils "github.com/cloudwego/hertz/pkg/common/utils"
-	"github.com/cloudwego/hertz/pkg/protocol/consts"
 )
 
 // Register .
@@ -37,11 +35,12 @@ func Register(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	_, err = service.NewRegisterService(ctx, c).Run(&req)
+	resp, err := service.NewRegisterService(ctx, c).Run(&req)
 	if err != nil {
-		c.HTML(consts.StatusOK, "sign-up", hertzUtils.H{"error": err})
+		utils.FailResponse(ctx, c, err)
 		return
 	}
+	utils.SuccessResponse(c, resp)
 }
 
 // Login .

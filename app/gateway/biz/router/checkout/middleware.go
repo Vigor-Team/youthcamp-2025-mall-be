@@ -22,10 +22,12 @@ import (
 )
 
 func rootMw() []app.HandlerFunc {
-	// your code...
-	return []app.HandlerFunc{middleware.Auth()}
+	var mws []app.HandlerFunc
+	mws = append(mws, middleware.GetJwtMd().MiddlewareFunc())
+	mws = append(mws, middleware.BlacklistMiddleware())
+	mws = append(mws, middleware.CasbinAuth())
+	return mws
 }
-
 func _checkoutMw() []app.HandlerFunc {
 	// your code...
 	return nil
@@ -42,6 +44,36 @@ func _checkoutresultMw() []app.HandlerFunc {
 }
 
 func _checkoutwaitingMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _apiMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _v1Mw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _getcheckoutpreviewMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _checkout1Mw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _apMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _v10Mw() []app.HandlerFunc {
 	// your code...
 	return nil
 }

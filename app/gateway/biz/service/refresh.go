@@ -2,13 +2,13 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/biz/_consts"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/types"
+	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/hertz-contrib/jwt"
 	"strings"
 	"time"
-
-	"github.com/cloudwego/hertz/pkg/app"
 )
 
 type RefreshService struct {
@@ -38,11 +38,12 @@ func (h *RefreshService) Run() (resp *types.Token, err error) {
 	if claims == nil {
 		return nil, _consts.ErrTokenInvalid
 	}
-	exp := int64(claims["exp"].(float64))
-	if time.Now().Unix() > exp+int64(h.jwtMd.MaxRefresh.Seconds()) {
-		return nil, _consts.ErrTokenExpired
+	fmt.Println(claims)
+	origIat := int64(claims["orig_iat"].(float64))
+	if time.Now().Unix() > origIat+h.jwtMd.MaxRefresh.Milliseconds() {
+		return nil, _consts.ErrRefreshTokenExpired
 	}
-	newToken, _, err := h.jwtMd.TokenGenerator(claims["id"])
+	newToken, _, err := h.jwtMd.TokenGenerator(claims)
 	if err != nil {
 		return
 	}
