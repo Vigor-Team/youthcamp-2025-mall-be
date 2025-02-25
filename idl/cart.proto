@@ -9,6 +9,7 @@ service CartService {
   rpc GetCart(GetCartReq) returns (GetCartResp) {}
   rpc EmptyCart(EmptyCartReq) returns (EmptyCartResp) {}
   rpc UpdateCart(UpdateCartReq) returns (UpdateCartResp) {}
+  rpc DeleteItem(DeleteItemReq) returns (DeleteItemResp) {}
 }
 
 message CartItem {
@@ -48,3 +49,10 @@ message UpdateCartReq {
 }
 
 message UpdateCartResp {}
+
+message DeleteItemReq {
+  uint32 user_id = 1;
+  uint32 product_id = 2;
+}
+
+message DeleteItemResp {}

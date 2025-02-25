@@ -50,6 +50,10 @@ func UpdateCartQty(db *gorm.DB, ctx context.Context, userId, productId, qty uint
 	).Error
 }
 
+func DeleteCartItem(db *gorm.DB, ctx context.Context, userId, productId uint32) error {
+	return db.WithContext(ctx).Delete(&Cart{}, "user_id = ? AND product_id = ?", userId, productId).Error
+}
+
 func AddCart(db *gorm.DB, ctx context.Context, c *Cart) error {
 	var find Cart
 	err := db.WithContext(ctx).Model(&Cart{}).Where(&Cart{UserId: c.UserId, ProductId: c.ProductId}).First(&find).Error

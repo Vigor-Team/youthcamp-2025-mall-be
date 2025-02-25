@@ -82,3 +82,23 @@ func UpdateCartItem(ctx context.Context, c *app.RequestContext) {
 	}
 	utils.SuccessResponse(c, resp)
 }
+
+// DeleteCartItem .
+// @router /api/v1/carts/{productId} [DELETE]
+func DeleteCartItem(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req cart.DeleteCartItemReq
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		utils.FailResponse(ctx, c, err)
+		return
+	}
+
+	resp, err := service.NewDeleteCartItemService(ctx, c).Run(&req)
+
+	if err != nil {
+		utils.FailResponse(ctx, c, err)
+		return
+	}
+	utils.SuccessResponse(c, resp)
+}

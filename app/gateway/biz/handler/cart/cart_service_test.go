@@ -16,6 +16,7 @@ package cart
 
 import (
 	"bytes"
+	"fmt"
 	"testing"
 
 	"github.com/cloudwego/hertz/pkg/app/server"
@@ -40,7 +41,7 @@ func TestAddCartItem(t *testing.T) {
 
 func TestGetCart(t *testing.T) {
 	h := server.Default()
-	h.GET("/cart", GetCart)
+	h.GET("/api/v1/carts", GetCart)
 	path := "/cart"                                           // todo: you can customize query
 	body := &ut.Body{Body: bytes.NewBufferString(""), Len: 1} // todo: you can customize body
 	header := ut.Header{}                                     // todo: you can customize header
@@ -55,11 +56,29 @@ func TestGetCart(t *testing.T) {
 
 func TestUpdateCartItem(t *testing.T) {
 	h := server.Default()
-	h.PUT("/api/v1/carts/{productId}", UpdateCartItem)
+	productId := 3560968192
+	path := fmt.Sprintf("/api/v1/carts/%d", productId) // 使用 fmt.Sprintf 来替换 path 中的占位符
+	body := &ut.Body{
+		Body: bytes.NewBufferString("productId=3560968192&productNum=7"), // 表单格式
+		Len:  int(len("productId=3560968192&productNum=3")),
+	}
+	header := ut.Header{} // todo: you can customize header
+	w := ut.PerformRequest(h.Engine, "PUT", path, body, header)
+	resp := w.Result()
+	t.Log(string(resp.Body()))
+
+	// todo edit your unit test.
+	// assert.DeepEqual(t, 200, resp.StatusCode())
+	// assert.DeepEqual(t, "null", string(resp.Body()))
+}
+
+func TestDeleteCartItem(t *testing.T) {
+	h := server.Default()
+	h.DELETE("/api/v1/carts/{productId}", DeleteCartItem)
 	path := "/api/v1/carts/{productId}"                       // todo: you can customize query
 	body := &ut.Body{Body: bytes.NewBufferString(""), Len: 1} // todo: you can customize body
 	header := ut.Header{}                                     // todo: you can customize header
-	w := ut.PerformRequest(h.Engine, "PUT", path, body, header)
+	w := ut.PerformRequest(h.Engine, "DELETE", path, body, header)
 	resp := w.Result()
 	t.Log(string(resp.Body()))
 

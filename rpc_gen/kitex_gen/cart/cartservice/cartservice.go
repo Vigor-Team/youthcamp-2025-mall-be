@@ -43,6 +43,13 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		false,
 		kitex.WithStreamingMode(kitex.StreamingUnary),
 	),
+	"DeleteItem": kitex.NewMethodInfo(
+		deleteItemHandler,
+		newDeleteItemArgs,
+		newDeleteItemResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingUnary),
+	),
 }
 
 var (
@@ -721,6 +728,159 @@ func (p *UpdateCartResult) GetResult() interface{} {
 	return p.Success
 }
 
+func deleteItemHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	switch s := arg.(type) {
+	case *streaming.Args:
+		st := s.Stream
+		req := new(cart.DeleteItemReq)
+		if err := st.RecvMsg(req); err != nil {
+			return err
+		}
+		resp, err := handler.(cart.CartService).DeleteItem(ctx, req)
+		if err != nil {
+			return err
+		}
+		return st.SendMsg(resp)
+	case *DeleteItemArgs:
+		success, err := handler.(cart.CartService).DeleteItem(ctx, s.Req)
+		if err != nil {
+			return err
+		}
+		realResult := result.(*DeleteItemResult)
+		realResult.Success = success
+		return nil
+	default:
+		return errInvalidMessageType
+	}
+}
+func newDeleteItemArgs() interface{} {
+	return &DeleteItemArgs{}
+}
+
+func newDeleteItemResult() interface{} {
+	return &DeleteItemResult{}
+}
+
+type DeleteItemArgs struct {
+	Req *cart.DeleteItemReq
+}
+
+func (p *DeleteItemArgs) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+	if !p.IsSetReq() {
+		p.Req = new(cart.DeleteItemReq)
+	}
+	return p.Req.FastRead(buf, _type, number)
+}
+
+func (p *DeleteItemArgs) FastWrite(buf []byte) (n int) {
+	if !p.IsSetReq() {
+		return 0
+	}
+	return p.Req.FastWrite(buf)
+}
+
+func (p *DeleteItemArgs) Size() (n int) {
+	if !p.IsSetReq() {
+		return 0
+	}
+	return p.Req.Size()
+}
+
+func (p *DeleteItemArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, nil
+	}
+	return proto.Marshal(p.Req)
+}
+
+func (p *DeleteItemArgs) Unmarshal(in []byte) error {
+	msg := new(cart.DeleteItemReq)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var DeleteItemArgs_Req_DEFAULT *cart.DeleteItemReq
+
+func (p *DeleteItemArgs) GetReq() *cart.DeleteItemReq {
+	if !p.IsSetReq() {
+		return DeleteItemArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *DeleteItemArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *DeleteItemArgs) GetFirstArgument() interface{} {
+	return p.Req
+}
+
+type DeleteItemResult struct {
+	Success *cart.DeleteItemResp
+}
+
+var DeleteItemResult_Success_DEFAULT *cart.DeleteItemResp
+
+func (p *DeleteItemResult) FastRead(buf []byte, _type int8, number int32) (n int, err error) {
+	if !p.IsSetSuccess() {
+		p.Success = new(cart.DeleteItemResp)
+	}
+	return p.Success.FastRead(buf, _type, number)
+}
+
+func (p *DeleteItemResult) FastWrite(buf []byte) (n int) {
+	if !p.IsSetSuccess() {
+		return 0
+	}
+	return p.Success.FastWrite(buf)
+}
+
+func (p *DeleteItemResult) Size() (n int) {
+	if !p.IsSetSuccess() {
+		return 0
+	}
+	return p.Success.Size()
+}
+
+func (p *DeleteItemResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, nil
+	}
+	return proto.Marshal(p.Success)
+}
+
+func (p *DeleteItemResult) Unmarshal(in []byte) error {
+	msg := new(cart.DeleteItemResp)
+	if err := proto.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *DeleteItemResult) GetSuccess() *cart.DeleteItemResp {
+	if !p.IsSetSuccess() {
+		return DeleteItemResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *DeleteItemResult) SetSuccess(x interface{}) {
+	p.Success = x.(*cart.DeleteItemResp)
+}
+
+func (p *DeleteItemResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *DeleteItemResult) GetResult() interface{} {
+	return p.Success
+}
+
 type kClient struct {
 	c client.Client
 }
@@ -766,6 +926,16 @@ func (p *kClient) UpdateCart(ctx context.Context, Req *cart.UpdateCartReq) (r *c
 	_args.Req = Req
 	var _result UpdateCartResult
 	if err = p.c.Call(ctx, "UpdateCart", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) DeleteItem(ctx context.Context, Req *cart.DeleteItemReq) (r *cart.DeleteItemResp, err error) {
+	var _args DeleteItemArgs
+	_args.Req = Req
+	var _result DeleteItemResult
+	if err = p.c.Call(ctx, "DeleteItem", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil

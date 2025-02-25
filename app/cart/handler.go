@@ -51,3 +51,10 @@ func (s *CartServiceImpl) UpdateCart(ctx context.Context, req *cart.UpdateCartRe
 
 	return resp, err
 }
+
+// DeleteItem implements the CartServiceImpl interface.
+func (s *CartServiceImpl) DeleteItem(ctx context.Context, req *cart.DeleteItemReq) (resp *cart.DeleteItemResp, err error) {
+	resp, err = service.NewDeleteItemService(ctx).Run(req)
+
+	return resp, err
+}

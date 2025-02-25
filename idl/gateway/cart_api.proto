@@ -46,6 +46,14 @@ message CartItem {
   int32  quantity = 10;
 }
 
+// 删除商品请求和响应
+message DeleteCartItemReq {
+  uint32 user_id = 1;
+  uint32 product_id = 2;
+}
+
+message DeleteCartItemResp {}
+
 service CartService {
   rpc AddCartItem(AddCartReq) returns (AddCartResp) {
     option (api.post) = "/api/v1/carts";
@@ -55,5 +63,8 @@ service CartService {
   }
   rpc UpdateCartItem(UpdateCartReq) returns (UpdateCartResp) {
     option (api.put) = "/api/v1/carts/{productId}"; 
+  }
+  rpc DeleteCartItem(DeleteCartItemReq) returns (DeleteCartItemResp) {
+    option (api.delete) = "/api/v1/carts/{productId}";
   }
 }

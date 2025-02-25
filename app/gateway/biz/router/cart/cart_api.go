@@ -24,6 +24,7 @@ func Register(r *server.Hertz) {
 			_v1.POST("/carts", append(_addcartitemMw(), cart.AddCartItem)...)
 			_carts := _v1.Group("/carts", _cartsMw()...)
 			_carts.PUT("/{productId}", append(_updatecartitemMw(), cart.UpdateCartItem)...)
+			_carts.DELETE("/{productId}", append(_deletecartitemMw(), cart.DeleteCartItem)...)
 			_v1.GET("/carts", append(_getcartMw(), cart.GetCart)...)
 		}
 	}
