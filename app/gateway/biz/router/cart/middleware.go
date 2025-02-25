@@ -47,3 +47,13 @@ func _v1Mw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
+
+func _cartsMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _updatecartitemMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}

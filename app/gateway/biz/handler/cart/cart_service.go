@@ -16,7 +16,6 @@ package cart
 
 import (
 	"context"
-
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/biz/service"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/biz/utils"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/hertz_gen/gateway/cart"
@@ -61,5 +60,25 @@ func GetCart(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
+	utils.SuccessResponse(c, resp)
+}
+
+// UpdateCartItem .
+// @router /api/v1/carts/{productId} [PUT]
+func UpdateCartItem(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req cart.UpdateCartReq
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		utils.FailResponse(ctx, c, err)
+		return
+	}
+
+	resp, err := service.NewUpdateCartItemService(ctx, c).Run(&req)
+
+	if err != nil {
+		utils.FailResponse(ctx, c, err)
+		return
+	}
 	utils.SuccessResponse(c, resp)
 }

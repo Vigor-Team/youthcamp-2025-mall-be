@@ -44,3 +44,10 @@ func (s *CartServiceImpl) EmptyCart(ctx context.Context, req *cart.EmptyCartReq)
 
 	return resp, err
 }
+
+// UpdateCart implements the CartServiceImpl interface.
+func (s *CartServiceImpl) UpdateCart(ctx context.Context, req *cart.UpdateCartReq) (resp *cart.UpdateCartResp, err error) {
+	resp, err = service.NewUpdateCartService(ctx).Run(req)
+
+	return resp, err
+}
