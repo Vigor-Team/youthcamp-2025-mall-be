@@ -60,11 +60,41 @@ func initDB() {
 	}
 	if os.Getenv("GO_ENV") != "online" {
 		//nolint:errcheck
-		DB.AutoMigrate(
-			&po2.Product{},
-			&po2.Category{},
-		)
+		if !DB.Migrator().HasTable(&po2.Category{}) {
+			DB.AutoMigrate(
+				&po2.Product{},
+				&po2.Category{},
+			)
+			DB.CreateInBatches([]po2.Category{
+				{
+					Name:        "电子产品",
+					Description: "各种电子设备，包括手机、电脑、电视等",
+				},
+				{
+					Name:        "家居用品",
+					Description: "提供舒适家居生活所需的各类家具与用品",
+				},
+				{
+					Name:        "食品饮料",
+					Description: "各类日常食品与饮料，保证新鲜与健康",
+				},
+				{
+					Name:        "服装鞋帽",
+					Description: "时尚服饰与鞋类，适合各种场合穿着",
+				},
+				{
+					Name:        "运动器材",
+					Description: "专业运动器材，满足运动需求",
+				},
+				{
+					Name:        "图书音像",
+					Description: "各类书籍、音乐与电影，丰富你的精神生活",
+				},
+			}, 6)
+		}
+
 	}
+
 	//if err := DB.Use(tracing.NewPlugin(tracing.WithoutMetrics(), tracing.WithTracerProvider(mtl.TracerProvider))); err != nil {
 	//	panic(err)
 	//}

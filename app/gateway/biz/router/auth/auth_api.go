@@ -21,21 +21,20 @@ func Register(r *server.Hertz) {
 		_api := root.Group("/api", _apiMw()...)
 		{
 			_v1 := _api.Group("/v1", _v1Mw()...)
+			_v1.POST("/ban", append(_banuserMw(), auth.BanUser)...)
 			_v1.POST("/login", append(_loginMw(), auth.Login)...)
 			_v1.POST("/logout", append(_logoutMw(), auth.Logout)...)
 			_v1.GET("/me", append(_meMw(), auth.Me)...)
+			_v1.POST("/permissions", append(_createpermissionMw(), auth.CreatePermission)...)
 			_v1.GET("/refresh", append(_refreshMw(), auth.Refresh)...)
 			_v1.POST("/register", append(_registerMw(), auth.Register)...)
-			{
-				_permission := _v1.Group("/permission", _permissionMw()...)
-				_permission.POST("/bind", append(_bindpermissionroleMw(), auth.BindPermissionRole)...)
-				_permission.POST("/create", append(_createpermissionMw(), auth.CreatePermission)...)
-			}
-			{
-				_role := _v1.Group("/role", _roleMw()...)
-				_role.POST("/bind", append(_bindroleuserMw(), auth.BindRoleUser)...)
-				_role.POST("/create", append(_createroleMw(), auth.CreateRole)...)
-			}
+			_v1.GET("/roles", append(_listrolesMw(), auth.ListRoles)...)
+			_roles := _v1.Group("/roles", _rolesMw()...)
+			_roles.POST("/bind", append(_bindroleuserMw(), auth.BindRoleUser)...)
+			_v1.POST("/roles", append(_createroleMw(), auth.CreateRole)...)
+			_v1.GET("/permissions", append(_listpermissionsMw(), auth.ListPermissions)...)
+			_permissions := _v1.Group("/permissions", _permissionsMw()...)
+			_permissions.POST("/bind", append(_bindpermissionroleMw(), auth.BindPermissionRole)...)
 		}
 	}
 }

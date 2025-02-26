@@ -28,10 +28,8 @@ services:
       - node.name=elasticsearch
       - cluster.name=es-docker-cluster
       - discovery.type=single-node
-      - bootstrap.memory_lock=true
-      - ES_JAVA_OPTS=-Xms2g -Xmx2g
       - ELASTIC_PASSWORD=123456
-      - xpack.security.enabled=false
+      - xpack.security.enabled=true
       - xpack.security.http.ssl.enabled=false
     ports:
       - "9200:9200"
@@ -56,6 +54,8 @@ services:
       - elasticsearch
     environment:
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTICSEARCH_USERNAME=kibana_system
+      - ELASTICSEARCH_PASSWORD=FZa-ITmKtfeK65d9_Ir2
     ports:
       - "5601:5601"
 

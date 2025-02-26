@@ -57,6 +57,7 @@ func Authorize(rvals ...interface{}) (result bool, err error) {
 func CasbinAuth() app.HandlerFunc {
 	return func(ctx context.Context, c *app.RequestContext) {
 		roles, exists := c.Get(Roles)
+		fmt.Println("roles: ", roles)
 		if !exists {
 			utils.FailResponse(ctx, c, kerrors.NewBizStatusError(1, "role not found"))
 			c.Abort()

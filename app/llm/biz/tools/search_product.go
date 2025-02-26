@@ -16,7 +16,7 @@ type SearchProductTool struct {
 func (spt *SearchProductTool) Info(ctx context.Context) (*schema.ToolInfo, error) {
 	return &schema.ToolInfo{
 		Name: "search_product",
-		Desc: "Search for products based on user query, and return the results",
+		Desc: "Search for products based on user query, and return the results. You can use it to recommend products to users, search for products, query product details, etc.",
 		ParamsOneOf: schema.NewParamsOneOfByParams(map[string]*schema.ParameterInfo{
 			"query": {
 				Desc:     "The search query for products, e.g. 'T-shirt'",

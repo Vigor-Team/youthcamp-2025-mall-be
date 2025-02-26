@@ -39,7 +39,6 @@ func (p *ProductRepositoryImpl) AddProduct(ctx context.Context, product *entity.
 		if pES.CategoryNames != nil {
 			texts = append(texts, pES.CategoryNames...)
 		}
-		fmt.Println("texts: ", texts)
 		vectors, err := eb.EmbedStrings(ctx, texts)
 		if err != nil {
 			klog.CtxErrorf(ctx, "EmbedStrings err: %v", err)

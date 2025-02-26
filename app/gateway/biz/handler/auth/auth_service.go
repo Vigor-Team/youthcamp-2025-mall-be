@@ -102,3 +102,23 @@ func Refresh(ctx context.Context, c *app.RequestContext) {
 	}
 	utils.SuccessResponse(c, resp)
 }
+
+// BanUser .
+// @router /api/v1/ban [POST]
+func BanUser(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req auth.BanUserReq
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		utils.FailResponse(ctx, c, err)
+		return
+	}
+
+	resp, err := service.NewBanUserService(ctx, c).Run(&req)
+
+	if err != nil {
+		utils.FailResponse(ctx, c, err)
+		return
+	}
+	utils.SuccessResponse(c, resp)
+}

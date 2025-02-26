@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 	"fmt"
-	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/biz/_consts"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/biz/consts"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/types"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/hertz-contrib/jwt"
@@ -24,24 +24,24 @@ func NewRefreshService(Context context.Context, RequestContext *app.RequestConte
 func (h *RefreshService) Run() (resp *types.Token, err error) {
 	auth := h.RequestContext.Request.Header.Get("Authorization")
 	if auth == "" {
-		return nil, _consts.ErrTokenNotFound
+		return nil, consts.ErrTokenNotFound
 	}
 	parts := strings.SplitN(auth, " ", 2)
 	if len(parts) != 2 || parts[0] != "Bearer" {
-		return nil, _consts.ErrTokenFormat
+		return nil, consts.ErrTokenFormat
 	}
 	token, err := h.jwtMd.ParseTokenString(parts[1])
 	if err != nil {
-		return nil, _consts.ErrTokenInvalid
+		return nil, consts.ErrTokenInvalid
 	}
 	claims := jwt.ExtractClaimsFromToken(token)
 	if claims == nil {
-		return nil, _consts.ErrTokenInvalid
+		return nil, consts.ErrTokenInvalid
 	}
 	fmt.Println(claims)
 	origIat := int64(claims["orig_iat"].(float64))
 	if time.Now().Unix() > origIat+h.jwtMd.MaxRefresh.Milliseconds() {
-		return nil, _consts.ErrRefreshTokenExpired
+		return nil, consts.ErrRefreshTokenExpired
 	}
 	newToken, _, err := h.jwtMd.TokenGenerator(claims)
 	if err != nil {
