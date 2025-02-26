@@ -2,9 +2,13 @@ package application
 
 import (
 	"context"
+	"fmt"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/infras/embedding"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/infras/repository"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/infras/utils"
 	product "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/product"
 	"testing"
+	"time"
 )
 
 func TestAddProduct_Run(t *testing.T) {
@@ -59,4 +63,26 @@ func TestAddProduct_Run(t *testing.T) {
 		t.Logf("err: %v", err)
 		t.Logf("resp: %v", resp)
 	}
+	time.Sleep(5 * time.Second)
+}
+
+func TestEmbedding(t *testing.T) {
+	eb, err := embedding.GetArkEmbedding(context.Background(), nil)
+	if err != nil {
+		t.Fatalf("GetArkEmbedding err: %v", err)
+	}
+	texts := []string{
+		"无线蓝牙耳机",
+		"高质量无线蓝牙耳机，音质清晰，电池续航长。",
+		"蓝牙耳机系列",
+	}
+	res, err := eb.EmbedStrings(context.Background(), texts)
+	if err != nil {
+		t.Fatalf("EmbedStrings err: %v", err)
+	}
+	var merged []float32
+	if len(res) > 0 {
+		merged = utils.MergeVectors(res)
+	}
+	fmt.Println("merged: ", merged)
 }

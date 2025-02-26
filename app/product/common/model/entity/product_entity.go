@@ -32,4 +32,5 @@ type ProductES struct {
 	Stock         uint32
 	Status        uint32
 	CategoryNames []string
+	Embedding     []float32 `json:"embedding"`
 }
