@@ -25,21 +25,50 @@ spec:
             - name: MYSQL_ROOT_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: mysql-paasword
+                  name: mysql-password
                   key: password
           volumeMounts:
-            - mountPath: /docker-entrypoint-initdb.d
-              name: initdb
             - name: mysql-data
               mountPath: /mysql/data
+            - name: mysql-init-scripts
+              mountPath: /docker-entrypoint-initdb.d
+
       volumes:
-        - name: initdb
-          hostPath:
-            path: /opt/gomall/db/sql/ini
-            type: Directory
         - name: mysql-data
           persistentVolumeClaim:
             claimName: mysql-data
+        - name: mysql-init-scripts
+          configMap:
+            name: mysql-init-scripts
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-init-scripts
+  namespace: default
+data:
+  init.sql: |
+    CREATE
+    DATABASE IF NOT EXISTS `cart`  
+        DEFAULT CHARACTER SET = 'utf8mb4';;
+    CREATE
+    DATABASE IF NOT EXISTS `checkout`
+        DEFAULT CHARACTER SET = 'utf8mb4';
+    CREATE
+    DATABASE IF NOT EXISTS `order`
+        DEFAULT CHARACTER SET = 'utf8mb4';
+    CREATE
+    DATABASE IF NOT EXISTS `payment`
+        DEFAULT CHARACTER SET = 'utf8mb4';
+    CREATE
+    DATABASE IF NOT EXISTS `product`
+        DEFAULT CHARACTER SET = 'utf8mb4';
+    CREATE
+    DATABASE IF NOT EXISTS `user`
+        DEFAULT CHARACTER SET = 'utf8mb4';
+    CREATE
+    DATABASE IF NOT EXISTS `auth`
+        DEFAULT CHARACTER SET = 'utf8mb4';
 ---
 apiVersion: v1
 kind: Service
@@ -54,3 +83,5 @@ spec:
       protocol: TCP
       nodePort: 30089
   type: NodePort
+
+

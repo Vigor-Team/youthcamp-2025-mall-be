@@ -42,9 +42,11 @@ func initMetric() route.CtxCallback {
 	config := consulapi.DefaultConfig()
 	config.Address = conf.GetConf().Hertz.RegistryAddr
 	consulClient, _ := consulapi.NewClient(config)
-	r := consul.NewConsulRegister(consulClient, consul.WithAdditionInfo(&consul.AdditionInfo{
-		Tags: []string{"service:gateway"},
-	}))
+	r := consul.NewConsulRegister(consulClient)
+	r.Register(&registry.Info{
+		ServiceName: "gateway",
+		Tags:        map[string]string{"service": "gateway"},
+	})
 
 	localIp := utils.MustGetLocalIPv4()
 	ip, err := net.ResolveTCPAddr("tcp", fmt.Sprintf("%s:%d", localIp, conf.GetConf().Hertz.MetricsPort))

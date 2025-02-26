@@ -35,9 +35,16 @@ service AuthService {
   rpc refresh(common.Empty) returns (common.Empty) {
     option (api.get) = "/api/v1/refresh";
   }
-  rpc banUser(common.Empty) returns (common.Empty) {
+  rpc banUser(BanUserReq) returns (BanUserResp) {
     option (api.post) = "/api/v1/ban";
   }
+}
+
+message BanUserReq {
+  int64 userId = 1 [(api.body) = "user_id", (api.form) = "user_id", (api.vd) = "($ > 0 && $ < 100)"];
+}
+
+message BanUserResp {
 }
 
 message Permission {

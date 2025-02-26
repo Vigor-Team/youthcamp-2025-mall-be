@@ -73,14 +73,15 @@ clean: ## clern up all the tmp files
 
 .PHONY: build-all
 build-all:
-	docker build -f ./deploy/Dockerfile.frontend -t frontend:${v} .
-	docker build -f ./deploy/Dockerfile.svc -t cart:${v} --build-arg SVC=cart .
-	docker build -f ./deploy/Dockerfile.svc -t checkout:${v} --build-arg SVC=checkout .
-	docker build -f ./deploy/Dockerfile.svc -t email:${v} --build-arg SVC=email .
-	docker build -f ./deploy/Dockerfile.svc -t order:${v} --build-arg SVC=order .
-	docker build -f ./deploy/Dockerfile.svc -t payment:${v} --build-arg SVC=payment .
-	docker build -f ./deploy/Dockerfile.svc -t product:${v} --build-arg SVC=product .
-	docker build -f ./deploy/Dockerfile.svc -t user:${v} --build-arg SVC=user .
+	docker build --no-cache -f ./deploy/k8s/Dockerfile.gateway -t gateway:${v} .
+	docker build --no-cache -f ./deploy/k8s/Dockerfile.svc -t cart:${v} --build-arg SVC=cart .
+	docker build --no-cache -f ./deploy/k8s/Dockerfile.svc -t checkout:${v} --build-arg SVC=checkout .
+	docker build --no-cache -f ./deploy/k8s/Dockerfile.svc -t email:${v} --build-arg SVC=email .
+	docker build --no-cache -f ./deploy/k8s/Dockerfile.svc -t order:${v} --build-arg SVC=order .
+	docker build --no-cache -f ./deploy/k8s/Dockerfile.svc -t payment:${v} --build-arg SVC=payment .
+	docker build --no-cache -f ./deploy/k8s/Dockerfile.svc -t product:${v} --build-arg SVC=product .
+	docker build --no-cache -f ./deploy/k8s/Dockerfile.svc -t user:${v} --build-arg SVC=user .
+	docker build --no-cache -f ./deploy/k8s/Dockerfile.svc -t llm:${v} --build-arg SVC=llm .
 
 .PHONY: gen-order
 gen-order:

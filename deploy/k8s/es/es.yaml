@@ -24,7 +24,7 @@ spec:
               value: "single-node"
             - name: ES_JAVA_OPTS
               value: "-Xms2g -Xmx2g"
-            - name: xpack.security.enabled
+            - name: xpack.security.enabled # todo
               value: "false"
             - name: xpack.security.http.ssl.enabled
               value: "false"

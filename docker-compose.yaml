@@ -81,6 +81,7 @@ services:
       - "--config.file=/etc/prometheus/prometheus.yml"
     ports:
       - "9090:9090"
+
 #  etcd:
 #    image: docker.io/bitnami/etcd:3.5
 #    environment:
@@ -88,6 +89,7 @@ services:
 #    ports:
 #      - 2379:2379
 #      - 2380:2380
+
   nats:
     image: nats:latest
     ports:

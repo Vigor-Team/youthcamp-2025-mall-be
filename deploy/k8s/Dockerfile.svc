@@ -1,11 +1,11 @@
-FROM golang:1.21 AS builder
+FROM golang:1.23 AS builder
 
 ARG SVC
 
 WORKDIR /usr/src/youthcamp-2025-mall-be
 
 # Set the GOPROXY environment variable to use the goproxy.io proxy (for China)
-ENV GOPROXY=https://goproxy.io,direct
+ENV GOPROXY=https://goproxy.cn,direct
 
 # pre-copy/cache go.mod for pre-downloading dependencies and only redownloading them in subsequent builds if they change
 COPY app/${SVC}/go.mod app/${SVC}/go.sum ./app/${SVC}/
