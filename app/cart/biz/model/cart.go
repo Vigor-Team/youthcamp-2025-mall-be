@@ -36,6 +36,24 @@ func GetCartByUserId(db *gorm.DB, ctx context.Context, userId uint32) (cartList 
 	return cartList, err
 }
 
+func GetCartItemByUserIdAndProductId(db *gorm.DB, ctx context.Context, userId, productId uint32) (
+	cart *Cart, err error,
+) {
+	var c Cart
+	err = db.WithContext(ctx).Model(&Cart{}).Where(&Cart{UserId: userId, ProductId: productId}).First(&c).Error
+	return &c, err
+}
+
+func UpdateCartQty(db *gorm.DB, ctx context.Context, userId, productId, qty uint32) error {
+	return db.WithContext(ctx).Model(&Cart{}).Where(&Cart{UserId: userId, ProductId: productId}).Update(
+		"qty", qty,
+	).Error
+}
+
+func DeleteCartItem(db *gorm.DB, ctx context.Context, userId, productId uint32) error {
+	return db.WithContext(ctx).Delete(&Cart{}, "user_id = ? AND product_id = ?", userId, productId).Error
+}
+
 func AddCart(db *gorm.DB, ctx context.Context, c *Cart) error {
 	var find Cart
 	err := db.WithContext(ctx).Model(&Cart{}).Where(&Cart{UserId: c.UserId, ProductId: c.ProductId}).First(&find).Error
@@ -43,7 +61,11 @@ func AddCart(db *gorm.DB, ctx context.Context, c *Cart) error {
 		return err
 	}
 	if find.ID != 0 {
-		err = db.WithContext(ctx).Model(&Cart{}).Where(&Cart{UserId: c.UserId, ProductId: c.ProductId}).UpdateColumn("qty", gorm.Expr("qty+?", c.Qty)).Error
+		err = db.WithContext(ctx).Model(&Cart{}).Where(
+			&Cart{
+				UserId: c.UserId, ProductId: c.ProductId,
+			},
+		).UpdateColumn("qty", gorm.Expr("qty+?", c.Qty)).Error
 	} else {
 		err = db.WithContext(ctx).Model(&Cart{}).Create(c).Error
 	}

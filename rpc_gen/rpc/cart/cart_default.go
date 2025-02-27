@@ -33,3 +33,21 @@ func EmptyCart(ctx context.Context, req *cart.EmptyCartReq, callOptions ...callo
 	}
 	return resp, nil
 }
+
+func UpdateCart(ctx context.Context, req *cart.UpdateCartReq, callOptions ...callopt.Option) (resp *cart.UpdateCartResp, err error) {
+	resp, err = defaultClient.UpdateCart(ctx, req, callOptions...)
+	if err != nil {
+		klog.CtxErrorf(ctx, "UpdateCart call failed,err =%+v", err)
+		return nil, err
+	}
+	return resp, nil
+}
+
+func DeleteItem(ctx context.Context, req *cart.DeleteItemReq, callOptions ...callopt.Option) (resp *cart.DeleteItemResp, err error) {
+	resp, err = defaultClient.DeleteItem(ctx, req, callOptions...)
+	if err != nil {
+		klog.CtxErrorf(ctx, "DeleteItem call failed,err =%+v", err)
+		return nil, err
+	}
+	return resp, nil
+}

@@ -22,6 +22,10 @@ func NewAddItemService(ctx context.Context) *AddItemService {
 // Run create note info
 func (s *AddItemService) Run(req *cart.AddItemReq) (resp *cart.AddItemResp, err error) {
 	// Finish your business logic.
+	if req.Item.Quantity < 0 {
+		return nil, kerrors.NewBizStatusError(40003, "quantity must be greater than 0")
+	}
+
 	getProduct, err := rpc.ProductClient.GetProduct(s.ctx, &product.GetProductReq{Id: req.Item.GetProductId()})
 	if err != nil {
 		return nil, err
@@ -31,11 +35,13 @@ func (s *AddItemService) Run(req *cart.AddItemReq) (resp *cart.AddItemResp, err 
 		return nil, kerrors.NewBizStatusError(40004, "product not exist")
 	}
 
-	err = model.AddCart(mysql.DB, s.ctx, &model.Cart{
-		UserId:    req.UserId,
-		ProductId: req.Item.ProductId,
-		Qty:       uint32(req.Item.Quantity),
-	})
+	err = model.AddCart(
+		mysql.DB, s.ctx, &model.Cart{
+			UserId:    req.UserId,
+			ProductId: req.Item.ProductId,
+			Qty:       uint32(req.Item.Quantity),
+		},
+	)
 	if err != nil {
 		return nil, kerrors.NewBizStatusError(50000, err.Error())
 	}
