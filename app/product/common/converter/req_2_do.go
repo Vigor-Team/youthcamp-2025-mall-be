@@ -3,6 +3,7 @@ package converter
 import (
 	"context"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/common/constant"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/common/consts"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/common/model/entity"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/infras/utils"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/product"
@@ -22,7 +23,7 @@ func ConvertAddReq2Entity(_ context.Context, req *product.AddProductReq) (*entit
 		SpuName:     req.SpuName,
 		SpuPrice:    req.SpuPrice,
 		Picture:     req.Picture,
-		Status:      constant.ProductStatusOnline,
+		Status:      consts.ProductStatusOnline,
 	}, nil
 }
 
@@ -36,6 +37,6 @@ func ConvertUpdateReq2Entity(_ context.Context, req *product.UpdateProductReq) (
 		SpuName:     req.SpuName,
 		SpuPrice:    req.SpuPrice,
 		Picture:     req.Picture,
-		Status:      constant.ProductStatusOnline,
+		Status:      consts.ProductStatusOnline,
 	}, nil
 }

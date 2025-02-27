@@ -56,31 +56,6 @@ func (c *ProductESClient) BatchGetProductById(ctx context.Context, productIds []
 }
 
 func (c *ProductESClient) SearchProduct(ctx context.Context, keyword string) ([]*entity.ProductEntity, error) {
-	//size := 100
-	//resp, err := GetESClient().Search().
-	//	Index("product").
-	//	Request(&search.Request{
-	//		Query: &types.Query{
-	//			MultiMatch: &types.MultiMatchQuery{
-	//				Query:  keyword,
-	//				Fields: []string{"name", "description", "spuName"},
-	//				Type: &textquerytype.TextQueryType{
-	//					Name: "best_fields",
-	//				},
-	//			},
-	//		},
-	//		Size: &size,
-	//	}).
-	//	Do(ctx)
-	//if err != nil {
-	//	return nil, fmt.Errorf("search request error: %w", err)
-	//}
-	//products := make([]*entity.ProductEntity, 0)
-	//for _, hit := range resp.Hits.Hits {
-	//	do := converter.ProductDoWithESConverter.Convert2DO(ctx, getProductESFormSource(string(hit.Source_)))
-	//	products = append(products, do)
-	//}
-	//return products, nil
 	eb, err := embedding.GetArkEmbedding(ctx, nil)
 	if err != nil {
 		return nil, fmt.Errorf("create embedding error: %w", err)

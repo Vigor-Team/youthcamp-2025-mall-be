@@ -3,7 +3,6 @@ package tools
 import (
 	"context"
 	"encoding/json"
-	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/llm/biz/consts"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/llm/infra/rpc"
 	rpcproduct "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/product"
 	"github.com/cloudwego/eino/components/tool"
@@ -32,17 +31,17 @@ func (spt *SearchProductTool) InvokableRun(ctx context.Context, argumentsInJSON 
 		Query string `json:"query"`
 	}
 	if err := json.Unmarshal([]byte(argumentsInJSON), &args); err != nil {
-		return "", consts.ErrJsonUnmarshal
+		return "", err
 	}
 
 	products, err := rpc.ProductClient.SearchProducts(ctx, &rpcproduct.SearchProductsReq{Query: args.Query})
 	if err != nil {
-		return "", consts.ErrSearchProducts
+		return "", err
 	}
 
 	result, err := json.Marshal(products)
 	if err != nil {
-		return "", consts.ErrJsonMarshal
+		return "", err
 	}
 	return string(result), nil
 }

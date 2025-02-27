@@ -3,7 +3,6 @@ package tools
 import (
 	"context"
 	"encoding/json"
-	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/llm/biz/consts"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/llm/infra/rpc"
 	rpccart "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/cart"
 	rpcorder "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/order"
@@ -42,13 +41,13 @@ func (cot *CreateOrderTool) InvokableRun(ctx context.Context, argumentsInJSON st
 	}
 	if err := json.Unmarshal([]byte(argumentsInJSON), &args); err != nil {
 		klog.CtxErrorf(ctx, "Unmarshal arguments error: %v", err)
-		return "", consts.ErrJsonUnmarshal
+		return "", err
 	}
 
 	pId, err := strconv.ParseUint(args.ProductID, 10, 32)
 	if err != nil {
 		klog.CtxErrorf(ctx, "Parse product id error: %v", err)
-		return "", consts.ErrCreateOrder
+		return "", err
 	}
 
 	// Just Test
@@ -75,13 +74,13 @@ func (cot *CreateOrderTool) InvokableRun(ctx context.Context, argumentsInJSON st
 
 	if err != nil {
 		klog.CtxErrorf(ctx, "Place order error: %v", err)
-		return "", consts.ErrCreateOrder
+		return "", err
 	}
 
 	result := map[string]string{"order_id": order.Order.OrderId}
 	resultJSON, err := json.Marshal(result)
 	if err != nil {
-		return "", consts.ErrJsonMarshal
+		return "", err
 	}
 	return string(resultJSON), nil
 }

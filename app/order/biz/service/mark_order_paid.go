@@ -17,10 +17,11 @@ package service
 import (
 	"context"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/biz/consts"
-
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/biz/dal/mysql"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/biz/model"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/common/errno"
 	order "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/order"
+	"github.com/cloudwego/kitex/pkg/kerrors"
 	"github.com/cloudwego/kitex/pkg/klog"
 )
 
@@ -36,18 +37,17 @@ func (s *MarkOrderPaidService) Run(req *order.MarkOrderPaidReq) (resp *order.Mar
 	// Finish your business logic.
 	if req.UserId == 0 || req.OrderId == "" {
 		klog.CtxErrorf(s.ctx, "userId or orderId empty")
-		err = consts.ErrInvalidParams
-		return
+		return nil, kerrors.NewBizStatusError(errno.ErrGRPCRequestParam, "userId or orderId empty")
 	}
 	_, err = model.GetOrder(mysql.DB, s.ctx, req.UserId, req.OrderId)
 	if err != nil {
 		klog.CtxErrorf(s.ctx, "model.ListOrder.err:%v", err)
-		return nil, consts.ErrMysql
+		return nil, kerrors.NewBizStatusError(consts.ErrGetOrder, "model.GetOrder error")
 	}
 	err = model.UpdateOrderState(mysql.DB, s.ctx, req.UserId, req.OrderId, model.OrderStatePaid)
 	if err != nil {
 		klog.CtxErrorf(s.ctx, "model.ListOrder.err:%v", err)
-		return nil, consts.ErrMysql
+		return nil, kerrors.NewBizStatusError(consts.ErrUpdateOrder, "model.UpdateOrderState error")
 	}
 	resp = &order.MarkOrderPaidResp{}
 	return

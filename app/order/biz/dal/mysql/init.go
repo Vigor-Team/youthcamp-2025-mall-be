@@ -17,6 +17,8 @@ package mysql
 import (
 	"fmt"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/conf"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/common/mtl"
+	"gorm.io/plugin/opentelemetry/tracing"
 	"os"
 
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/biz/model"
@@ -47,5 +49,8 @@ func Init() {
 			&model.OrderItem{},
 			&model.PreOrder{},
 		)
+	}
+	if err = DB.Use(tracing.NewPlugin(tracing.WithoutMetrics(), tracing.WithTracerProvider(mtl.TracerProvider))); err != nil {
+		panic(err)
 	}
 }

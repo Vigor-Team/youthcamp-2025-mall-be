@@ -28,7 +28,7 @@ func NewSendService(ctx context.Context) *SendService {
 }
 
 // Run create note info
-func (s *SendService) Run(req *email.EmailReq) (resp *email.EmailResp, err error) {
+func (s *SendService) Run(_ *email.EmailReq) (resp *email.EmailResp, err error) {
 	// Finish your business logic.
 
 	return

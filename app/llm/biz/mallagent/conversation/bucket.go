@@ -3,7 +3,6 @@ package conversation
 import (
 	"context"
 	"fmt"
-	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/llm/biz/consts"
 	dalmongo "github.com/Vigor-Team/youthcamp-2025-mall-be/app/llm/biz/dal/mongo"
 	"github.com/cloudwego/eino/schema"
 	"github.com/cloudwego/kitex/pkg/klog"
@@ -65,7 +64,7 @@ func (m *Bucket) GetConversation(conversationId, userId string) (*Conversation, 
 		conv := cached.(*Conversation)
 		if conv.UserID != userId {
 			klog.CtxErrorf(m.ctx, "conversation id %s already exists with different user id %s", conversationId, conv.UserID)
-			return nil, consts.ErrGetConversation
+			return nil, fmt.Errorf("conversation id %s already exists with different user id %s", conversationId, conv.UserID)
 		}
 		return conv, nil
 	}
@@ -104,8 +103,8 @@ func (m *Bucket) GetConversation(conversationId, userId string) (*Conversation, 
 				"messages": []*schema.Message{},
 			},
 		}
-		if _, err := m.collection.UpdateOne(m.ctx, filter, update, updateOpts); err != nil {
-			return nil, consts.ErrGetConversation
+		if _, err = m.collection.UpdateOne(m.ctx, filter, update, updateOpts); err != nil {
+			return nil, err
 		}
 
 		m.conversations.Store(conversationId, newConv)
@@ -113,7 +112,7 @@ func (m *Bucket) GetConversation(conversationId, userId string) (*Conversation, 
 
 	default:
 		klog.CtxErrorf(m.ctx, "failed to get conversation: %v", err)
-		return nil, consts.ErrGetConversation
+		return nil, err
 	}
 }
 
@@ -129,7 +128,7 @@ func (m *Bucket) ListConversations(userId string) ([]string, error) {
 		var result struct {
 			ID string `bson:"_id"`
 		}
-		if err := cursor.Decode(&result); err != nil {
+		if err = cursor.Decode(&result); err != nil {
 			continue
 		}
 		ids = append(ids, result.ID)
@@ -146,12 +145,12 @@ func (m *Bucket) DeleteConversation(conversationId, userId string) error {
 	res, err := m.collection.DeleteOne(m.ctx, filter)
 	if err != nil {
 		klog.CtxErrorf(m.ctx, "failed to delete conversation: %v", err)
-		return consts.ErrDeleteConversation
+		return fmt.Errorf("failed to delete conversation: %w", err)
 	}
 
 	if res.DeletedCount == 0 {
 		klog.CtxErrorf(m.ctx, "attempted to delete non-existent conversation %s", conversationId)
-		return consts.ErrDeleteConversation
+		return fmt.Errorf("conversation %s does not exist", conversationId)
 	}
 
 	m.conversations.Delete(conversationId)

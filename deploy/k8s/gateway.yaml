@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
         - name: gateway
-          image: "gateway:v1.1.6"
+          image: "gateway:v1.1.8"
           imagePullPolicy: IfNotPresent
           resources:
             limits:
@@ -72,11 +72,12 @@ metadata:
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
+  ingressClassName: nginx
   rules:
     - http:
         paths:
-          - pathType: Prefix
-            path: /mall
+          - path: /
+            pathType: Prefix
             backend:
               service:
                 name: gateway-svc

@@ -7,7 +7,9 @@ import (
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/biz/dal/mq"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/biz/dal/redis"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/biz/model"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/common/errno"
 	order "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/order"
+	"github.com/cloudwego/kitex/pkg/kerrors"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"strconv"
 )
@@ -26,18 +28,18 @@ func (s *SeckillPlaceOrderService) Run(req *order.SeckillPlaceOrderReq) (resp *o
 	tempMeta, err := validatePreOrderId(s.ctx, tempId, req.UserId)
 	if err != nil {
 		klog.CtxErrorf(s.ctx, "validatePreOrderId.err:%v", err)
-		return nil, consts.ErrInvalidParams
+		return nil, kerrors.NewBizStatusError(consts.ErrPreOrderValidate, err.Error())
 	}
 
 	productId, err := strconv.ParseUint(tempMeta["product_id"], 10, 32)
 	if err != nil {
 		klog.CtxErrorf(s.ctx, "strconv.ParseUint.err:%v", err)
-		return nil, consts.ErrInvalidParams
+		return nil, kerrors.NewBizStatusError(errno.ErrInternal, err.Error())
 	}
 	orderId, err := redis.NextId(s.ctx, "order")
 	if err != nil {
 		klog.CtxErrorf(s.ctx, "redis.NextId.err:%v", err)
-		return nil, consts.ErrRedis
+		return nil, kerrors.NewBizStatusError(errno.ErrInternal, "redis.NextId error")
 	}
 
 	// publish order message
@@ -60,7 +62,7 @@ func (s *SeckillPlaceOrderService) Run(req *order.SeckillPlaceOrderReq) (resp *o
 	err = producer.PublishOrder(s.ctx, msg)
 	if err != nil {
 		klog.CtxErrorf(s.ctx, "producer.PublishOrder.err:%v", err)
-		return nil, consts.ErrPublishMessage
+		return nil, kerrors.NewBizStatusError(consts.ErrPubMessage, "publish order message error")
 	}
 	resp = &order.SeckillPlaceOrderResp{
 		Status:  "processing",
@@ -73,7 +75,6 @@ func validatePreOrderId(ctx context.Context, tempId, userId uint32) (map[string]
 	if tempId == 0 || userId == 0 {
 		return nil, fmt.Errorf("invalid params: tempId=%d, userId=%d", tempId, userId)
 	}
-	// get tempId info from redis
 	productOrderKey := redis.GetOrderPreOrderKey(tempId)
 	tempIdInfo, err := redis.RedisClient.HGetAll(ctx, productOrderKey).Result()
 	fmt.Println("tempIdInfo", tempIdInfo)

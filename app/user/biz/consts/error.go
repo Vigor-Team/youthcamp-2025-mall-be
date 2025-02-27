@@ -1,11 +1,7 @@
 package consts
 
-import (
-	"github.com/cloudwego/kitex/pkg/kerrors"
-)
-
 var (
-	ErrUserNotFound = kerrors.NewBizStatusError(10001, "user not found")
-	ErrPassword     = kerrors.NewBizStatusError(10002, "password error")
-	ErrorUserExist  = kerrors.NewBizStatusError(10003, "user exist")
+	ErrUserExist    int32 = 20001
+	ErrUserNotFound int32 = 20002
+	ErrPassword     int32 = 20003
 )

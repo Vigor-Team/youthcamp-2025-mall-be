@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
         - name: product
-          image: "product:v1.1.6"
+          image: "product:v1.1.8"
           imagePullPolicy: IfNotPresent
           resources:
             limits:
@@ -59,7 +59,7 @@ spec:
     spec:
       containers:
         - name: cart
-          image: "cart:v1.1.6"
+          image: "cart:v1.1.8"
           imagePullPolicy: IfNotPresent
           resources:
             limits:
@@ -103,7 +103,7 @@ spec:
     spec:
       containers:
         - name: checkout
-          image: "checkout:v1.1.6"
+          image: "checkout:v1.1.8"
           imagePullPolicy: IfNotPresent
           resources:
             limits:
@@ -143,7 +143,7 @@ spec:
     spec:
       containers:
         - name: email
-          image: "email:v1.1.6"
+          image: "email:v1.1.8"
           imagePullPolicy: IfNotPresent
           resources:
             limits:
@@ -178,7 +178,7 @@ spec:
     spec:
       containers:
         - name: order
-          image: "order:v1.1.6"
+          image: "order:v1.1.8"
           imagePullPolicy: IfNotPresent
           resources:
             limits:
@@ -226,7 +226,7 @@ spec:
     spec:
       containers:
         - name: payment
-          image: "payment:v1.1.6"
+          image: "payment:v1.1.8"
           imagePullPolicy: IfNotPresent
           resources:
             limits:
@@ -270,7 +270,7 @@ spec:
     spec:
       containers:
         - name: user
-          image: "user:v1.1.6"
+          image: "user:v1.1.8"
           imagePullPolicy: IfNotPresent
           resources:
             limits:
@@ -314,7 +314,7 @@ spec:
     spec:
       containers:
         - name: llm
-          image: "llm:v1.1.6"
+          image: "llm:v1.1.8"
           imagePullPolicy: IfNotPresent
           resources:
             limits:

@@ -1,4 +1,4 @@
-package constant
+package consts
 
 type ProductStatus = uint32
 

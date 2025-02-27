@@ -1,5 +1,5 @@
 make:
-	#kind load docker-image mysql:latest --name mall-dev
+	kind load docker-image mysql:latest --name mall-dev
 	kubectl apply -f pv.yaml
 	kubectl apply -f pvc.yaml
 	kubectl apply -f mysql.yaml

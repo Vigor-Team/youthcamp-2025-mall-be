@@ -18,6 +18,8 @@ import (
 	"context"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/biz/consts"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/biz/dal/redis"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/common/errno"
+	"github.com/cloudwego/kitex/pkg/kerrors"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"strconv"
 
@@ -39,15 +41,14 @@ func (s *PlaceOrderService) Run(req *order.PlaceOrderReq) (resp *order.PlaceOrde
 	// Finish your business logic.
 	if len(req.OrderItems) == 0 {
 		klog.CtxErrorf(s.ctx, "OrderItems empty")
-		err = consts.ErrInvalidParams
-		return
+		return nil, kerrors.NewBizStatusError(errno.ErrGRPCRequestParam, "OrderItems empty")
 	}
 
 	err = mysql.DB.Transaction(func(tx *gorm.DB) error {
 		orderId, err := redis.NextId(s.ctx, "order")
 		if err != nil {
 			klog.CtxErrorf(s.ctx, "redis.NextId.err: %v", err)
-			return consts.ErrRedis
+			return kerrors.NewBizStatusError(errno.ErrInternal, "redis.NextId error")
 		}
 
 		o := &model.Order{
@@ -66,9 +67,9 @@ func (s *PlaceOrderService) Run(req *order.PlaceOrderReq) (resp *order.PlaceOrde
 			o.Consignee.City = a.City
 			o.Consignee.StreetAddress = a.StreetAddress
 		}
-		if err := tx.Create(o).Error; err != nil {
+		if err = tx.Create(o).Error; err != nil {
 			klog.CtxErrorf(s.ctx, "tx.Create.err: %v", err)
-			return consts.ErrMysql
+			return kerrors.NewBizStatusError(errno.ErrInternal, "tx.Create error")
 		}
 
 		var itemList []*model.OrderItem
@@ -80,16 +81,15 @@ func (s *PlaceOrderService) Run(req *order.PlaceOrderReq) (resp *order.PlaceOrde
 				Cost:         v.Cost,
 			})
 		}
-		if err := tx.Create(&itemList).Error; err != nil {
+		if err = tx.Create(&itemList).Error; err != nil {
 			klog.CtxErrorf(s.ctx, "tx.Create.err: %v", err)
-			return consts.ErrMysql
+			return kerrors.NewBizStatusError(consts.ErrCreateOrder, "tx.Create error")
 		}
 		resp = &order.PlaceOrderResp{
 			Order: &order.OrderResult{
 				OrderId: strconv.Itoa(int(orderId)),
 			},
 		}
-
 		return nil
 	})
 	return

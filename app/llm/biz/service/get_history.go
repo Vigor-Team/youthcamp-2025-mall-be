@@ -4,7 +4,9 @@ import (
 	"context"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/llm/biz/consts"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/llm/biz/mallagent/conversation"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/common/errno"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/llm"
+	"github.com/cloudwego/kitex/pkg/kerrors"
 	"github.com/cloudwego/kitex/pkg/klog"
 )
 
@@ -19,14 +21,13 @@ func NewGetHistoryService(ctx context.Context) *GetHistoryService {
 func (s *GetHistoryService) Run(req *llm.GetHistoryRequest) (resp *llm.GetHistoryResponse, err error) {
 	userId := req.UserId
 	if userId == "" {
-		err = consts.ErrReqParamNotFound
-		return
+		return nil, kerrors.NewBizStatusError(errno.ErrGRPCRequestParam, "invalid params")
 	}
 	if req.ConversationId == "" {
 		ids, err := conversation.GetDefaultBucket(s.ctx).ListConversations(userId)
 		if err != nil {
 			klog.CtxErrorf(s.ctx, "get conversation list failed, err: %v", err)
-			return nil, consts.ErrGetConversation
+			return nil, kerrors.NewBizStatusError(consts.ErrGetHistory, "get conversation list failed")
 		}
 
 		resp = &llm.GetHistoryResponse{

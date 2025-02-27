@@ -11,9 +11,12 @@ all:
 	make -C prometheus make
 	make -C jaeger make
 	make -C nats make
+	make -C promtail make
+
 
 
 app:
-	#kind load docker-image product:v1.1.6 gateway:v1.1.6 order:v1.1.6 user:v1.1.6 order:v1.1.6 payment:v1.1.6 email:v1.1.6 checkout:v1.1.6 cart:v1.1.6 llm:v1.1.6 --name mall-dev
+	kind load docker-image product:v1.1.8 gateway:v1.1.8 order:v1.1.8 user:v1.1.8 order:v1.1.8 payment:v1.1.8 email:v1.1.8 checkout:v1.1.8 cart:v1.1.8 llm:v1.1.8 --name mall-dev
 	kubectl apply -f app.yaml
 	kubectl apply -f gateway.yaml
+

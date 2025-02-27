@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/common/constant"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/common/consts"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/common/model/entity"
 	productrepo "github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/domain/product/repository"
 	"github.com/cloudwego/kitex/pkg/klog"
@@ -19,69 +20,69 @@ func GetProductStateService() *ProductStateService {
 }
 
 type ProductStateInfo struct {
-	Status constant.ProductStatus
+	Status consts.ProductStatus
 }
 
 type CanTransferFunc func(originalInfo *ProductStateInfo) error
 
 type ConstructTargetInfoFunc func(originalInfo *ProductStateInfo) *ProductStateInfo
 
-var canTransferFuncMap = map[constant.StateOperationType]CanTransferFunc{
-	constant.StateOperationTypeAdd: func(originalInfo *ProductStateInfo) error {
+var canTransferFuncMap = map[consts.StateOperationType]CanTransferFunc{
+	consts.StateOperationTypeAdd: func(originalInfo *ProductStateInfo) error {
 		return nil
 	},
-	constant.StateOperationTypeSave: func(originalInfo *ProductStateInfo) error {
-		if originalInfo.Status == constant.ProductStatusDelete {
+	consts.StateOperationTypeSave: func(originalInfo *ProductStateInfo) error {
+		if originalInfo.Status == consts.ProductStatusDelete {
 			return errors.New("product has been deleted")
 		}
 		return nil
 	},
-	constant.StateOperationTypeDel: func(originalInfo *ProductStateInfo) error {
+	consts.StateOperationTypeDel: func(originalInfo *ProductStateInfo) error {
 		return nil
 	},
-	constant.StateOperationTypeOnline: func(originalInfo *ProductStateInfo) error {
-		if originalInfo.Status != constant.ProductStatusOffline {
+	consts.StateOperationTypeOnline: func(originalInfo *ProductStateInfo) error {
+		if originalInfo.Status != consts.ProductStatusOffline {
 			return errors.New("product is not offline")
 		}
 		return nil
 	},
-	constant.StateOperationTypeOffline: func(originalInfo *ProductStateInfo) error {
-		if originalInfo.Status != constant.ProductStatusOnline {
+	consts.StateOperationTypeOffline: func(originalInfo *ProductStateInfo) error {
+		if originalInfo.Status != consts.ProductStatusOnline {
 			return errors.New("product is not online")
 		}
 		return nil
 	},
 }
 
-var constructTargetInfoFuncMap = map[constant.StateOperationType]ConstructTargetInfoFunc{
-	constant.StateOperationTypeAdd: func(originalInfo *ProductStateInfo) (ret *ProductStateInfo) {
+var constructTargetInfoFuncMap = map[consts.StateOperationType]ConstructTargetInfoFunc{
+	consts.StateOperationTypeAdd: func(originalInfo *ProductStateInfo) (ret *ProductStateInfo) {
 		ret = &ProductStateInfo{}
-		ret.Status = constant.ProductStatusOnline
+		ret.Status = consts.ProductStatusOnline
 		return
 	},
-	constant.StateOperationTypeSave: func(originalInfo *ProductStateInfo) (ret *ProductStateInfo) {
+	consts.StateOperationTypeSave: func(originalInfo *ProductStateInfo) (ret *ProductStateInfo) {
 		ret = &ProductStateInfo{}
-		ret.Status = constant.ProductStatusOnline
+		ret.Status = consts.ProductStatusOnline
 		return
 	},
-	constant.StateOperationTypeDel: func(originalInfo *ProductStateInfo) (ret *ProductStateInfo) {
+	consts.StateOperationTypeDel: func(originalInfo *ProductStateInfo) (ret *ProductStateInfo) {
 		ret = &ProductStateInfo{}
-		ret.Status = constant.ProductStatusDelete
+		ret.Status = consts.ProductStatusDelete
 		return
 	},
-	constant.StateOperationTypeOnline: func(originalInfo *ProductStateInfo) (ret *ProductStateInfo) {
+	consts.StateOperationTypeOnline: func(originalInfo *ProductStateInfo) (ret *ProductStateInfo) {
 		ret = &ProductStateInfo{}
-		ret.Status = constant.ProductStatusOnline
+		ret.Status = consts.ProductStatusOnline
 		return
 	},
-	constant.StateOperationTypeOffline: func(originalInfo *ProductStateInfo) (ret *ProductStateInfo) {
+	consts.StateOperationTypeOffline: func(originalInfo *ProductStateInfo) (ret *ProductStateInfo) {
 		ret = &ProductStateInfo{}
-		ret.Status = constant.ProductStatusOffline
+		ret.Status = consts.ProductStatusOffline
 		return
 	},
 }
 
-func (s *ProductStateService) GetCanTransferFunc(operationType constant.StateOperationType) (CanTransferFunc, error) {
+func (s *ProductStateService) GetCanTransferFunc(operationType consts.StateOperationType) (CanTransferFunc, error) {
 	if canTransferFunc, ok := canTransferFuncMap[operationType]; ok {
 		return canTransferFunc, nil
 	}
@@ -89,7 +90,7 @@ func (s *ProductStateService) GetCanTransferFunc(operationType constant.StateOpe
 }
 
 func (s *ProductStateService) ConstructTargetInfo(originProduct *entity.ProductEntity,
-	operation constant.StateOperationType,
+	operation consts.StateOperationType,
 ) (*entity.ProductEntity, error) {
 	targetProduct, err := originProduct.Clone()
 	if err != nil {
@@ -116,7 +117,7 @@ func (s *ProductStateService) OperateProduct(ctx context.Context, origin, target
 	return nil
 }
 
-func (s *ProductStateService) getConstructTargetInfoFunc(operationType constant.StateOperationType) (ConstructTargetInfoFunc, error) {
+func (s *ProductStateService) getConstructTargetInfoFunc(operationType consts.StateOperationType) (ConstructTargetInfoFunc, error) {
 	if constructTargetInfoFunc, ok := constructTargetInfoFuncMap[operationType]; ok {
 		return constructTargetInfoFunc, nil
 	}

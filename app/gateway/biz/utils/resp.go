@@ -47,7 +47,7 @@ func FailResponse(ctx context.Context, c *app.RequestContext, err error) {
 
 func FailResponseWithMsg(c *app.RequestContext, msg string) {
 	c.JSON(http.StatusOK, GlobalResponse{
-		Code: errno.BadRequestCode,
+		Code: errno.ErrInternal,
 		Msg:  msg,
 		Data: nil,
 	})

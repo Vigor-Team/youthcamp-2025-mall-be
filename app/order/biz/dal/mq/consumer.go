@@ -2,7 +2,6 @@ package mq
 
 import (
 	"context"
-	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/biz/consts"
 	"github.com/bytedance/sonic"
 	"github.com/cloudwego/kitex/pkg/klog"
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -38,7 +37,7 @@ func (c *Consumer) ConsumePreOrders(ctx context.Context, handler func(context.Co
 		var msg PreOrderMessage
 		if err := sonic.Unmarshal(d.Body, &msg); err != nil {
 			d.Nack(false, false)
-			return consts.ErrConsumeMessage
+			return err
 		}
 
 		if err := handler(ctx, msg); err != nil {
@@ -56,7 +55,7 @@ func (c *Consumer) ConsumeOrders(ctx context.Context, handler func(context.Conte
 		var msg OrderMessage
 		if err := sonic.Unmarshal(d.Body, &msg); err != nil {
 			d.Nack(false, false)
-			return consts.ErrConsumeMessage
+			return err
 		}
 
 		// todo retry
@@ -75,7 +74,7 @@ func (c *Consumer) ConsumeDelay(ctx context.Context, handler func(context.Contex
 		var msg DelayMessage
 		if err := sonic.Unmarshal(d.Body, &msg); err != nil {
 			d.Nack(false, false)
-			return consts.ErrConsumeMessage
+			return err
 		}
 
 		if err := handler(ctx, msg); err != nil {

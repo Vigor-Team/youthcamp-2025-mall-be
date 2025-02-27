@@ -20,6 +20,7 @@ import (
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/user/biz/dal/mysql"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/user/biz/model"
 	user "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/user"
+	"github.com/cloudwego/kitex/pkg/kerrors"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -33,17 +34,15 @@ func NewLoginService(ctx context.Context) *LoginService {
 
 // Run create note info
 func (s *LoginService) Run(req *user.LoginReq) (resp *user.LoginResp, err error) {
-	// Finish your business logic.
-	klog.Infof("LoginReq:%+v", req)
 	userRow, err := model.GetByEmail(mysql.DB, s.ctx, req.Email)
 	if err != nil {
-		klog.CtxErrorf(s.ctx, "login error: %v", err)
-		return nil, consts.ErrUserNotFound
+		klog.CtxErrorf(s.ctx, "model.GetByEmail: %v", err)
+		return nil, kerrors.NewBizStatusError(consts.ErrUserNotFound, "user not found")
 	}
 	err = bcrypt.CompareHashAndPassword([]byte(userRow.PasswordHashed), []byte(req.Password))
 	if err != nil {
-		klog.CtxErrorf(s.ctx, "login error: %v", err)
-		return nil, consts.ErrPassword
+		klog.CtxErrorf(s.ctx, "bcrypt.CompareHashAndPassword: %v", err)
+		return nil, kerrors.NewBizStatusError(consts.ErrPassword, "password error")
 	}
 	return &user.LoginResp{UserId: int32(userRow.ID)}, nil
 }
