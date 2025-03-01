@@ -3,9 +3,12 @@ package service
 import (
 	"context"
 
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/cart/biz/consts"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/cart/biz/dal/mysql"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/cart/biz/model"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/cart/infra/rpc"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/common/errno"
+	"github.com/cloudwego/kitex/pkg/klog"
 
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/cart"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/product"
@@ -21,18 +24,19 @@ func NewAddItemService(ctx context.Context) *AddItemService {
 
 // Run create note info
 func (s *AddItemService) Run(req *cart.AddItemReq) (resp *cart.AddItemResp, err error) {
-	// Finish your business logic.
 	if req.Item.Quantity < 0 {
-		return nil, kerrors.NewBizStatusError(40003, "quantity must be greater than 0")
+		klog.CtxErrorf(s.ctx, "quantity must be greater than 0")
+		return nil, kerrors.NewBizStatusError(errno.ErrGRPCRequestParam, "quantity must be greater than 0")
 	}
 
 	getProduct, err := rpc.ProductClient.GetProduct(s.ctx, &product.GetProductReq{Id: req.Item.GetProductId()})
 	if err != nil {
-		return nil, err
+		klog.CtxErrorf(s.ctx, "rpc.ProductClient.GetProduct.err: %v", err)
+		return nil, kerrors.NewBizStatusError(consts.ErrRPCGetProduct, "rpc.ProductClient.GetProduct error")
 	}
 
 	if getProduct.Product == nil || getProduct.Product.Id == 0 {
-		return nil, kerrors.NewBizStatusError(40004, "product not exist")
+		return nil, kerrors.NewBizStatusError(consts.ErrRPCGetProduct, "product not exist")
 	}
 
 	err = model.AddCart(
@@ -43,7 +47,8 @@ func (s *AddItemService) Run(req *cart.AddItemReq) (resp *cart.AddItemResp, err 
 		},
 	)
 	if err != nil {
-		return nil, kerrors.NewBizStatusError(50000, err.Error())
+		klog.CtxErrorf(s.ctx, "model.AddCart.err: %v", err)
+		return nil, kerrors.NewBizStatusError(consts.ErrAddCart, "add cart error")
 	}
 
 	return &cart.AddItemResp{}, nil

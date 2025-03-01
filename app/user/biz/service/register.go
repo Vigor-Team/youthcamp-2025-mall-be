@@ -16,6 +16,7 @@ package service
 
 import (
 	"context"
+
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/user/biz/consts"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/common/errno"
 	"github.com/cloudwego/kitex/pkg/kerrors"
@@ -57,7 +58,7 @@ func (s *RegisterService) Run(req *user.RegisterReq) (resp *user.RegisterResp, e
 	}
 	if err = model.Create(mysql.DB, s.ctx, newUser); err != nil {
 		klog.CtxErrorf(s.ctx, "model.Create: %v", err)
-		err = kerrors.NewBizStatusError(errno.ErrMysql, "create user error")
+		err = kerrors.NewBizStatusError(consts.ErrCreateUser, "create user error")
 		return
 	}
 	return &user.RegisterResp{UserId: int32(newUser.ID)}, nil

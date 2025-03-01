@@ -28,6 +28,8 @@ spec:
               value: "false"
             - name: xpack.security.http.ssl.enabled
               value: "false"
+            - name: ELASTIC_PASSWORD
+              value: "123456"
           ports:
             - containerPort: 9200
             - containerPort: 9300

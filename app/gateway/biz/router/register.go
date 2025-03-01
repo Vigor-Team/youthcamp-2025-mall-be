@@ -21,7 +21,6 @@ import (
 	auth "github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/biz/router/auth"
 	cart "github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/biz/router/cart"
 	checkout "github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/biz/router/checkout"
-	home "github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/biz/router/home"
 	llm "github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/biz/router/llm"
 	order "github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/biz/router/order"
 	product "github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/biz/router/product"
@@ -45,5 +44,4 @@ func GeneratedRegister(r *server.Hertz) {
 
 	product.Register(r)
 
-	home.Register(r)
 }

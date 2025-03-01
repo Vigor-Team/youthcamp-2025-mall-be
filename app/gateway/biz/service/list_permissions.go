@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/biz/consts"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/biz/dal/mysql"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/biz/model"
@@ -26,7 +27,7 @@ func (h *ListPermissionsService) Run(_ *common.Empty) (resp *auth.ListPermission
 	permissions, err := model.ListPermissions(mysql.DB, h.Context)
 	if err != nil {
 		klog.CtxErrorf(h.Context, "model.ListPermissions.err: %v", err)
-		err = kerrors.NewBizStatusError(consts.ErrMysqlErr, err.Error())
+		err = kerrors.NewBizStatusError(consts.ErrGetPermission, "get permission failed")
 	}
 	ps := make([]*auth.Permission, 0, len(permissions))
 	for _, p := range permissions {

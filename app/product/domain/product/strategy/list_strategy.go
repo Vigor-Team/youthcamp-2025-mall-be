@@ -1,6 +1,8 @@
 package strategy
 
-import "github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/common/constant"
+import (
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/common/consts"
+)
 
 type ListingStrategy interface {
 	AllowedStatuses() []consts.ProductStatus

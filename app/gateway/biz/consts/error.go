@@ -1,15 +1,18 @@
 package consts
 
-import "github.com/cloudwego/kitex/pkg/kerrors"
-
 var (
-	ErrTokenInvalid        = kerrors.NewBizStatusError(10002, "token is invalid")
-	ErrTokenNotFound       = kerrors.NewBizStatusError(10001, "token not found")
-	ErrTokenFormat         = kerrors.NewBizStatusError(1004, "invalid token format")
-	ErrRefreshTokenExpired = kerrors.NewBizStatusError(10003, "refresh token expired")
+	ErrBanUser            int32 = 10011
+	ErrBindPermissionRole int32 = 10012
+	ErrBindRoleUser       int32 = 10013
+	ErrCreatePermission   int32 = 10014
+	ErrCreateRole         int32 = 10015
+	ErrGetPermission      int32 = 10016
+	ErrGetRole            int32 = 10017
 )
 
 var (
-	ErrMysqlErr int32 = 10000
-	ErrRedisErr int32 = 10001
+	ErrJWTNotFound       int32 = 10021
+	ErrJWTInvalid        int32 = 10022
+	ErrJWTCreate         int32 = 10023
+	ErrJWTRefreshExpired int32 = 10024
 )

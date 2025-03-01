@@ -2,12 +2,11 @@ package service
 
 import (
 	"context"
+
+	common "github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/hertz_gen/gateway/common"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/hertz_gen/gateway/product"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/infra/rpc"
 	rpcproduct "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/product"
-	"github.com/cloudwego/hertz/pkg/common/hlog"
-
-	common "github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/hertz_gen/gateway/common"
 	"github.com/cloudwego/hertz/pkg/app"
 )
 
@@ -21,10 +20,6 @@ func NewListCategoriesService(Context context.Context, RequestContext *app.Reque
 }
 
 func (h *ListCategoriesService) Run(req *common.Empty) (resp *product.ListCategoriesResp, err error) {
-	defer func() {
-		hlog.CtxInfof(h.Context, "req = %+v", req)
-		hlog.CtxInfof(h.Context, "resp = %+v", resp)
-	}()
 	r, err := rpc.ProductClient.GetCategories(h.Context, &rpcproduct.GetCategoriesReq{})
 	if err != nil {
 		return

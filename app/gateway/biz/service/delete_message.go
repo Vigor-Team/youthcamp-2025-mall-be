@@ -2,9 +2,14 @@ package service
 
 import (
 	"context"
+	"strconv"
+
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/infra/rpc"
+	gatewayutils "github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/utils"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/common/errno"
 	rpcllm "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/llm"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
+	"github.com/cloudwego/kitex/pkg/kerrors"
 
 	llm "github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/hertz_gen/gateway/llm"
 	"github.com/cloudwego/hertz/pkg/app"
@@ -20,18 +25,14 @@ func NewDeleteMessageService(Context context.Context, RequestContext *app.Reques
 }
 
 func (h *DeleteMessageService) Run(req *llm.DeleteHistoryRequest) (resp *llm.DeleteHistoryResponse, err error) {
-	defer func() {
-		hlog.CtxInfof(h.Context, "req = %+v", req)
-		hlog.CtxInfof(h.Context, "resp = %+v", resp)
-	}()
 	convId := req.ConversationId
 	if convId == "" {
 		hlog.CtxErrorf(h.Context, "delete history failed, err: conversation id is empty")
-		return
+		return nil, kerrors.NewBizStatusError(errno.ErrHTTPRequestParam, "conversation id is empty")
 	}
 	_, err = rpc.LlmClient.DeleteHistory(h.Context, &rpcllm.DeleteHistoryRequest{
 		ConversationId: convId,
-		UserId:         "12345", // todo test, should get from jwt
+		UserId:         strconv.Itoa(int(gatewayutils.GetUserIdFromCtx(h.RequestContext))),
 	})
 	if err != nil {
 		hlog.CtxErrorf(h.Context, "delete history failed, err: %v", err)

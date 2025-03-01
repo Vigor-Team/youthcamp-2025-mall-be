@@ -2,7 +2,7 @@ package service
 
 import (
 	"context"
-	"fmt"
+
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/infra/rpc"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/middleware"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/types"
@@ -20,13 +20,12 @@ func NewMeService(Context context.Context, RequestContext *app.RequestContext) *
 }
 
 func (h *MeService) Run() (resp *types.UserInfo, err error) {
+	// todo
 	claims, err := middleware.GetJwtMd().GetClaimsFromJWT(h.Context, h.RequestContext)
-	fmt.Println("claims", claims)
 	if err != nil {
 		return nil, err
 	}
 	userId, ok := claims["id"].(float64)
-	fmt.Println("userId", userId)
 	if !ok {
 		return nil, err
 	}

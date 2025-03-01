@@ -6,6 +6,7 @@ var (
 	ErrGetProduct       int32 = 30004
 	ErrStateOperation   int32 = 30005
 	ErrUpdateProduct    int32 = 30006
+	ErrAddProduct       int32 = 30007
 )
 
 var (

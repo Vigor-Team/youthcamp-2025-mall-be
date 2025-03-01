@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/biz/consts"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/biz/dal/mysql"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/biz/model"
@@ -26,7 +27,7 @@ func (h *ListRolesService) Run(_ *common.Empty) (resp *auth.ListRolesResp, err e
 	roles, err := model.ListRoles(mysql.DB, h.Context)
 	if err != nil {
 		klog.CtxErrorf(h.Context, "model.ListRoles.err: %v", err)
-		err = kerrors.NewBizStatusError(consts.ErrMysqlErr, err.Error())
+		err = kerrors.NewBizStatusError(consts.ErrGetRole, "get role failed")
 	}
 	rs := make([]*auth.Role, 0, len(roles))
 	for _, r := range roles {

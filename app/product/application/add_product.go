@@ -2,6 +2,8 @@ package application
 
 import (
 	"context"
+
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/common/consts"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/common/converter"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/common/errno"
 	"github.com/cloudwego/kitex/pkg/kerrors"
@@ -9,7 +11,6 @@ import (
 
 	categoryservice "github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/domain/category/service"
 	productservice "github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/domain/product/service"
-	//productservice "github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/domain/product/service"
 	product "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/product"
 )
 
@@ -25,7 +26,7 @@ func (s *AddProductService) Run(req *product.AddProductReq) (resp *product.AddPr
 	categories, err := categoryservice.GetCategoryService().BatchGetCategories(s.ctx, req.CategoryIds)
 	if err != nil {
 		klog.CtxErrorf(s.ctx, "BatchGetCategories failed, err:%v", err)
-		return nil, kerrors.NewBizStatusError(errno.ErrMysql, "BatchGetCategories failed")
+		return nil, kerrors.NewBizStatusError(consts.ErrGetCategory, "BatchGetCategories failed")
 	}
 	entity, err := converter.ConvertAddReq2Entity(s.ctx, req)
 	if err != nil {
@@ -36,7 +37,7 @@ func (s *AddProductService) Run(req *product.AddProductReq) (resp *product.AddPr
 	err = productservice.GetProductUpdateService().AddProduct(s.ctx, entity)
 	if err != nil {
 		klog.CtxErrorf(s.ctx, "AddProduct failed, err:%v", err)
-		return nil, kerrors.NewBizStatusError(errno.ErrMysql, "AddProduct failed")
+		return nil, kerrors.NewBizStatusError(consts.ErrAddProduct, "AddProduct failed")
 	}
 	return
 }

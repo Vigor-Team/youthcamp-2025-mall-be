@@ -2,12 +2,11 @@ package service
 
 import (
 	"context"
+
+	order "github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/hertz_gen/gateway/order"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/infra/rpc"
 	gatewayutils "github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/utils"
 	rpcorder "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/order"
-	"github.com/cloudwego/hertz/pkg/common/hlog"
-
-	order "github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/hertz_gen/gateway/order"
 	"github.com/cloudwego/hertz/pkg/app"
 )
 
@@ -21,10 +20,6 @@ func NewSeckillPlaceOrderService(Context context.Context, RequestContext *app.Re
 }
 
 func (h *SeckillPlaceOrderService) Run(req *order.SeckillPlaceOrderReq) (resp *order.SeckillPlaceOrderResp, err error) {
-	defer func() {
-		hlog.CtxInfof(h.Context, "req = %+v", req)
-		hlog.CtxInfof(h.Context, "resp = %+v", resp)
-	}()
 	seckill, err := rpc.OrderClient.SeckillPlaceOrder(h.Context, &rpcorder.SeckillPlaceOrderReq{
 		UserId:       gatewayutils.GetUserIdFromCtx(h.RequestContext),
 		UserCurrency: req.UserCurrency,

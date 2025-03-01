@@ -16,12 +16,15 @@ require (
 	github.com/joho/godotenv v1.5.1
 	github.com/kr/pretty v0.3.1
 	github.com/rabbitmq/amqp091-go v1.10.0
+	github.com/redis/go-redis/extra/redisotel/v9 v9.7.1
+	github.com/redis/go-redis/extra/redisprometheus/v9 v9.7.1
 	github.com/redis/go-redis/v9 v9.7.1
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 	gopkg.in/validator.v2 v2.0.1
 	gopkg.in/yaml.v2 v2.4.0
 	gorm.io/driver/mysql v1.5.7
 	gorm.io/gorm v1.25.12
+	gorm.io/plugin/opentelemetry v0.1.11
 )
 
 require (
@@ -89,6 +92,7 @@ require (
 	github.com/prometheus/client_model v0.6.1 // indirect
 	github.com/prometheus/common v0.62.0 // indirect
 	github.com/prometheus/procfs v0.15.1 // indirect
+	github.com/redis/go-redis/extra/rediscmd/v9 v9.7.1 // indirect
 	github.com/rogpeppe/go-internal v1.13.1 // indirect
 	github.com/stretchr/testify v1.10.0 // indirect
 	github.com/tidwall/gjson v1.17.3 // indirect
