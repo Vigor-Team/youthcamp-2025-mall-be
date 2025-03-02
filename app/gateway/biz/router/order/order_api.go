@@ -21,6 +21,7 @@ func Register(r *server.Hertz) {
 		_api := root.Group("/api", _apiMw()...)
 		{
 			_v1 := _api.Group("/v1", _v1Mw()...)
+			_v1.POST("/order", append(_placeorderMw(), order.PlaceOrder)...)
 			_v1.GET("/order", append(_orderlistMw(), order.OrderList)...)
 			_order := _v1.Group("/order", _orderMw()...)
 			_order.GET("/:order_id", append(_queryorderMw(), order.QueryOrder)...)

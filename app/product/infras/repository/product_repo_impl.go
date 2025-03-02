@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/common/model/entity"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/common/model/po"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/domain/product/strategy"
@@ -71,6 +72,7 @@ func (p *ProductRepositoryImpl) UpdateProduct(ctx context.Context, origin, targe
 	if err != nil {
 		return err
 	}
+	// todo 数据一致性
 	go func() {
 		pES := converter.ProductDoWithESConverter.Convert2ES(ctx, target)
 		texts := []string{
@@ -81,7 +83,6 @@ func (p *ProductRepositoryImpl) UpdateProduct(ctx context.Context, origin, targe
 		if pES.CategoryNames != nil {
 			texts = append(texts, pES.CategoryNames...)
 		}
-		fmt.Println("texts: ", texts)
 		vectors, err := eb.EmbedStrings(ctx, texts)
 		if err != nil {
 			klog.CtxErrorf(ctx, "EmbedStrings err: %v", err)

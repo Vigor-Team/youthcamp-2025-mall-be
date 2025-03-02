@@ -3,6 +3,8 @@ package service
 import (
 	"context"
 	"errors"
+	"io"
+
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/llm/biz/consts"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/llm/biz/mallagent"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/llm/biz/mallagent/conversation"
@@ -12,7 +14,6 @@ import (
 	"github.com/cloudwego/kitex/pkg/kerrors"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/google/uuid"
-	"io"
 )
 
 type StreamMessageService struct {
@@ -35,6 +36,7 @@ func (s *StreamMessageService) Run(req *llm.ChatRequest) (sr *schema.StreamReade
 		convId = uuid.New().String()
 	}
 
+	s.ctx = context.WithValue(s.ctx, "userId", userId)
 	runnable, err := mallagent.BuildMallAgent(s.ctx, &mallagent.BuildConfig{MallAgent: &mallagent.MallAgentBuildConfig{}})
 	if err != nil {
 		klog.CtxErrorf(s.ctx, "build mall agent error: %v", err)

@@ -2,8 +2,10 @@ package service
 
 import (
 	"context"
+	"strconv"
 
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/infra/rpc"
+	gatewayutils "github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/utils"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/common/errno"
 	rpcllm "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/llm"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
@@ -30,7 +32,7 @@ func (h *GetHistoryService) Run(req *llm.GetHistoryRequest) (resp *llm.GetHistor
 	}
 	history, err := rpc.LlmClient.GetHistory(h.Context, &rpcllm.GetHistoryRequest{
 		ConversationId: convId,
-		UserId:         h.RequestContext.Value("user_id").(string),
+		UserId:         strconv.Itoa(int(gatewayutils.GetUserIdFromCtx(h.RequestContext))),
 	})
 	if err != nil {
 		hlog.CtxErrorf(h.Context, "get history failed, err: %v", err)

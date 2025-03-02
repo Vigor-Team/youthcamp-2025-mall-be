@@ -3,6 +3,7 @@ package tools
 import (
 	"context"
 	"encoding/json"
+
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/llm/infra/rpc"
 	rpcproduct "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/product"
 	"github.com/cloudwego/eino/components/tool"
@@ -15,7 +16,11 @@ type SearchProductTool struct {
 func (spt *SearchProductTool) Info(ctx context.Context) (*schema.ToolInfo, error) {
 	return &schema.ToolInfo{
 		Name: "search_product",
-		Desc: "Search for products based on user query, and return the results. You can use it to recommend products to users, search for products, query product details, etc.",
+		Desc: `
+			Search for products based on user query, and return the complete information about the product. 
+			You can use it to recommend products to users, search for products, query product details, etc.
+			You can also search for the product id needed to create an order based on the user's description when you need to create an order.
+`,
 		ParamsOneOf: schema.NewParamsOneOfByParams(map[string]*schema.ParameterInfo{
 			"query": {
 				Desc:     "The search query for products, e.g. 'T-shirt'",

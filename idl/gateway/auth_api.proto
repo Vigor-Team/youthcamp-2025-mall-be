@@ -19,6 +19,15 @@ message LoginReq {
   string next = 3 [(api.query) = "next"];
 }
 
+message MeReq {
+}
+
+message MeResp {
+  int64 id = 1;
+  string email = 2;
+  repeated Role roles = 3;
+}
+
 service AuthService {
   rpc register(RegisterReq) returns (common.Empty) {
     option (api.post) = "/api/v1/register";
@@ -29,7 +38,7 @@ service AuthService {
   rpc logout(common.Empty) returns (common.Empty) {
     option (api.post) = "/api/v1/logout";
   }
-  rpc me(common.Empty) returns (common.Empty) {
+  rpc me(MeReq) returns (MeResp) {
     option (api.get) = "/api/v1/me";
   }
   rpc refresh(common.Empty) returns (common.Empty) {

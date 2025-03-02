@@ -40,3 +40,10 @@ func (s *UserServiceImpl) UserInfo(ctx context.Context, req *user.UserInfoReq) (
 	resp, err = service.NewUserInfoService(ctx).Run(req)
 	return resp, err
 }
+
+// DeleteUser implements the UserServiceImpl interface.
+func (s *UserServiceImpl) DeleteUser(ctx context.Context, req *user.UserDeleteReq) (resp *user.UserDeleteResp, err error) {
+	resp, err = service.NewDeleteUserService(ctx).Run(req)
+
+	return resp, err
+}

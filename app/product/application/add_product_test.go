@@ -3,12 +3,13 @@ package application
 import (
 	"context"
 	"fmt"
+	"testing"
+	"time"
+
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/infras/embedding"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/infras/repository"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/infras/utils"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/product"
-	"testing"
-	"time"
 )
 
 func TestAddProduct_Run(t *testing.T) {

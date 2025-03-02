@@ -43,6 +43,20 @@ message Item {
   int32 quantity = 4;
 }
 
+message ChargeReq {
+  float amount = 1 [(api.body) = "amount"];
+  string credit_card_number = 2 [(api.body) = "credit_card_number"];
+  int32 credit_card_cvv = 3 [(api.body) = "credit_card_cvv"];
+  int32 credit_card_expiration_year = 4 [(api.body) = "credit_card_expiration_year"];
+  int32 credit_card_expiration_month = 5 [(api.body) = "credit_card_expiration_month"];
+  string order_id = 6 [(api.body) = "order_id"];
+  string payment_method = 7 [(api.body) = "payment_method"];
+}
+
+message ChargeResp {
+  string transaction_id = 1;
+}
+
 service CheckoutService {
 
   rpc GetCheckoutPreview(GetCheckoutPreviewReq) returns (GetCheckoutPreviewResp) {
@@ -50,6 +64,9 @@ service CheckoutService {
   }
   rpc Checkout(CheckoutReq) returns (CheckoutResp) {
     option (api.post) = "/api/v1/checkout";
+  }
+  rpc Charge(ChargeReq) returns (ChargeResp) {
+    option (api.post) = "/api/v1/payment/charge";
   }
 }
 

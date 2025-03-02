@@ -77,3 +77,13 @@ func _v10Mw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
+
+func _paymentMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _chargeMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}

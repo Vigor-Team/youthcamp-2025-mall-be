@@ -2,7 +2,6 @@ package embedding
 
 import (
 	"context"
-	"os"
 	"sync"
 
 	"github.com/cloudwego/eino-ext/components/embedding/ark"
@@ -16,8 +15,10 @@ var (
 
 func defaultArkEmbeddingConfig(_ context.Context) (*ark.EmbeddingConfig, error) {
 	config := &ark.EmbeddingConfig{
-		Model:  os.Getenv("ARK_EMBEDDING_MODEL"),
-		APIKey: os.Getenv("ARK_API_KEY"),
+		//Model:  os.Getenv("ARK_EMBEDDING_MODEL"),
+		//APIKey: os.Getenv("ARK_API_KEY"),
+		Model:  "ep-20250226100008-wwhh7",
+		APIKey: "9727f906-23a1-4f66-902f-d6e1d5d45950",
 	}
 	return config, nil
 }

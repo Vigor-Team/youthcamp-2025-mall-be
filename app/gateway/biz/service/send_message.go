@@ -22,8 +22,9 @@ func NewSendMessageService(Context context.Context, RequestContext *app.RequestC
 
 func (h *SendMessageService) Run(req *llm.ChatRequest) (resp *llm.ChatResponse, err error) {
 	llmResp, err := rpc.LlmClient.SendMessage(h.Context, &rpcllm.ChatRequest{
-		Message: req.GetMessage(),
-		UserId:  strconv.Itoa(int(gatewayutils.GetUserIdFromCtx(h.RequestContext))),
+		Message:        req.GetMessage(),
+		UserId:         strconv.Itoa(int(gatewayutils.GetUserIdFromCtx(h.RequestContext))),
+		ConversationId: req.ConversationId,
 	})
 	if err != nil {
 		return nil, err

@@ -29,9 +29,6 @@ func Init() {
 	if err != nil {
 		panic(err)
 	}
-	if err = DB.Use(tracing.NewPlugin(tracing.WithoutMetrics(), tracing.WithTracerProvider(mtl.TracerProvider))); err != nil {
-		panic(err)
-	}
 	if os.Getenv("GO_ENV") != "online" {
 		//nolint:errcheck
 		DB.AutoMigrate(

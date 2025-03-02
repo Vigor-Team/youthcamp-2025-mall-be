@@ -8,6 +8,7 @@ service UserService {
     rpc Register(RegisterReq) returns (RegisterResp) {}
     rpc Login(LoginReq) returns (LoginResp) {}
     rpc UserInfo(UserInfoReq) returns (UserInfoResp) {}
+    rpc DeleteUser(UserDeleteReq) returns (UserDeleteResp) {}
 }
 
 message RegisterReq {
@@ -36,4 +37,11 @@ message UserInfoReq {
 message UserInfoResp {
     string email = 1;
     string role = 2;
+}
+
+message UserDeleteReq {
+    int32 user_id = 1;
+}
+
+message UserDeleteResp {
 }
