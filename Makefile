@@ -87,3 +87,8 @@ build-all:
 gen-user:
 	@cd rpc_gen && cwgo client --type RPC --service user --module github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen --I ../idl --idl ../idl/user.proto
 	@cd app/user && cwgo server --type RPC --service user --module github.com/Vigor-Team/youthcamp-2025-mall-be/app/user --pass "-use github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen" -I ../../idl --idl ../../idl/user.proto
+
+
+.PHONY: create-kibana_system
+create-kibana_system:
+	curl -X POST "localhost:9200/_security/user/kibana_system/_password" -H "Content-Type: application/json" -u elastic:123123 -d "{\"password\": \"123456\"}"

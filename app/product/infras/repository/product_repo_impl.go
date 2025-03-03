@@ -31,7 +31,8 @@ func (p *ProductRepositoryImpl) AddProduct(ctx context.Context, product *entity.
 		return err
 	}
 	go func() {
-		pES := converter.ProductDoWithESConverter.Convert2ES(ctx, product)
+		detachedCtx := context.WithoutCancel(ctx)
+		pES := converter.ProductDoWithESConverter.Convert2ES(detachedCtx, product)
 		texts := []string{
 			pES.Name,
 			pES.Description,
@@ -40,9 +41,9 @@ func (p *ProductRepositoryImpl) AddProduct(ctx context.Context, product *entity.
 		if pES.CategoryNames != nil {
 			texts = append(texts, pES.CategoryNames...)
 		}
-		vectors, err := eb.EmbedStrings(ctx, texts)
+		vectors, err := eb.EmbedStrings(detachedCtx, texts)
 		if err != nil {
-			klog.CtxErrorf(ctx, "EmbedStrings err: %v", err)
+			klog.CtxErrorf(detachedCtx, "EmbedStrings err: %v", err)
 			return
 		}
 		var merged []float32
@@ -50,9 +51,9 @@ func (p *ProductRepositoryImpl) AddProduct(ctx context.Context, product *entity.
 			merged = utils.MergeVectors(vectors)
 		}
 		pES.Embedding = merged
-		err = es.GetProductESClient().UpsertProduct(ctx, productPO.ID, pES)
+		err = es.GetProductESClient().UpsertProduct(detachedCtx, productPO.ID, pES)
 		if err != nil {
-			klog.CtxErrorf(ctx, "UpsertProductES.err: %v", err)
+			klog.CtxErrorf(detachedCtx, "UpsertProductES.err: %v", err)
 		}
 	}()
 	return p.db.WithContext(ctx).Create(productPO).Error

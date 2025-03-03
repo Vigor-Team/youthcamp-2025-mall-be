@@ -2,9 +2,11 @@ package service
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/hertz_gen/gateway/cart"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/infra/rpc"
+	gatewayutils "github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/utils"
 	rpccart "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/cart"
 	rpcproduct "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/product"
 	"github.com/cloudwego/hertz/pkg/app"
@@ -21,11 +23,12 @@ func NewGetCartService(Context context.Context, RequestContext *app.RequestConte
 
 func (h *GetCartService) Run(_ *cart.GetCartReq) (resp *cart.GetCartResp, err error) {
 	carts, err := rpc.CartClient.GetCart(h.Context, &rpccart.GetCartReq{
-		UserId: uint32(h.RequestContext.Value("user_id").(int32)),
+		UserId: gatewayutils.GetUserIdFromCtx(h.RequestContext),
 	})
 	if err != nil {
 		return nil, err
 	}
+	fmt.Printf("carts: %v\n", carts)
 
 	items := make([]*cart.CartItem, 0, carts.Cart.Size())
 	for _, i := range carts.Cart.Items {

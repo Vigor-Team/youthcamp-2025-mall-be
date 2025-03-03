@@ -6,6 +6,7 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=root
     volumes:
+      - mysql-data:/var/lib/mysql
       - ./db/sql/ini:/docker-entrypoint-initdb.d
 
   mongo:
@@ -16,11 +17,15 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: root
+    volumes:
+      - mongo-data:/data/db
 
   redis:
     image: 'redis:latest'
     ports:
       - 6379:6379
+    volumes:
+      - redis-data:/data
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.17.1
@@ -28,9 +33,10 @@ services:
       - node.name=elasticsearch
       - cluster.name=es-docker-cluster
       - discovery.type=single-node
-      - ELASTIC_PASSWORD=123456
-      - xpack.security.enabled=true
+      - ELASTIC_PASSWORD=123123
+      - xpack.security.enabled=false
       - xpack.security.http.ssl.enabled=false
+      - xpack.security.authc.apiKey.enabled=true
     ports:
       - "9200:9200"
       - "9300:9300"
@@ -38,6 +44,8 @@ services:
       memlock:
         soft: -1
         hard: -1
+    volumes:
+      - es-data:/usr/share/elasticsearch/data
 
   rabbitmq:
     image: rabbitmq:3-management
@@ -47,6 +55,8 @@ services:
     environment:
       - RABBITMQ_DEFAULT_USER=guest
       - RABBITMQ_DEFAULT_PASS=guest
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
 
   kibana:
     image: docker.elastic.co/kibana/kibana:8.17.1
@@ -54,8 +64,8 @@ services:
       - elasticsearch
     environment:
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
-      - ELASTICSEARCH_USERNAME=kibana_system
-      - ELASTICSEARCH_PASSWORD=FZa-ITmKtfeK65d9_Ir2
+#      - ELASTICSEARCH_USERNAME=kibana_system
+#      - ELASTICSEARCH_PASSWORD=VvJlR2DZPz0DBli*G2jk
     ports:
       - "5601:5601"
 
@@ -65,7 +75,9 @@ services:
       - "8500:8500"
     environment:
       CONSUL_BIND_INTERFACE: eth0
-  # Jaeger
+    volumes:
+      - consul-data:/consul/data
+
   jaeger-all-in-one:
     container_name: jaeger-all-in-one
     image: jaegertracing/all-in-one:latest
@@ -73,6 +85,7 @@ services:
       - "16686:16686"
       - "4317:4317"
       - "4318:4318"
+
   prometheus:
     image: prom/prometheus:latest
     volumes:
@@ -81,14 +94,6 @@ services:
       - "--config.file=/etc/prometheus/prometheus.yml"
     ports:
       - "9090:9090"
-
-#  etcd:
-#    image: docker.io/bitnami/etcd:3.5
-#    environment:
-#      - ALLOW_NONE_AUTHENTICATION=yes
-#    ports:
-#      - 2379:2379
-#      - 2380:2380
 
   nats:
     image: nats:latest
@@ -104,6 +109,8 @@ services:
       - GF_AUTH_DISABLE_LOGIN_FORM=true
     ports:
       - "3000:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
 
   loki:
     image: grafana/loki:2.9.2
@@ -126,3 +133,12 @@ services:
       - ./app/product/log:/logs/product
       - ./app/user/log:/logs/user
     command: -config.file=/etc/promtail/config.yml
+
+volumes:
+  mysql-data:
+  mongo-data:
+  redis-data:
+  es-data:
+  rabbitmq-data:
+  consul-data:
+  grafana-data:
