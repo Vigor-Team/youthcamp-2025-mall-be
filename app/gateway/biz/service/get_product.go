@@ -2,11 +2,10 @@ package service
 
 import (
 	"context"
-	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/infra/rpc"
-	rpcproduct "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/product"
-	"github.com/cloudwego/hertz/pkg/common/hlog"
 
 	product "github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/hertz_gen/gateway/product"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/infra/rpc"
+	rpcproduct "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/product"
 	"github.com/cloudwego/hertz/pkg/app"
 )
 
@@ -20,10 +19,6 @@ func NewGetProductService(Context context.Context, RequestContext *app.RequestCo
 }
 
 func (h *GetProductService) Run(req *product.ProductIDReq) (resp *product.GetProductResp, err error) {
-	defer func() {
-		hlog.CtxInfof(h.Context, "req = %+v", req)
-		hlog.CtxInfof(h.Context, "resp = %+v", resp)
-	}()
 	r, err := rpc.ProductClient.GetProduct(h.Context, &rpcproduct.GetProductReq{
 		Id: req.ProductId,
 	})

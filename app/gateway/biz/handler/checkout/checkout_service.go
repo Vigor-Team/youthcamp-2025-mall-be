@@ -16,6 +16,7 @@ package checkout
 
 import (
 	"context"
+
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/biz/service"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/biz/utils"
 	checkout "github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/hertz_gen/gateway/checkout"
@@ -54,6 +55,26 @@ func GetCheckoutPreview(ctx context.Context, c *app.RequestContext) {
 	}
 
 	resp, err := service.NewGetCheckoutPreviewService(ctx, c).Run(&req)
+
+	if err != nil {
+		utils.FailResponse(ctx, c, err)
+		return
+	}
+	utils.SuccessResponse(c, resp)
+}
+
+// Charge .
+// @router /api/v1/payment/charge [POST]
+func Charge(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req checkout.ChargeReq
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		utils.FailResponse(ctx, c, err)
+		return
+	}
+
+	resp, err := service.NewChargeService(ctx, c).Run(&req)
 
 	if err != nil {
 		utils.FailResponse(ctx, c, err)

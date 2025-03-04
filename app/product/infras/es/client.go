@@ -2,10 +2,11 @@ package es
 
 import (
 	"context"
-	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/conf"
-	"github.com/elastic/go-elasticsearch/v8"
 	"os"
 	"sync"
+
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/conf"
+	"github.com/elastic/go-elasticsearch/v8"
 )
 
 var (

@@ -15,6 +15,10 @@
 package mysql
 
 import (
+	"fmt"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/conf"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/common/mtl"
+	"gorm.io/plugin/opentelemetry/tracing"
 	"os"
 
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/biz/model"
@@ -28,8 +32,8 @@ var (
 )
 
 func Init() {
-	//dsn := fmt.Sprintf(conf.GetConf().MySQL.DSN, os.Getenv("MYSQL_USER"), os.Getenv("MYSQL_PASSWORD"), os.Getenv("MYSQL_HOST"))
-	dsn := "root:root@tcp(127.0.0.1:3306)/order?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := fmt.Sprintf(conf.GetConf().MySQL.DSN, os.Getenv("MYSQL_USER"), os.Getenv("MYSQL_PASSWORD"), os.Getenv("MYSQL_HOST"))
+	//dsn := "root:root@tcp(127.0.0.1:3306)/order?charset=utf8mb4&parseTime=True&loc=Local"
 	DB, err = gorm.Open(mysql.Open(dsn),
 		&gorm.Config{
 			PrepareStmt:            true,
@@ -45,5 +49,8 @@ func Init() {
 			&model.OrderItem{},
 			&model.PreOrder{},
 		)
+	}
+	if err = DB.Use(tracing.NewPlugin(tracing.WithoutMetrics(), tracing.WithTracerProvider(mtl.TracerProvider))); err != nil {
+		panic(err)
 	}
 }

@@ -48,3 +48,9 @@ func CreateRole(db *gorm.DB, _ context.Context, role *Role) (*Role, error) {
 	err := db.Create(role).Error
 	return role, err
 }
+
+func ListRoles(db *gorm.DB, _ context.Context) ([]Role, error) {
+	var roles []Role
+	err := db.Find(&roles).Error
+	return roles, err
+}

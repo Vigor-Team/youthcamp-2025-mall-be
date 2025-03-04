@@ -19,6 +19,15 @@ message LoginReq {
   string next = 3 [(api.query) = "next"];
 }
 
+message MeReq {
+}
+
+message MeResp {
+  int64 id = 1;
+  string email = 2;
+  repeated Role roles = 3;
+}
+
 service AuthService {
   rpc register(RegisterReq) returns (common.Empty) {
     option (api.post) = "/api/v1/register";
@@ -29,15 +38,24 @@ service AuthService {
   rpc logout(common.Empty) returns (common.Empty) {
     option (api.post) = "/api/v1/logout";
   }
-  rpc me(common.Empty) returns (common.Empty) {
+  rpc me(MeReq) returns (MeResp) {
     option (api.get) = "/api/v1/me";
   }
   rpc refresh(common.Empty) returns (common.Empty) {
     option (api.get) = "/api/v1/refresh";
   }
-  rpc banUser(common.Empty) returns (common.Empty) {
+  rpc banUser(BanUserReq) returns (BanUserResp) {
     option (api.post) = "/api/v1/ban";
   }
+}
+
+message BanUserReq {
+  int64 userId = 1 [(api.body) = "user_id", (api.form) = "user_id", (api.vd) = "($ > 0 && $ < 100)"];
+  // expire
+  int64 expireSeconds = 2 [(api.body) = "expire_seconds", (api.form) = "expire_seconds", (api.vd) = "($ > 0 && $ < 100)"];
+}
+
+message BanUserResp {
 }
 
 message Permission {
@@ -70,12 +88,19 @@ message BindPermissionRoleResp {
   PermissionRole permissionRole = 3;
 }
 
+message ListPermissionsResp {
+  repeated Permission permissions = 1;
+}
+
 service PermissionService {
+  rpc listPermissions(common.Empty) returns (ListPermissionsResp) {
+    option (api.get) = "/api/v1/permissions";
+  }
   rpc createPermission(CreatePermissionReq) returns (CreatePermissionResp) {
-    option (api.post) = "/api/v1/permission/create";
+    option (api.post) = "/api/v1/permissions";
   }
   rpc bindPermissionRole(BindPermissionRoleReq) returns (BindPermissionRoleResp) {
-    option (api.post) = "/api/v1/permission/bind";
+    option (api.post) = "/api/v1/permissions/bind";
   }
 }
 
@@ -100,11 +125,18 @@ message BindRoleUserReq {
 message BindRoleUserResp {
 }
 
+message ListRolesResp {
+  repeated Role roles = 1;
+}
+
 service RoleService {
+  rpc listRoles(common.Empty) returns (ListRolesResp) {
+    option (api.get) = "/api/v1/roles";
+  }
   rpc createRole(CreateRoleReq) returns (CreateRoleResp) {
-    option (api.post) = "/api/v1/role/create";
+    option (api.post) = "/api/v1/roles";
   }
   rpc bindRoleUser(BindRoleUserReq) returns (BindRoleUserResp) {
-    option (api.post) = "/api/v1/role/bind";
+    option (api.post) = "/api/v1/roles/bind";
   }
 }

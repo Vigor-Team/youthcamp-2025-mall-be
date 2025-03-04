@@ -9,4 +9,4 @@ spec:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
   hostPath:
-    path: /mnt/data/consul
+    path: /mnt/data/mysql

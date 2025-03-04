@@ -2,11 +2,11 @@ package service
 
 import (
 	"context"
-	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/infra/rpc"
-	rpcorder "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/order"
-	"github.com/cloudwego/hertz/pkg/common/hlog"
 
 	order "github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/hertz_gen/gateway/order"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/infra/rpc"
+	gatewayutils "github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/utils"
+	rpcorder "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/order"
 	"github.com/cloudwego/hertz/pkg/app"
 )
 
@@ -20,13 +20,9 @@ func NewQueryOrderService(Context context.Context, RequestContext *app.RequestCo
 }
 
 func (h *QueryOrderService) Run(req *order.QueryOrderReq) (resp *order.QueryOrderResp, err error) {
-	defer func() {
-		hlog.CtxInfof(h.Context, "req = %+v", req)
-		hlog.CtxInfof(h.Context, "resp = %+v", resp)
-	}()
 	res, err := rpc.OrderClient.QueryOrder(h.Context, &rpcorder.QueryOrderReq{
 		OrderId: req.OrderId,
-		UserId:  1,
+		UserId:  gatewayutils.GetUserIdFromCtx(h.RequestContext),
 	})
 	if err != nil {
 		return

@@ -33,3 +33,9 @@ func CreatePermission(db *gorm.DB, _ context.Context, permission *Permission) (*
 func BindPermissionRole(db *gorm.DB, _ context.Context, permissionRole *PermissionRole) error {
 	return db.Create(permissionRole).Error
 }
+
+func ListPermissions(db *gorm.DB, _ context.Context) ([]*Permission, error) {
+	var permissions []*Permission
+	err := db.Find(&permissions).Error
+	return permissions, err
+}

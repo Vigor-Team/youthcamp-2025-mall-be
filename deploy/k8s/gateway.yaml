@@ -1,0 +1,85 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway
+spec:
+  selector:
+    matchLabels:
+      app: gateway
+  template:
+    metadata:
+      labels:
+        app: gateway
+    spec:
+      containers:
+        - name: gateway
+          image: "gateway:v1.1.1"
+          imagePullPolicy: IfNotPresent
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: gateway-config
+              mountPath: /opt/youthcamp-2025-mall-be/gateway/conf/dev
+          env:
+            - name: MYSQL_USER
+              value: "root"
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-password
+                  key: password
+            - name: MYSQL_HOST
+              value: "mysql-svc"
+            - name: GO_ENV
+              value: "dev"
+            - name: SESSION_SECRET
+              value: "4UFIOADJFIJIASOFJI"
+            - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+              value: "http://jaeger-svc:4317"
+            - name: OTEL_EXPORTER_OTLP_INSECURE
+              value: "true"
+      volumes:
+        - name: gateway-config
+          configMap:
+            name: youthcamp-2025-mall-be-config
+            items:
+              - key: gateway-app-config
+                path: conf.yaml
+---
+# service
+apiVersion: v1
+kind: Service
+metadata:
+  name: gateway-svc
+spec:
+    selector:
+        app: gateway
+    ports:
+        - protocol: TCP
+          port: 80
+          targetPort: 8080
+---
+# ingress
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: gateway-ingress
+  namespace: default
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx
+  rules:
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: gateway-svc
+                port:
+                  number: 80

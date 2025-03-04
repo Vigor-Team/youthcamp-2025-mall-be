@@ -23,3 +23,107 @@ scrape_configs:
         labels:
           app: gateway
           __path__: /logs/gateway/hertz.log
+  - job_name: cart
+    pipeline_stages:
+      - json:
+          expressions:
+            level: level
+      - labels:
+          level:
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          app: cart
+          __path__: /logs/cart/cart.log
+  - job_name: product
+    pipeline_stages:
+      - json:
+          expressions:
+            level: level
+      - labels:
+          level:
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          app: product
+          __path__: /logs/product/product.log
+  - job_name: order
+    pipeline_stages:
+      - json:
+          expressions:
+            level: level
+      - labels:
+          level:
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          app: order
+          __path__: /logs/order/order.log
+  - job_name: checkout
+    pipeline_stages:
+      - json:
+          expressions:
+            level: level
+      - labels:
+          level:
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          app: checkout
+          __path__: /logs/checkout/checkout.log
+  - job_name: email
+    pipeline_stages:
+      - json:
+          expressions:
+            level: level
+      - labels:
+          level:
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          app: email
+          __path__: /logs/email/email.log
+  - job_name: payment
+    pipeline_stages:
+      - json:
+          expressions:
+            level: level
+      - labels:
+          level:
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          app: payment
+          __path__: /logs/payment/payment.log
+  - job_name: user
+    pipeline_stages:
+      - json:
+          expressions:
+            level: level
+      - labels:
+          level:
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          app: user
+          __path__: /logs/user/user.log
+  - job_name: llm
+    pipeline_stages:
+      - json:
+          expressions:
+            level: level
+      - labels:
+          level:
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          app: llm
+          __path__: /logs/llm/llm.log

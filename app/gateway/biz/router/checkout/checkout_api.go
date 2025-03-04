@@ -26,6 +26,10 @@ func Register(r *server.Hertz) {
 				_checkout0 := _v1.Group("/checkout", _checkout0Mw()...)
 				_checkout0.GET("/preview", append(_getcheckoutpreviewMw(), checkout.GetCheckoutPreview)...)
 			}
+			{
+				_payment := _v1.Group("/payment", _paymentMw()...)
+				_payment.POST("/charge", append(_chargeMw(), checkout.Charge)...)
+			}
 		}
 	}
 }

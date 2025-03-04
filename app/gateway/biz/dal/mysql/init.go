@@ -15,7 +15,9 @@
 package mysql
 
 import (
+	"fmt"
 	model2 "github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/biz/model"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/conf"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"os"
@@ -27,8 +29,8 @@ var (
 )
 
 func Init() {
-	//dsn := fmt.Sprintf(conf.GetConf().MySQL.DSN, os.Getenv("MYSQL_USER"), os.Getenv("MYSQL_PASSWORD"), os.Getenv("MYSQL_HOST"))
-	dsn := "root:root@tcp(:3306)/auth?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := fmt.Sprintf(conf.GetConf().MySQL.DSN, os.Getenv("MYSQL_USER"), os.Getenv("MYSQL_PASSWORD"), os.Getenv("MYSQL_HOST"))
+	//dsn := "root:root@tcp(:3306)/auth?charset=utf8mb4&parseTime=True&loc=Local"
 	DB, err = gorm.Open(mysql.Open(dsn),
 		&gorm.Config{
 			PrepareStmt:            true,
@@ -39,10 +41,6 @@ func Init() {
 		panic(err)
 	}
 	if os.Getenv("GO_ENV") != "online" {
-		m := DB.Migrator()
-		if !m.HasTable(&model2.Role{}) {
-			return
-		}
 		DB.AutoMigrate( //nolint:errcheck
 			&model2.Role{},
 			&model2.UserRole{},

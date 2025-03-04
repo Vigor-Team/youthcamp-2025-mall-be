@@ -33,3 +33,12 @@ func UserInfo(ctx context.Context, req *user.UserInfoReq, callOptions ...callopt
 	}
 	return resp, nil
 }
+
+func DeleteUser(ctx context.Context, req *user.UserDeleteReq, callOptions ...callopt.Option) (resp *user.UserDeleteResp, err error) {
+	resp, err = defaultClient.DeleteUser(ctx, req, callOptions...)
+	if err != nil {
+		klog.CtxErrorf(ctx, "DeleteUser call failed,err =%+v", err)
+		return nil, err
+	}
+	return resp, nil
+}

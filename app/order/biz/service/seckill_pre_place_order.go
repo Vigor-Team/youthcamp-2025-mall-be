@@ -6,6 +6,7 @@ import (
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/biz/dal/mq"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/biz/dal/redis"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/biz/dal/redis/script"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/common/errno"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/order"
 	"github.com/cloudwego/kitex/pkg/kerrors"
 	"github.com/cloudwego/kitex/pkg/klog"
@@ -28,7 +29,7 @@ func (s *SeckillPrePlaceOrderService) Run(req *order.SeckillPrePlaceOrderReq) (r
 	productId := req.ProductId
 	if userId == 0 || productId == 0 {
 		klog.CtxErrorf(s.ctx, "invalid params: userId=%d, productId=%d", userId, productId)
-		return nil, consts.ErrInvalidParams
+		return nil, kerrors.NewBizStatusError(errno.ErrGRPCRequestParam, "invalid params")
 	}
 
 	// todo rate limit
@@ -36,13 +37,13 @@ func (s *SeckillPrePlaceOrderService) Run(req *order.SeckillPrePlaceOrderReq) (r
 	seckillScript, err := script.GetPreSeckillScript()
 	if err != nil {
 		klog.CtxErrorf(s.ctx, "get pre seckill script failed: %v", err)
-		return nil, kerrors.ErrBiz.WithCause(err)
+		return nil, kerrors.NewBizStatusError(errno.ErrInternal, "get pre seckill script failed")
 	}
 
 	preOrderId, err := redis.NextId(s.ctx, "pre_order")
 	if err != nil {
 		klog.CtxErrorf(s.ctx, "redis.NextId.err:%v", err)
-		return nil, consts.ErrRedis
+		return nil, kerrors.NewBizStatusError(errno.ErrInternal, "redis.NextId error")
 	}
 	productStockKey := redis.GetProductStockKey(productId)
 	productOrderKey := redis.GetProductOrderKey(productId)
@@ -51,16 +52,16 @@ func (s *SeckillPrePlaceOrderService) Run(req *order.SeckillPrePlaceOrderReq) (r
 	result, err := redis.RedisClient.Eval(s.ctx, seckillScript, []string{productStockKey, productOrderKey, preOrderKey}, userId, productId).Result()
 	if err != nil {
 		klog.CtxErrorf(s.ctx, "redis.RedisClient.Eval.err:%v", err)
-		return nil, consts.ErrRedis
+		return nil, kerrors.NewBizStatusError(errno.ErrInternal, "redis.RedisClient.Eval error")
 	}
 
 	if resultMap, ok := result.(map[string]interface{}); ok {
 		if errMsg, exists := resultMap["err"]; exists {
 			switch errMsg {
 			case "OUT_OF_STOCK":
-				return nil, consts.ErrInventoryShortage
+				return nil, kerrors.NewBizStatusError(consts.ErrOutStock, "out of stock")
 			case "DUPLICATE_USER":
-				return nil, consts.ErrDuplicateUser
+				return nil, kerrors.NewBizStatusError(consts.ErrDuplicateUser, "duplicate user")
 			}
 		}
 	}
@@ -74,7 +75,7 @@ func (s *SeckillPrePlaceOrderService) Run(req *order.SeckillPrePlaceOrderReq) (r
 	}
 	if err := producer.PublishPreOrder(s.ctx, msg); err != nil {
 		klog.CtxErrorf(s.ctx, "producer.PublishPreOrder.err:%v", err)
-		return nil, consts.ErrPublishMessage
+		return nil, kerrors.NewBizStatusError(consts.ErrPubMessage, "publish pre order message error")
 	}
 
 	resp = &order.SeckillPrePlaceOrderResp{

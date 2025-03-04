@@ -31,7 +31,6 @@ import (
 
 func ConsumerInit() {
 	// Connect to a server
-
 	tracer := otel.Tracer("shop-nats-consumer")
 	sub, err := mq.Nc.Subscribe("email", func(m *nats.Msg) {
 		var req email.EmailReq

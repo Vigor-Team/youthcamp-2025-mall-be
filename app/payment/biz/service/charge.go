@@ -16,6 +16,9 @@ package service
 
 import (
 	"context"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/payment/biz/consts"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/common/errno"
+	"github.com/cloudwego/kitex/pkg/klog"
 	"strconv"
 	"time"
 
@@ -45,12 +48,13 @@ func (s *ChargeService) Run(req *payment.ChargeReq) (resp *payment.ChargeResp, e
 
 	err = card.Validate(true)
 	if err != nil {
-		return nil, kerrors.NewBizStatusError(400, err.Error())
+		return nil, kerrors.NewBizStatusError(consts.ErrCardValidate, err.Error())
 	}
 
 	translationId, err := uuid.NewRandom()
 	if err != nil {
-		return nil, err
+		klog.CtxErrorf(s.ctx, "uuid.NewRandom.err: %v", err)
+		return nil, kerrors.NewBizStatusError(errno.ErrInternal, "uuid.NewRandom error")
 	}
 	err = model.CreatePaymentLog(mysql.DB, s.ctx, &model.PaymentLog{
 		UserId:        req.UserId,
@@ -61,7 +65,8 @@ func (s *ChargeService) Run(req *payment.ChargeReq) (resp *payment.ChargeResp, e
 		PaymentMethod: req.PaymentMethod,
 	})
 	if err != nil {
-		return nil, err
+		klog.CtxErrorf(s.ctx, "model.CreatePaymentLog.err: %v", err)
+		return nil, kerrors.NewBizStatusError(consts.ErrCreatePaymentLog, "create payment log error")
 	}
 	return &payment.ChargeResp{TransactionId: translationId.String()}, nil
 }

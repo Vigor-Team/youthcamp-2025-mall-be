@@ -16,7 +16,11 @@ package service
 
 import (
 	"context"
-	"errors"
+
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/user/biz/consts"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/common/errno"
+	"github.com/cloudwego/kitex/pkg/kerrors"
+	"github.com/cloudwego/kitex/pkg/klog"
 
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/user/biz/dal/mysql"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/user/biz/model"
@@ -33,18 +37,19 @@ func NewRegisterService(ctx context.Context) *RegisterService {
 
 // Run create note info
 func (s *RegisterService) Run(req *user.RegisterReq) (resp *user.RegisterResp, err error) {
-	// Finish your business logic.
 	if req.Password != req.ConfirmPassword {
-		err = errors.New("password must be the same as confirmPassword")
+		err = kerrors.NewBizStatusError(errno.ErrGRPCRequestParam, "password and confirm password are not the same")
 		return
 	}
 	userInfo, _ := model.GetByEmail(mysql.DB, s.ctx, req.Email)
 	if userInfo != nil && userInfo.ID != 0 {
-		err = errors.New("user already exists")
+		err = kerrors.NewBizStatusError(consts.ErrUserExist, "email already exists")
 		return
 	}
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 	if err != nil {
+		klog.CtxErrorf(s.ctx, "bcrypt.GenerateFromPassword: %v", err)
+		err = kerrors.NewBizStatusError(errno.ErrInternal, "bcrypt.GenerateFromPassword error")
 		return
 	}
 	newUser := &model.User{
@@ -52,8 +57,9 @@ func (s *RegisterService) Run(req *user.RegisterReq) (resp *user.RegisterResp, e
 		PasswordHashed: string(hashedPassword),
 	}
 	if err = model.Create(mysql.DB, s.ctx, newUser); err != nil {
+		klog.CtxErrorf(s.ctx, "model.Create: %v", err)
+		err = kerrors.NewBizStatusError(consts.ErrCreateUser, "create user error")
 		return
 	}
-
 	return &user.RegisterResp{UserId: int32(newUser.ID)}, nil
 }

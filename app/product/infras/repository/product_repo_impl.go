@@ -4,12 +4,15 @@ import (
 	"context"
 	"errors"
 	"fmt"
+
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/common/model/entity"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/common/model/po"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/domain/product/strategy"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/infras/embedding"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/infras/es"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/infras/repository/converter"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/infras/repository/differ"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/infras/utils"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"gorm.io/gorm"
 )
@@ -23,11 +26,34 @@ func (p *ProductRepositoryImpl) AddProduct(ctx context.Context, product *entity.
 	if err != nil {
 		return err
 	}
+	eb, err := embedding.GetArkEmbedding(ctx, nil)
+	if err != nil {
+		return err
+	}
 	go func() {
-		pES := converter.ProductDoWithESConverter.Convert2ES(ctx, product)
-		err := es.GetProductESClient().UpsertProduct(ctx, productPO.ID, pES)
+		detachedCtx := context.WithoutCancel(ctx)
+		pES := converter.ProductDoWithESConverter.Convert2ES(detachedCtx, product)
+		texts := []string{
+			pES.Name,
+			pES.Description,
+			pES.SpuName,
+		}
+		if pES.CategoryNames != nil {
+			texts = append(texts, pES.CategoryNames...)
+		}
+		vectors, err := eb.EmbedStrings(detachedCtx, texts)
 		if err != nil {
-			klog.CtxErrorf(ctx, "UpsertProductES err: %v", err)
+			klog.CtxErrorf(detachedCtx, "EmbedStrings err: %v", err)
+			return
+		}
+		var merged []float32
+		if len(vectors) > 0 {
+			merged = utils.MergeVectors(vectors)
+		}
+		pES.Embedding = merged
+		err = es.GetProductESClient().UpsertProduct(detachedCtx, productPO.ID, pES)
+		if err != nil {
+			klog.CtxErrorf(detachedCtx, "UpsertProductES.err: %v", err)
 		}
 	}()
 	return p.db.WithContext(ctx).Create(productPO).Error
@@ -43,9 +69,32 @@ func (p *ProductRepositoryImpl) UpdateProduct(ctx context.Context, origin, targe
 	if err != nil {
 		return err
 	}
+	eb, err := embedding.GetArkEmbedding(ctx, nil)
+	if err != nil {
+		return err
+	}
+	// todo 数据一致性
 	go func() {
 		pES := converter.ProductDoWithESConverter.Convert2ES(ctx, target)
-		err := es.GetProductESClient().UpsertProduct(ctx, productId, pES)
+		texts := []string{
+			pES.Name,
+			pES.Description,
+			pES.SpuName,
+		}
+		if pES.CategoryNames != nil {
+			texts = append(texts, pES.CategoryNames...)
+		}
+		vectors, err := eb.EmbedStrings(ctx, texts)
+		if err != nil {
+			klog.CtxErrorf(ctx, "EmbedStrings err: %v", err)
+			return
+		}
+		var merged []float32
+		if len(vectors) > 0 {
+			merged = utils.MergeVectors(vectors)
+		}
+		pES.Embedding = merged
+		err = es.GetProductESClient().UpsertProduct(ctx, productId, pES)
 		if err != nil {
 			klog.CtxErrorf(ctx, "UpsertProductES err: %v", err)
 		}
@@ -87,7 +136,6 @@ func (p *ProductRepositoryImpl) ListProducts(ctx context.Context, strategy strat
 	}
 
 	allowedStatuses := strategy.AllowedStatuses()
-	fmt.Println("allowedStatuses: ", allowedStatuses)
 	if len(allowedStatuses) > 0 {
 		db = db.Where("product.status IN ?", allowedStatuses)
 	}

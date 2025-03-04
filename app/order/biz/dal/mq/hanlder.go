@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/biz/consts"
+	"fmt"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/biz/dal/mysql"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/biz/dal/redis"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/biz/model"
@@ -21,7 +21,7 @@ func handlePreOrder(ctx context.Context, msg PreOrderMessage) error {
 	key := redis.GetSeckillTempLockKey(msg.TempID)
 	if success := redis.TryLock(ctx, key, 20*time.Second); !success {
 		klog.CtxErrorf(ctx, "redis.TryLock.err")
-		return consts.ErrRedis
+		return fmt.Errorf("redis.TryLock.err")
 	}
 	defer func(ctx context.Context, lockKey string) {
 		err := redis.ReleaseLock(ctx, lockKey)
@@ -46,8 +46,7 @@ func handlePreOrder(ctx context.Context, msg PreOrderMessage) error {
 		Status:    "pending",
 		ExpiredAt: time.Now().Add(10 * time.Minute),
 	}); err != nil {
-		klog.CtxErrorf(ctx, "model.AddPreOrder.err: %v", err)
-		return consts.ErrMysql
+		return err
 	}
 
 	// publish delay message
@@ -60,8 +59,7 @@ func handlePreOrder(ctx context.Context, msg PreOrderMessage) error {
 		ExpectedAt: time.Now().Add(10 * time.Minute).Unix(),
 	}
 	if err = producer.PublishDelay(ctx, delayMsg, 1*time.Second); err != nil {
-		klog.CtxErrorf(ctx, "producer.PublishDelay.err: %v", err)
-		return consts.ErrPublishMessage
+		return err
 	}
 	return nil
 }
@@ -71,7 +69,7 @@ func handleOrder(ctx context.Context, msg OrderMessage) error {
 	key := redis.GetSeckillTempLockKey(msg.TempID)
 	if success := redis.TryLock(ctx, key, 20*time.Second); !success {
 		klog.CtxErrorf(ctx, "redis.TryLock.err")
-		return consts.ErrRedis
+		return fmt.Errorf("redis.TryLock.err")
 	}
 	defer func(ctx context.Context, lockKey string) {
 		err := redis.ReleaseLock(ctx, lockKey)
@@ -84,7 +82,7 @@ func handleOrder(ctx context.Context, msg OrderMessage) error {
 	_, err := model.GetOrder(mysql.DB, ctx, msg.UserID, strconv.Itoa(int(msg.OrderId)))
 	if !errors.Is(err, gorm.ErrRecordNotFound) {
 		klog.CtxErrorf(ctx, "model.GetOrder.err: %v", err)
-		return consts.ErrOrderExists
+		return fmt.Errorf("model.GetOrder.err: %v", err)
 	}
 
 	// start transaction
@@ -92,9 +90,9 @@ func handleOrder(ctx context.Context, msg OrderMessage) error {
 	defer tx.Rollback()
 
 	// update pre order
-	if err := tx.Model(&model.PreOrder{}).Where("id = ?", msg.TempID).Update("status", "completed").Error; err != nil {
+	if err = tx.Model(&model.PreOrder{}).Where("id = ?", msg.TempID).Update("status", "completed").Error; err != nil {
 		klog.CtxErrorf(ctx, "tx.Model.Update.err: %v", err)
-		return consts.ErrMysql
+		return err
 	}
 
 	// decrease product stock
@@ -104,7 +102,7 @@ func handleOrder(ctx context.Context, msg OrderMessage) error {
 	})
 	if err != nil {
 		klog.CtxErrorf(ctx, "rpc.ProductClient.DecrStock.err: %v", err)
-		return consts.ErrDecrementInventory
+		return err
 	}
 
 	// create order
@@ -124,7 +122,7 @@ func handleOrder(ctx context.Context, msg OrderMessage) error {
 	}
 	if err := tx.Create(o).Error; err != nil {
 		klog.CtxErrorf(ctx, "tx.Create.err: %v", err)
-		return consts.ErrMysql
+		return err
 	}
 
 	// create order item
@@ -135,27 +133,27 @@ func handleOrder(ctx context.Context, msg OrderMessage) error {
 		Quantity:     1,
 		Cost:         msg.Cost,
 	})
-	if err := tx.Create(&itemList).Error; err != nil {
+	if err = tx.Create(&itemList).Error; err != nil {
 		klog.CtxErrorf(ctx, "tx.Create.err: %v", err)
-		return consts.ErrMysql
+		return err
 	}
 
 	// delete redis key
 	preOrderID, err := strconv.ParseUint(msg.TempID, 10, 32)
 	if err != nil {
 		klog.CtxErrorf(ctx, "strconv.ParseUint.err: %v", err)
-		return consts.ErrInvalidParams
+		return err
 	}
 	preOrderKey := redis.GetOrderPreOrderKey(uint32(preOrderID))
-	if err := redis.RedisClient.HDel(ctx, preOrderKey, "user_id", "product_id").Err(); err != nil {
+	if err = redis.RedisClient.HDel(ctx, preOrderKey, "user_id", "product_id").Err(); err != nil {
 		klog.CtxErrorf(ctx, "redis.RedisClient.HDel.err: %v", err)
-		return consts.ErrRedis
+		return err
 	}
 
 	// commit transaction
-	if err := tx.Commit().Error; err != nil {
+	if err = tx.Commit().Error; err != nil {
 		klog.CtxErrorf(ctx, "tx.Commit.err: %v", err)
-		return consts.ErrMysql
+		return err
 	}
 	return nil
 }
@@ -165,7 +163,7 @@ func handleDelayOrder(ctx context.Context, msg DelayMessage) error {
 	key := redis.GetSeckillTempLockKey(msg.TempID)
 	if success := redis.TryLock(ctx, key, 10); !success {
 		klog.CtxErrorf(ctx, "redis.TryLock.err")
-		return consts.ErrRedis
+		return fmt.Errorf("redis.TryLock.err")
 	}
 	defer func(ctx context.Context, lockKey string) {
 		err := redis.ReleaseLock(ctx, lockKey)
@@ -189,19 +187,19 @@ func handleDelayOrder(ctx context.Context, msg DelayMessage) error {
 	var preOrder model.PreOrder
 	if err := mysql.DB.Where("id = ?", msg.TempID).First(&preOrder).Error; err != nil {
 		klog.CtxErrorf(ctx, "mysql.DB.Where.err: %v", err)
-		return consts.ErrMysql
+		return err
 	}
 
 	// update pre order status
 	if err := tx.Model(&model.PreOrder{}).Where("id = ?", msg.TempID).Update("status", "cancelled").Error; err != nil {
 		klog.CtxErrorf(ctx, "tx.Model.Update.err: %v", err)
-		return consts.ErrMysql
+		return err
 	}
 
 	// update order status
 	if err := tx.Model(&model.Order{}).Where("pre_order_id = ?", msg.TempID).Update("order_state", model.OrderStateCanceled).Error; err != nil {
 		klog.CtxErrorf(ctx, "tx.Model.Update.err: %v", err)
-		return consts.ErrMysql
+		return err
 	}
 
 	// recover product stock
@@ -211,14 +209,14 @@ func handleDelayOrder(ctx context.Context, msg DelayMessage) error {
 	})
 	if err != nil {
 		klog.CtxErrorf(ctx, "rpc.ProductClient.IncrStock.err: %v", err)
-		return consts.ErrIncrementInventory
+		return err
 	}
 
 	// rollback redis
 	preOrderID, err := strconv.ParseUint(msg.TempID, 10, 32)
 	if err != nil {
 		klog.CtxErrorf(ctx, "strconv.ParseUint.err: %v", err)
-		return consts.ErrInvalidParams
+		return err
 	}
 	preOrderKey := redis.GetOrderPreOrderKey(uint32(preOrderID))
 	productOrderKey := redis.GetProductOrderKey(preOrder.ProductId)
@@ -226,22 +224,22 @@ func handleDelayOrder(ctx context.Context, msg DelayMessage) error {
 
 	if err = redis.RedisClient.SRem(ctx, productOrderKey, msg.UserID).Err(); err != nil {
 		klog.CtxErrorf(ctx, "redis.RedisClient.SRem.err: %v", err)
-		return consts.ErrRedis
+		return err
 	}
 	if err = redis.RedisClient.HDel(ctx, preOrderKey, "user_id", "product_id").Err(); err != nil {
 		klog.CtxErrorf(ctx, "redis.RedisClient.HDel.err: %v", err)
-		return consts.ErrRedis
+		return err
 	}
 
 	if err = redis.RedisClient.Incr(ctx, stockKey).Err(); err != nil {
 		klog.CtxErrorf(ctx, "redis.RedisClient.Incr.err: %v", err)
-		return consts.ErrRedis
+		return err
 	}
 
 	// commit transaction
 	if err = tx.Commit().Error; err != nil {
 		klog.CtxErrorf(ctx, "tx.Commit.err: %v", err)
-		return consts.ErrMysql
+		return err
 	}
 
 	return nil

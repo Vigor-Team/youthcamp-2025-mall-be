@@ -4,12 +4,12 @@ import (
 	"context"
 	"fmt"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/common/model/entity"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/infras/embedding"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/product/infras/repository/converter"
 	"github.com/bytedance/sonic"
 	"github.com/elastic/go-elasticsearch/v8/typedapi/core/search"
 	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
 	"github.com/elastic/go-elasticsearch/v8/typedapi/types/enums/refresh"
-	"github.com/elastic/go-elasticsearch/v8/typedapi/types/enums/textquerytype"
 	"strconv"
 )
 
@@ -56,16 +56,46 @@ func (c *ProductESClient) BatchGetProductById(ctx context.Context, productIds []
 }
 
 func (c *ProductESClient) SearchProduct(ctx context.Context, keyword string) ([]*entity.ProductEntity, error) {
+	eb, err := embedding.GetArkEmbedding(ctx, nil)
+	if err != nil {
+		return nil, fmt.Errorf("create embedding error: %w", err)
+	}
+	vectors, err := eb.EmbedStrings(ctx, []string{keyword})
+	if err != nil {
+		return nil, fmt.Errorf("embedding error: %w", err)
+	}
+	if len(vectors) == 0 || len(vectors[0]) == 0 {
+		return nil, fmt.Errorf("empty embedding result")
+	}
+	queryVector := make([]float32, len(vectors[0]))
+	for i, v := range vectors[0] {
+		queryVector[i] = float32(v)
+	}
 	size := 100
+	k := 50
+	numCandidates := 100
+	var boost float32 = 0.5
 	resp, err := GetESClient().Search().
 		Index("product").
 		Request(&search.Request{
 			Query: &types.Query{
-				MultiMatch: &types.MultiMatchQuery{
-					Query:  keyword,
-					Fields: []string{"name", "description", "spuName"},
-					Type: &textquerytype.TextQueryType{
-						Name: "best_fields",
+				Bool: &types.BoolQuery{
+					Should: []types.Query{
+						{
+							MultiMatch: &types.MultiMatchQuery{
+								Query:  keyword,
+								Fields: []string{"name^3", "description^2", "spuName"},
+							},
+						},
+						{
+							Knn: &types.KnnQuery{
+								Field:         "embedding",
+								QueryVector:   queryVector,
+								K:             &k,
+								NumCandidates: &numCandidates,
+								Boost:         &boost,
+							},
+						},
 					},
 				},
 			},
@@ -75,7 +105,8 @@ func (c *ProductESClient) SearchProduct(ctx context.Context, keyword string) ([]
 	if err != nil {
 		return nil, fmt.Errorf("search request error: %w", err)
 	}
-	products := make([]*entity.ProductEntity, 0)
+
+	products := make([]*entity.ProductEntity, 0, len(resp.Hits.Hits))
 	for _, hit := range resp.Hits.Hits {
 		do := converter.ProductDoWithESConverter.Convert2DO(ctx, getProductESFormSource(string(hit.Source_)))
 		products = append(products, do)

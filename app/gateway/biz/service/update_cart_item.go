@@ -2,12 +2,13 @@ package service
 
 import (
 	"context"
-	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/infra/rpc"
-	rpccart "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/cart"
-	"github.com/cloudwego/hertz/pkg/common/hlog"
 
 	cart "github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/hertz_gen/gateway/cart"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/infra/rpc"
+	gatewayutils "github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/utils"
+	rpccart "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/cart"
 	"github.com/cloudwego/hertz/pkg/app"
+	"github.com/cloudwego/hertz/pkg/common/hlog"
 )
 
 type UpdateCartItemService struct {
@@ -20,18 +21,18 @@ func NewUpdateCartItemService(Context context.Context, RequestContext *app.Reque
 }
 
 func (h *UpdateCartItemService) Run(req *cart.UpdateCartReq) (resp *cart.UpdateCartResp, err error) {
-	defer func() {
-		hlog.CtxInfof(h.Context, "req = %+v", req)
-		hlog.CtxInfof(h.Context, "resp = %+v", resp)
-	}()
 	_, err = rpc.CartClient.UpdateCart(
 		h.Context, &rpccart.UpdateCartReq{
-			UserId: uint32(h.RequestContext.Value("user_id").(int32)),
+			UserId: gatewayutils.GetUserIdFromCtx(h.RequestContext),
 			Item: &rpccart.CartItem{
 				ProductId: req.ProductId,
 				Quantity:  req.ProductNum,
 			},
 		},
 	)
+	if err != nil {
+		hlog.CtxErrorf(h.Context, "UpdateCartItemService Run failed: %v", err)
+		return nil, err
+	}
 	return
 }

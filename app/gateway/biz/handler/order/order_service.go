@@ -16,6 +16,7 @@ package order
 
 import (
 	"context"
+
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/biz/service"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/biz/utils"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/hertz_gen/gateway/common"
@@ -93,6 +94,26 @@ func QueryOrder(ctx context.Context, c *app.RequestContext) {
 	}
 
 	resp, err := service.NewQueryOrderService(ctx, c).Run(&req)
+
+	if err != nil {
+		utils.FailResponse(ctx, c, err)
+		return
+	}
+	utils.SuccessResponse(c, resp)
+}
+
+// PlaceOrder .
+// @router /api/v1/order [POST]
+func PlaceOrder(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req order.PlaceOrderReq
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		utils.FailResponse(ctx, c, err)
+		return
+	}
+
+	resp, err := service.NewPlaceOrderService(ctx, c).Run(&req)
 
 	if err != nil {
 		utils.FailResponse(ctx, c, err)

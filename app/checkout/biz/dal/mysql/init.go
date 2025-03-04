@@ -15,8 +15,10 @@
 package mysql
 
 import (
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/common/mtl"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"gorm.io/plugin/opentelemetry/tracing"
 
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/checkout/conf"
 )
@@ -34,6 +36,9 @@ func Init() {
 		},
 	)
 	if err != nil {
+		panic(err)
+	}
+	if err = DB.Use(tracing.NewPlugin(tracing.WithoutMetrics(), tracing.WithTracerProvider(mtl.TracerProvider))); err != nil {
 		panic(err)
 	}
 }

@@ -2,8 +2,12 @@ package service
 
 import (
 	"context"
+
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/biz/consts"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/biz/dal/mysql"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/biz/model"
+	"github.com/cloudwego/hertz/pkg/common/hlog"
+	"github.com/cloudwego/kitex/pkg/kerrors"
 
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/hertz_gen/gateway/auth"
 	"github.com/cloudwego/hertz/pkg/app"
@@ -23,7 +27,8 @@ func (h *CreateRoleService) Run(req *auth.CreateRoleReq) (resp *auth.CreateRoleR
 		Name: req.Name,
 	})
 	if err != nil {
-		return nil, err
+		hlog.CtxErrorf(h.Context, "model.CreateRole.err: %v", err)
+		return nil, kerrors.NewBizStatusError(consts.ErrCreateRole, err.Error())
 	}
 	resp = &auth.CreateRoleResp{
 		Role: &auth.Role{

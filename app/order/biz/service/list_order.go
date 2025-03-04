@@ -17,6 +17,7 @@ package service
 import (
 	"context"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/biz/consts"
+	"github.com/cloudwego/kitex/pkg/kerrors"
 
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/biz/dal/mysql"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/biz/model"
@@ -34,11 +35,10 @@ func NewListOrderService(ctx context.Context) *ListOrderService {
 
 // Run create note info
 func (s *ListOrderService) Run(req *order.ListOrderReq) (resp *order.ListOrderResp, err error) {
-	// Finish your business logic.
 	orders, err := model.ListOrder(mysql.DB, s.ctx, req.UserId)
 	if err != nil {
 		klog.CtxErrorf(s.ctx, "model.ListOrder.err:%v", err)
-		return nil, consts.ErrMysql
+		return nil, kerrors.NewBizStatusError(consts.ErrGetOrder, "model.ListOrder error")
 	}
 	var list []*order.Order
 	for _, v := range orders {

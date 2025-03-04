@@ -61,20 +61,16 @@ func _refreshMw() []app.HandlerFunc {
 	return nil
 }
 
-func _permissionMw() []app.HandlerFunc {
-	var mws []app.HandlerFunc
-	mws = append(mws, middleware.GetJwtMd().MiddlewareFunc())
-	mws = append(mws, middleware.BlacklistMiddleware())
-	mws = append(mws, middleware.CasbinAuth())
-	return mws
-}
-
 func _bindpermissionroleMw() []app.HandlerFunc {
 	return nil
 }
 
 func _createpermissionMw() []app.HandlerFunc {
-	return nil
+	var mws []app.HandlerFunc
+	mws = append(mws, middleware.GetJwtMd().MiddlewareFunc())
+	mws = append(mws, middleware.BlacklistMiddleware())
+	mws = append(mws, middleware.CasbinAuth())
+	return mws
 }
 
 func _roleMw() []app.HandlerFunc {
@@ -91,4 +87,44 @@ func _bindroleuserMw() []app.HandlerFunc {
 
 func _createroleMw() []app.HandlerFunc {
 	return nil
+}
+
+func _banuserMw() []app.HandlerFunc {
+	var mws []app.HandlerFunc
+	mws = append(mws, middleware.GetJwtMd().MiddlewareFunc())
+	mws = append(mws, middleware.BlacklistMiddleware())
+	mws = append(mws, middleware.CasbinAuth())
+	return mws
+}
+
+func _listpermissionsMw() []app.HandlerFunc {
+	var mws []app.HandlerFunc
+	mws = append(mws, middleware.GetJwtMd().MiddlewareFunc())
+	mws = append(mws, middleware.BlacklistMiddleware())
+	mws = append(mws, middleware.CasbinAuth())
+	return mws
+}
+
+func _listrolesMw() []app.HandlerFunc {
+	var mws []app.HandlerFunc
+	mws = append(mws, middleware.GetJwtMd().MiddlewareFunc())
+	mws = append(mws, middleware.BlacklistMiddleware())
+	mws = append(mws, middleware.CasbinAuth())
+	return mws
+}
+
+func _rolesMw() []app.HandlerFunc {
+	var mws []app.HandlerFunc
+	mws = append(mws, middleware.GetJwtMd().MiddlewareFunc())
+	mws = append(mws, middleware.BlacklistMiddleware())
+	mws = append(mws, middleware.CasbinAuth())
+	return mws
+}
+
+func _permissionsMw() []app.HandlerFunc {
+	var mws []app.HandlerFunc
+	mws = append(mws, middleware.GetJwtMd().MiddlewareFunc())
+	mws = append(mws, middleware.BlacklistMiddleware())
+	mws = append(mws, middleware.CasbinAuth())
+	return mws
 }

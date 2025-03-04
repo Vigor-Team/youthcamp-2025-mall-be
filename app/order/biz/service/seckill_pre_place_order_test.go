@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/biz/dal"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/biz/dal/mq"
-	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/biz/dal/redis"
 	order "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/order"
 	"testing"
 )

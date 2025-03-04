@@ -16,8 +16,12 @@ package service
 
 import (
 	"context"
+
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/biz/consts"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/biz/dal/mysql"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/biz/model"
+	"github.com/cloudwego/hertz/pkg/common/hlog"
+	"github.com/cloudwego/kitex/pkg/kerrors"
 
 	auth "github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/hertz_gen/gateway/auth"
 	common "github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/hertz_gen/gateway/common"
@@ -44,16 +48,28 @@ func (h *RegisterService) Run(req *auth.RegisterReq) (resp *common.Empty, err er
 	if err != nil {
 		return nil, err
 	}
-	role, err := model.GetRoleByName(mysql.DB, h.Context, "Guest")
+	err = func() error {
+		role, err := model.GetRoleByName(mysql.DB, h.Context, "Registered User")
+		if err != nil {
+			hlog.CtxErrorf(h.Context, "GetRoleByName failed, err: %v", err)
+			return err
+		}
+		err = model.BindUserRole(mysql.DB, h.Context, &model.UserRole{
+			UID: int64(userID.UserId),
+			RID: role.ID,
+		})
+		return err
+	}()
 	if err != nil {
-		return nil, err
-	}
-	err = model.BindUserRole(mysql.DB, h.Context, &model.UserRole{
-		UID: int64(userID.UserId),
-		RID: role.ID,
-	})
-	if err != nil {
-		return nil, err
+		hlog.CtxErrorf(h.Context, "BindUserRole failed, err: %v", err)
+		_, err := rpc.UserClient.DeleteUser(h.Context, &rpcuser.UserDeleteReq{
+			UserId: userID.UserId,
+		})
+		if err != nil {
+			hlog.CtxErrorf(h.Context, "DeleteUser failed, err: %v", err)
+			return nil, err
+		}
+		return nil, kerrors.NewBizStatusError(consts.ErrBindRoleUser, "BindUserRole failed")
 	}
 	return
 }

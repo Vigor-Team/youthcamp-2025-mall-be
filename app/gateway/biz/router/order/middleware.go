@@ -68,3 +68,8 @@ func _v1Mw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
+
+func _placeorderMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}

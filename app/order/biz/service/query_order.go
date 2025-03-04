@@ -7,6 +7,7 @@ import (
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/biz/model"
 	rpccart "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/cart"
 	order "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/order"
+	"github.com/cloudwego/kitex/pkg/kerrors"
 	"github.com/cloudwego/kitex/pkg/klog"
 )
 
@@ -19,11 +20,10 @@ func NewQueryOrderService(ctx context.Context) *QueryOrderService {
 
 // Run create note info
 func (s *QueryOrderService) Run(req *order.QueryOrderReq) (resp *order.QueryOrderResp, err error) {
-	// Finish your business logic.
 	get, err := model.GetOrder(mysql.DB, s.ctx, req.UserId, req.OrderId)
 	if err != nil {
 		klog.CtxErrorf(s.ctx, "model.GetOrder.err:%v", err)
-		return nil, consts.ErrMysql
+		return nil, kerrors.NewBizStatusError(consts.ErrGetOrder, "model.GetOrder error")
 	}
 
 	var ois []*order.OrderItem

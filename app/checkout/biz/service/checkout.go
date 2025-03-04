@@ -2,14 +2,15 @@ package service
 
 import (
 	"context"
-	"errors"
 	"fmt"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/checkout/biz/consts"
+	"github.com/cloudwego/kitex/pkg/kerrors"
 	"strconv"
 
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/checkout/infra/mq"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/checkout/infra/rpc"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/cart"
-	checkout "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/checkout"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/checkout"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/email"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/order"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/payment"
@@ -44,13 +45,11 @@ func (s *CheckoutService) Run(req *checkout.CheckoutReq) (resp *checkout.Checkou
 	// get cart
 	cartResult, err := rpc.CartClient.GetCart(s.ctx, &cart.GetCartReq{UserId: req.UserId})
 	if err != nil {
-		klog.Error(err)
-		err = fmt.Errorf("GetCart.err:%v", err)
-		return
+		klog.CtxErrorf(s.ctx, "GetCart.err:%v", err)
+		return nil, kerrors.NewBizStatusError(consts.ErrRPCGetCart, "get cart error")
 	}
 	if cartResult == nil || cartResult.Cart == nil || len(cartResult.Cart.Items) == 0 {
-		err = errors.New("cart is empty")
-		return
+		return nil, kerrors.NewBizStatusError(consts.ErrRPCGetCart, "empty cart")
 	}
 	var (
 		oi    []*order.OrderItem
@@ -59,9 +58,8 @@ func (s *CheckoutService) Run(req *checkout.CheckoutReq) (resp *checkout.Checkou
 	for _, cartItem := range cartResult.Cart.Items {
 		productResp, resultErr := rpc.ProductClient.GetProduct(s.ctx, &product.GetProductReq{Id: cartItem.ProductId})
 		if resultErr != nil {
-			klog.Error(resultErr)
-			err = resultErr
-			return
+			klog.CtxErrorf(s.ctx, "GetProduct.err:%v", resultErr)
+			return nil, kerrors.NewBizStatusError(consts.ErrRPCGetProduct, "get product error")
 		}
 		if productResp.Product == nil {
 			continue
@@ -95,8 +93,8 @@ func (s *CheckoutService) Run(req *checkout.CheckoutReq) (resp *checkout.Checkou
 	}
 	orderResult, err := rpc.OrderClient.PlaceOrder(s.ctx, orderReq)
 	if err != nil {
-		err = fmt.Errorf("PlaceOrder.err:%v", err)
-		return
+		klog.CtxErrorf(s.ctx, "PlaceOrder.err:%v", err)
+		return nil, kerrors.NewBizStatusError(consts.ErrRPCPlaceOrder, "place order error")
 	}
 	klog.Info("orderResult", orderResult)
 
@@ -104,7 +102,7 @@ func (s *CheckoutService) Run(req *checkout.CheckoutReq) (resp *checkout.Checkou
 	emptyResult, err := rpc.CartClient.EmptyCart(s.ctx, &cart.EmptyCartReq{UserId: req.UserId})
 	if err != nil {
 		err = fmt.Errorf("EmptyCart.err:%v", err)
-		return
+		return nil, kerrors.NewBizStatusError(consts.ErrRPCEmptyCart, "empty cart error")
 	}
 	klog.Info(emptyResult)
 
@@ -127,15 +125,15 @@ func (s *CheckoutService) Run(req *checkout.CheckoutReq) (resp *checkout.Checkou
 	}
 	paymentResult, err := rpc.PaymentClient.Charge(s.ctx, payReq)
 	if err != nil {
-		err = fmt.Errorf("Charge.err:%v", err)
-		return
+		klog.CtxErrorf(s.ctx, "Charge.err:%v", err)
+		return nil, kerrors.NewBizStatusError(consts.ErrRPCCharge, "charge error")
 	}
 	data, _ := proto.Marshal(&email.EmailReq{
-		From:        "from@example.com",
+		From:        "mall@example.com",
 		To:          req.Email,
 		ContentType: "text/plain",
-		Subject:     "You just created an order in CloudWeGo shop",
-		Content:     "You just created an order in CloudWeGo shop",
+		Subject:     "You just created an order in Mall",
+		Content:     "You just created an order in Mall",
 	})
 	msg := &nats.Msg{Subject: "email", Data: data, Header: make(nats.Header)}
 
@@ -149,8 +147,8 @@ func (s *CheckoutService) Run(req *checkout.CheckoutReq) (resp *checkout.Checkou
 	klog.Info(orderResult)
 	_, err = rpc.OrderClient.MarkOrderPaid(s.ctx, &order.MarkOrderPaidReq{UserId: req.UserId, OrderId: orderId})
 	if err != nil {
-		klog.Error(err)
-		return
+		klog.CtxErrorf(s.ctx, "MarkOrderPaid.err:%v", err)
+		return nil, kerrors.NewBizStatusError(consts.ErrRPCMarkOrderPaid, "mark order paid error")
 	}
 
 	resp = &checkout.CheckoutResp{

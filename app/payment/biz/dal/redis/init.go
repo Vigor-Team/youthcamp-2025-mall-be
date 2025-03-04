@@ -16,6 +16,10 @@ package redis
 
 import (
 	"context"
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/common/mtl"
+	"github.com/cloudwego/kitex/pkg/klog"
+	"github.com/redis/go-redis/extra/redisotel/v9"
+	"github.com/redis/go-redis/extra/redisprometheus/v9"
 
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/payment/conf"
 	"github.com/redis/go-redis/v9"
@@ -33,4 +37,11 @@ func Init() {
 	if err := RedisClient.Ping(context.Background()).Err(); err != nil {
 		panic(err)
 	}
+	if err := redisotel.InstrumentTracing(RedisClient); err != nil {
+		klog.Error("redis tracing collect error ", err)
+	}
+	if err := mtl.Registry.Register(redisprometheus.NewCollector("default", "product", RedisClient)); err != nil {
+		klog.Error("redis metric collect error ", err)
+	}
+	redisotel.InstrumentTracing(RedisClient) //nolint:errcheck
 }

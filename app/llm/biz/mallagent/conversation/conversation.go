@@ -2,7 +2,6 @@ package conversation
 
 import (
 	"context"
-	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/llm/biz/consts"
 	"github.com/cloudwego/eino/schema"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -47,7 +46,7 @@ func (c *Conversation) Append(msg *schema.Message) error {
 		update,
 		options.Update().SetUpsert(true),
 	); err != nil {
-		return consts.ErrAppendMessage
+		return err
 	}
 
 	c.Messages = append([]*schema.Message{msg}, c.Messages...)

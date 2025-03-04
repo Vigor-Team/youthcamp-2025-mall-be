@@ -2,10 +2,13 @@ package service
 
 import (
 	"context"
+
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/cart/biz/consts"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/cart/biz/dal/mysql"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/cart/biz/model"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/cart"
 	"github.com/cloudwego/kitex/pkg/kerrors"
+	"github.com/cloudwego/kitex/pkg/klog"
 )
 
 type GetCartService struct {
@@ -19,7 +22,8 @@ func NewGetCartService(ctx context.Context) *GetCartService {
 func (s *GetCartService) Run(req *cart.GetCartReq) (resp *cart.GetCartResp, err error) {
 	carts, err := model.GetCartByUserId(mysql.DB, s.ctx, req.GetUserId())
 	if err != nil {
-		return nil, kerrors.NewBizStatusError(50000, err.Error())
+		klog.CtxErrorf(s.ctx, "model.GetCartByUserId.err: %v", err)
+		return nil, kerrors.NewBizStatusError(consts.ErrGetCart, "get cart error")
 	}
 	items := make([]*cart.CartItem, 0, len(carts))
 	for _, v := range carts {
