@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
         - name: gateway
-          image: "gateway:v1.1.8"
+          image: "gateway:v1.1.1"
           imagePullPolicy: IfNotPresent
           resources:
             limits:

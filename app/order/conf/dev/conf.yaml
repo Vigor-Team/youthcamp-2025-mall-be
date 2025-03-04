@@ -10,7 +10,7 @@ kitex:
 
 registry:
   registry_address:
-    - consul:8500
+    - 127.0.0.1:8500
   username: ""
   password: ""
 

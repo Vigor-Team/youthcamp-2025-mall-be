@@ -35,6 +35,13 @@ spec:
             - containerPort: 9300
           securityContext:
             privileged: true  # 解决 memlock 问题
+          volumeMounts:
+            - mountPath: /usr/share/elasticsearch/data
+              name: elasticsearch-data
+      volumes:
+        - name: elasticsearch-data
+          persistentVolumeClaim:
+            claimName: elasticsearch-data
 ---
 apiVersion: v1
 kind: Service

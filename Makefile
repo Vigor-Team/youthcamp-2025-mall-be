@@ -77,10 +77,10 @@ build-all:
 	docker build --no-cache -f ./deploy/k8s/Dockerfile.svc -t user:${v} --build-arg SVC=user .
 	docker build --no-cache -f ./deploy/k8s/Dockerfile.svc -t checkout:${v} --build-arg SVC=checkout .
 	docker build --no-cache -f ./deploy/k8s/Dockerfile.svc -t email:${v} --build-arg SVC=email .
-	docker build --no-cache -f ./deploy/k8s/Dockerfile.svc -t user:${v} --build-arg SVC=user .
+	docker build --no-cache -f ./deploy/k8s/Dockerfile.svc -t cart:${v} --build-arg SVC=cart .
 	docker build --no-cache -f ./deploy/k8s/Dockerfile.svc -t payment:${v} --build-arg SVC=payment .
 	docker build --no-cache -f ./deploy/k8s/Dockerfile.svc -t product:${v} --build-arg SVC=product .
-	docker build --no-cache -f ./deploy/k8s/Dockerfile.svc -t user:${v} --build-arg SVC=user .
+	docker build --no-cache -f ./deploy/k8s/Dockerfile.svc -t order:${v} --build-arg SVC=order .
 	docker build --no-cache -f ./deploy/k8s/Dockerfile.svc -t llm:${v} --build-arg SVC=llm .
 
 .PHONY: gen-user
@@ -89,6 +89,3 @@ gen-user:
 	@cd app/user && cwgo server --type RPC --service user --module github.com/Vigor-Team/youthcamp-2025-mall-be/app/user --pass "-use github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen" -I ../../idl --idl ../../idl/user.proto
 
 
-.PHONY: create-kibana_system
-create-kibana_system:
-	curl -X POST "localhost:9200/_security/user/kibana_system/_password" -H "Content-Type: application/json" -u elastic:123123 -d "{\"password\": \"123456\"}"
