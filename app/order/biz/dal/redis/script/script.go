@@ -1,26 +1,6 @@
 package script
 
-import (
-	"sync"
-)
-
-var (
-	scriptOnce       sync.Once
-	preSeckillScript string
-)
-
-func GetPreSeckillScript() (string, error) {
-	//var err error
-	//scriptOnce.Do(func() {
-	//	prefix := "redis/script"
-	//	scriptFileRelPath := filepath.Join(prefix, "pre_seckill.lua")
-	//	content, err := os.ReadFile(scriptFileRelPath)
-	//	if err != nil {
-	//		return
-	//	}
-	//	preSeckillScript = string(content)
-	//})
-	//return preSeckillScript, err
+func GetPreSeckillScript() string {
 	return `
 local product_stock_key = KEYS[1]
 local product_order_key = KEYS[2]
@@ -52,5 +32,5 @@ redis.call('HSET', pre_order_key,
 )
 
 return remaining_stock
-`, nil
+`
 }

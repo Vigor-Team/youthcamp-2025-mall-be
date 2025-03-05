@@ -28,7 +28,7 @@ gen-server: ## gen service code of {svc}. example: make gen-server svc=user
 
 .PHONY: gen-gateway
 gen-gateway:
-	@cd app/gateway && cwgo server --type HTTP --idl ../../idl/gateway/checkout_api.proto --service gateway --module github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway -I ../../idl
+	@cd app/gateway && cwgo server --type HTTP --idl ../../idl/gateway/product_api.proto --service gateway --module github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway -I ../../idl
 
 ##@ Build
 

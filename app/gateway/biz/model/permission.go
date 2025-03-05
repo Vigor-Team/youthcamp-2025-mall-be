@@ -2,6 +2,7 @@ package model
 
 import (
 	"context"
+
 	"gorm.io/gorm"
 )
 
@@ -38,4 +39,12 @@ func ListPermissions(db *gorm.DB, _ context.Context) ([]*Permission, error) {
 	var permissions []*Permission
 	err := db.Find(&permissions).Error
 	return permissions, err
+}
+
+func UnbindPermissionRole(db *gorm.DB, _ context.Context, permissionRole *PermissionRole) error {
+	return db.Where(permissionRole).Delete(&PermissionRole{}).Error
+}
+
+func UpdatePermission(db *gorm.DB, _ context.Context, permission *Permission) error {
+	return db.Model(permission).Updates(permission).Error
 }

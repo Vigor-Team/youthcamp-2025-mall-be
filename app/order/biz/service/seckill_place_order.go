@@ -3,6 +3,8 @@ package service
 import (
 	"context"
 	"fmt"
+	"strconv"
+
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/biz/consts"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/biz/dal/mq"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/biz/dal/redis"
@@ -11,7 +13,6 @@ import (
 	order "github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/order"
 	"github.com/cloudwego/kitex/pkg/kerrors"
 	"github.com/cloudwego/kitex/pkg/klog"
-	"strconv"
 )
 
 type SeckillPlaceOrderService struct {
@@ -23,9 +24,9 @@ func NewSeckillPlaceOrderService(ctx context.Context) *SeckillPlaceOrderService 
 
 // Run create note info
 func (s *SeckillPlaceOrderService) Run(req *order.SeckillPlaceOrderReq) (resp *order.SeckillPlaceOrderResp, err error) {
-	// validate tempId
-	tempId := req.TempId
-	tempMeta, err := validatePreOrderId(s.ctx, tempId, req.UserId)
+	// validate preOrderId
+	preOrderId := req.TempId
+	tempMeta, err := validatePreOrderId(s.ctx, preOrderId, req.UserId)
 	if err != nil {
 		klog.CtxErrorf(s.ctx, "validatePreOrderId.err:%v", err)
 		return nil, kerrors.NewBizStatusError(consts.ErrPreOrderValidate, err.Error())
@@ -45,7 +46,7 @@ func (s *SeckillPlaceOrderService) Run(req *order.SeckillPlaceOrderReq) (resp *o
 	// publish order message
 	producer := mq.NewProducer(mq.Client)
 	msg := mq.OrderMessage{
-		TempID:       strconv.Itoa(int(tempId)),
+		TempID:       strconv.Itoa(int(preOrderId)),
 		OrderId:      orderId,
 		UserID:       req.UserId,
 		UserCurrency: req.UserCurrency,

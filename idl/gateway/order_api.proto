@@ -41,7 +41,7 @@ message SeckillPrePlaceOrderReq {
 }
 
 message SeckillPrePlaceOrderResp {
-  uint32 temp_id = 1;
+  uint32 pre_order_id = 1;
 }
 
 message SeckillPlaceOrderReq {
@@ -49,7 +49,7 @@ message SeckillPlaceOrderReq {
   Address address = 2 [(api.body) = "address"];
   string email = 3 [(api.body) = "email"];
 
-  uint32 temp_id = 4;
+  uint32 pre_order_id = 4;
 }
 
 message SeckillPlaceOrderResp {

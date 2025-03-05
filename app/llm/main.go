@@ -2,6 +2,9 @@ package main
 
 import (
 	"context"
+	"net"
+	"strings"
+
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/llm/biz/dal"
 	dalmongo "github.com/Vigor-Team/youthcamp-2025-mall-be/app/llm/biz/dal/mongo"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/llm/conf"
@@ -16,8 +19,6 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/kitex-contrib/obs-opentelemetry/provider"
 	"gopkg.in/natefinch/lumberjack.v2"
-	"net"
-	"strings"
 )
 
 var serviceName = conf.GetConf().Kitex.Service
@@ -37,6 +38,7 @@ func main() {
 	mtl.InitTracing(serviceName)
 	mtl.InitMetric(serviceName, conf.GetConf().Kitex.MetricsPort, conf.GetConf().Registry.RegistryAddress[0])
 	opts := kitexInit()
+	opts = append(opts, server.WithGRPCInitialWindowSize(1024*1024*10), server.WithGRPCInitialConnWindowSize(1024*1024*10))
 
 	svr := llmservice.NewServer(new(LlmServiceImpl), opts...)
 

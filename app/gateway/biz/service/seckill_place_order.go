@@ -31,7 +31,7 @@ func (h *SeckillPlaceOrderService) Run(req *order.SeckillPlaceOrderReq) (resp *o
 			Country:       req.Address.Country,
 		},
 		Email:  req.Email,
-		TempId: req.TempId,
+		TempId: req.PreOrderId,
 	})
 	if err != nil {
 		return

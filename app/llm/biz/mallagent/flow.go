@@ -2,12 +2,12 @@ package mallagent
 
 import (
 	"context"
+
 	"github.com/cloudwego/eino/compose"
 	"github.com/cloudwego/eino/flow/agent/react"
 )
 
 func defaultReactAgentConfig(ctx context.Context) (config *react.AgentConfig, err error) {
-
 	chatModel, err := NewArkChatModel(ctx, nil)
 	if err != nil {
 		return

@@ -86,7 +86,11 @@ func _bindroleuserMw() []app.HandlerFunc {
 }
 
 func _createroleMw() []app.HandlerFunc {
-	return nil
+	var mws []app.HandlerFunc
+	mws = append(mws, middleware.GetJwtMd().MiddlewareFunc())
+	mws = append(mws, middleware.BlacklistMiddleware())
+	mws = append(mws, middleware.CasbinAuth())
+	return mws
 }
 
 func _banuserMw() []app.HandlerFunc {
@@ -127,4 +131,17 @@ func _permissionsMw() []app.HandlerFunc {
 	mws = append(mws, middleware.BlacklistMiddleware())
 	mws = append(mws, middleware.CasbinAuth())
 	return mws
+}
+
+func _updatepermissionMw() []app.HandlerFunc {
+	var mws []app.HandlerFunc
+	mws = append(mws, middleware.GetJwtMd().MiddlewareFunc())
+	mws = append(mws, middleware.BlacklistMiddleware())
+	mws = append(mws, middleware.CasbinAuth())
+	return mws
+}
+
+func _unbindpermissionroleMw() []app.HandlerFunc {
+	// your code...
+	return nil
 }

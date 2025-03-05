@@ -28,7 +28,7 @@ func (h *SeckillPrePlaceOrderService) Run(req *order.SeckillPrePlaceOrderReq) (r
 		return
 	}
 	resp = &order.SeckillPrePlaceOrderResp{
-		TempId: preOrderId.TempId,
+		PreOrderId: preOrderId.TempId,
 	}
 	return
 }

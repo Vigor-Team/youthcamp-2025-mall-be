@@ -18,8 +18,11 @@ import (
 	"context"
 	"sync"
 
+	"github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/llm"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/llm/llmservice"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/payment/paymentservice"
+	"github.com/cloudwego/kitex/pkg/kerrors"
+	"github.com/cloudwego/kitex/pkg/retry"
 
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/conf"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/infra/mtl"
@@ -49,16 +52,17 @@ var (
 	once           sync.Once
 	err            error
 	registryAddr   string
-	commonSuite    client.Option
+	commonOpt      []client.Option
 )
 
 func InitClient() {
 	once.Do(func() {
 		registryAddr = conf.GetConf().Hertz.RegistryAddr
-		commonSuite = client.WithSuite(clientsuite.CommonGrpcClientSuite{
+		commonOpt = append(commonOpt, client.WithSuite(clientsuite.CommonGrpcClientSuite{
 			RegistryAddr:       registryAddr,
 			CurrentServiceName: gatewayutils.ServiceName,
-		})
+		}))
+		commonOpt = append(commonOpt, client.WithTracer(prometheus.NewClientTracer("", "", prometheus.WithDisableServer(true), prometheus.WithRegistry(mtl.Registry))))
 		initProductClient()
 		initUserClient()
 		initCartClient()
@@ -77,7 +81,7 @@ func initProductClient() {
 	})
 	cbs.UpdateServiceCBConfig("shop-gateway/product/GetProduct", circuitbreak.CBConfig{Enable: true, ErrRate: 0.5, MinSample: 2})
 
-	opts = append(opts, commonSuite, client.WithCircuitBreaker(cbs), client.WithFallback(fallback.NewFallbackPolicy(fallback.UnwrapHelper(func(ctx context.Context, req, resp interface{}, err error) (fbResp interface{}, fbErr error) {
+	opts = append(opts, client.WithCircuitBreaker(cbs), client.WithFallback(fallback.NewFallbackPolicy(fallback.UnwrapHelper(func(ctx context.Context, req, resp interface{}, err error) (fbResp interface{}, fbErr error) {
 		methodName := rpcinfo.GetRPCInfo(ctx).To().Method()
 		if err == nil {
 			return resp, err
@@ -92,43 +96,91 @@ func initProductClient() {
 					Id:          3,
 					Picture:     "/static/image/t-shirt.jpeg",
 					Name:        "T-Shirt",
-					Description: "CloudWeGo T-Shirt",
+					Description: "T-Shirt",
 				},
 			},
 		}, nil
 	}))))
-	opts = append(opts, client.WithTracer(prometheus.NewClientTracer("", "", prometheus.WithDisableServer(true), prometheus.WithRegistry(mtl.Registry))))
-
+	opts = append(opts, commonOpt...)
 	ProductClient, err = productcatalogservice.NewClient("product", opts...)
 	gatewayutils.MustHandleError(err)
 }
 
 func initUserClient() {
-	UserClient, err = userservice.NewClient("user", commonSuite)
+	UserClient, err = userservice.NewClient("user", commonOpt...)
 	gatewayutils.MustHandleError(err)
 }
 
 func initCartClient() {
-	CartClient, err = cartservice.NewClient("cart", commonSuite)
+	CartClient, err = cartservice.NewClient("cart", commonOpt...)
 	gatewayutils.MustHandleError(err)
 }
 
 func initCheckoutClient() {
-	CheckoutClient, err = checkoutservice.NewClient("checkout", commonSuite)
+	CheckoutClient, err = checkoutservice.NewClient("checkout", commonOpt...)
 	gatewayutils.MustHandleError(err)
 }
 
 func initOrderClient() {
-	OrderClient, err = orderservice.NewClient("order", commonSuite)
+	OrderClient, err = orderservice.NewClient("order", commonOpt...)
 	gatewayutils.MustHandleError(err)
 }
 
 func initLlmClient() {
-	LlmClient, err = llmservice.NewClient("llm", commonSuite)
+	var opts []client.Option
+	fp := retry.NewFailurePolicy()
+	fp.WithMaxRetryTimes(3)
+	fp.WithMaxDurationMS(10000)
+	fp.WithSpecifiedResultRetry(&retry.ShouldResultRetry{
+		ErrorRetryWithCtx: func(ctx context.Context, err error, ri rpcinfo.RPCInfo) bool {
+			if err == nil {
+				return false
+			}
+			if kerrors.IsTimeoutError(err) {
+				return true
+			} else {
+				return false
+			}
+		},
+	})
+	opts = append(opts, client.WithRetryMethodPolicies(map[string]retry.Policy{
+		"SendMessage": {
+			Enable:        true,
+			Type:          0,
+			FailurePolicy: fp,
+		},
+		"StreamMessage": {
+			Enable:        true,
+			Type:          0,
+			FailurePolicy: fp,
+		},
+	}))
+	cbs := circuitbreak.NewCBSuite(func(ri rpcinfo.RPCInfo) string {
+		return circuitbreak.RPCInfo2Key(ri)
+	})
+	cbs.UpdateServiceCBConfig("mall-gateway/llm/chat", circuitbreak.CBConfig{Enable: true, ErrRate: 0.5, MinSample: 2})
+	opts = append(opts, client.WithCircuitBreaker(cbs), client.WithFallback(fallback.NewFallbackPolicy(fallback.UnwrapHelper(func(ctx context.Context, req, resp interface{}, err error) (fbResp interface{}, fbErr error) {
+		methodName := rpcinfo.GetRPCInfo(ctx).To().Method()
+		if err == nil {
+			return resp, err
+		}
+		if methodName == "SendMessage" {
+			return &llm.ChatResponse{
+				Response: "服务器繁忙，请稍后再试",
+			}, nil
+		}
+		if methodName == "StreamMessage" {
+			return &llm.ChatResponse{
+				Response: "服务器繁忙，请稍后再试",
+			}, nil
+		}
+		return resp, err
+	}))))
+	LlmClient, err = llmservice.NewClient("llm", commonOpt...)
 	gatewayutils.MustHandleError(err)
 }
 
 func initPaymentClient() {
-	PaymentClient, err = paymentservice.NewClient("payment", commonSuite)
+	PaymentClient, err = paymentservice.NewClient("payment", commonOpt...)
 	gatewayutils.MustHandleError(err)
 }
