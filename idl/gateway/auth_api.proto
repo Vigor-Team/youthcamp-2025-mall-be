@@ -92,6 +92,23 @@ message ListPermissionsResp {
   repeated Permission permissions = 1;
 }
 
+message UpdatePermissionReq {
+  int64 id = 1 [(api.body) = "id", (api.form) = "id", (api.vd) = "($ > 0 && $ < 100)"];
+  string v1 = 2 [(api.body) = "v1", (api.form) = "v1", (api.vd) = "(len($) > 0 && len($) < 100)"];
+  string v2 = 3 [(api.body) = "v2", (api.form) = "v2", (api.vd) = "(len($) > 0 && len($) < 100)"];
+}
+
+message UpdatePermissionResp {
+}
+
+message UnbindPermissionRoleReq {
+  int64 pid = 1 [(api.body) = "pid", (api.form) = "pid", (api.vd) = "($ > 0 && $ < 100)"];
+  int64 rid = 2 [(api.body) = "rid", (api.form) = "rid", (api.vd) = "($ > 0 && $ < 100)"];
+}
+
+message UnbindPermissionRoleResp {
+}
+
 service PermissionService {
   rpc listPermissions(common.Empty) returns (ListPermissionsResp) {
     option (api.get) = "/api/v1/permissions";
@@ -99,8 +116,14 @@ service PermissionService {
   rpc createPermission(CreatePermissionReq) returns (CreatePermissionResp) {
     option (api.post) = "/api/v1/permissions";
   }
+  rpc updatePermission(UpdatePermissionReq) returns (UpdatePermissionResp) {
+    option (api.put) = "/api/v1/permissions";
+  }
   rpc bindPermissionRole(BindPermissionRoleReq) returns (BindPermissionRoleResp) {
     option (api.post) = "/api/v1/permissions/bind";
+  }
+  rpc unbindPermissionRole(UnbindPermissionRoleReq) returns (UnbindPermissionRoleResp) {
+    option (api.post) = "/api/v1/permissions/unbind";
   }
 }
 

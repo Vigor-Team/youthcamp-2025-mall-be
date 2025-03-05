@@ -3,6 +3,8 @@ package middleware
 import (
 	"context"
 	"fmt"
+	"os"
+
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/biz/utils"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/gateway/conf"
 	"github.com/casbin/casbin/v2"
@@ -11,7 +13,6 @@ import (
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/cloudwego/kitex/pkg/kerrors"
-	"os"
 )
 
 var AuthEnforcer *casbin.Enforcer
@@ -68,9 +69,6 @@ func CasbinAuth() app.HandlerFunc {
 		var isAuth = false
 
 		for _, r := range roles.([]interface{}) {
-			fmt.Println("role: ", r)
-			fmt.Println("path: ", c.FullPath())
-			fmt.Println("method: ", string(c.Request.Header.Method()))
 			res, err := Authorize(r.(string), c.FullPath(), string(c.Request.Header.Method()))
 			if err != nil {
 				hlog.CtxErrorf(ctx, "Authorize is error: %v", err)

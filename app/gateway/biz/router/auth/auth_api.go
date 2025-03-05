@@ -26,6 +26,7 @@ func Register(r *server.Hertz) {
 			_v1.POST("/logout", append(_logoutMw(), auth.Logout)...)
 			_v1.GET("/me", append(_meMw(), auth.Me)...)
 			_v1.POST("/permissions", append(_createpermissionMw(), auth.CreatePermission)...)
+			_v1.PUT("/permissions", append(_updatepermissionMw(), auth.UpdatePermission)...)
 			_v1.GET("/refresh", append(_refreshMw(), auth.Refresh)...)
 			_v1.POST("/register", append(_registerMw(), auth.Register)...)
 			_v1.GET("/roles", append(_listrolesMw(), auth.ListRoles)...)
@@ -35,6 +36,7 @@ func Register(r *server.Hertz) {
 			_v1.GET("/permissions", append(_listpermissionsMw(), auth.ListPermissions)...)
 			_permissions := _v1.Group("/permissions", _permissionsMw()...)
 			_permissions.POST("/bind", append(_bindpermissionroleMw(), auth.BindPermissionRole)...)
+			_permissions.POST("/unbind", append(_unbindpermissionroleMw(), auth.UnbindPermissionRole)...)
 		}
 	}
 }

@@ -135,194 +135,194 @@ services:
       - ./app/llm/log:/logs/llm
     command: -config.file=/etc/promtail/config.yml
 
-  gateway:
-    build:
-      context: .
-      dockerfile: ./deploy/Dockerfile.gateway
-    ports:
-      - 8080:8080
-    environment:
-      - MYSQL_USER=root
-      - MYSQL_PASSWORD=root
-      - MYSQL_HOST=mysql
-      - GO_ENV=dev
-      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://jaeger-all-in-one:4317
-      - OTEL_EXPORTER_OTLP_INSECURE=true
-    depends_on:
-      - redis
-      - mysql
-      - consul
-    volumes:
-      - ./app/gateway/conf/dev:/opt/youthcamp-2025-mall-be/gateway/conf/dev
-
-  user:
-    build:
-      context: .
-      dockerfile: ./deploy/Dockerfile.svc
-      args:
-        - SVC=user
-    environment:
-      - MYSQL_USER=root
-      - MYSQL_PASSWORD=root
-      - MYSQL_HOST=mysql
-      - GO_ENV=dev
-      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://jaeger-all-in-one:4317
-      - OTEL_EXPORTER_OTLP_INSECURE=true
-    depends_on:
-      - redis
-      - mysql
-      - consul
-    volumes:
-      - ./app/user/conf/dev:/opt/youthcamp-2025-mall-be/user/conf/dev
-
-  product:
-    build:
-      context: .
-      dockerfile: ./deploy/Dockerfile.svc
-      args:
-        - SVC=product
-    environment:
-      - MYSQL_USER=root
-      - MYSQL_PASSWORD=root
-      - MYSQL_HOST=mysql
-      - GO_ENV=dev
-      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://jaeger-all-in-one:4317
-      - OTEL_EXPORTER_OTLP_INSECURE=true
-      - ARK_API_KEY=9727f906-23a1-4f66-902f-d6e1d5d45950
-      - ARK_EMBEDDING_MODEL=ep-20250226100008-wwhh7
-      - ES_PASSWORD=123123
-    depends_on:
-      - redis
-      - mysql
-      - consul
-    volumes:
-      - ./app/product/conf/dev:/opt/youthcamp-2025-mall-be/product/conf/dev
-
-  cart:
-    build:
-      context: .
-      dockerfile: ./deploy/Dockerfile.svc
-      args:
-        - SVC=cart
-    environment:
-      - MYSQL_USER=root
-      - MYSQL_PASSWORD=root
-      - MYSQL_HOST=mysql
-      - GO_ENV=dev
-      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://jaeger-all-in-one:4317
-      - OTEL_EXPORTER_OTLP_INSECURE=true
-    depends_on:
-      - redis
-      - mysql
-      - consul
-    volumes:
-      - ./app/cart/conf/dev:/opt/youthcamp-2025-mall-be/cart/conf/dev
-
-  order:
-    build:
-      context: .
-      dockerfile: ./deploy/Dockerfile.svc
-      args:
-        - SVC=order
-    environment:
-      - MYSQL_USER=root
-      - MYSQL_PASSWORD=root
-      - MYSQL_HOST=mysql
-      - GO_ENV=dev
-      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://jaeger-all-in-one:4317
-      - OTEL_EXPORTER_OTLP_INSECURE=true
-      - RABBITMQ_USER=guest
-      - RABBITMQ_PASSWORD=guest
-    depends_on:
-      - redis
-      - mysql
-      - consul
-    volumes:
-      - ./app/order/conf/dev:/opt/youthcamp-2025-mall-be/order/conf/dev
-
-  llm:
-    build:
-      context: .
-      dockerfile: ./deploy/Dockerfile.svc
-      args:
-        - SVC=llm
-    environment:
-      - MYSQL_USER=root
-      - MYSQL_PASSWORD=root
-      - MYSQL_HOST=mysql
-      - GO_ENV=dev
-      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://jaeger-all-in-one:4317
-      - OTEL_EXPORTER_OTLP_INSECURE=true
-      - ARK_CHAT_MODEL=ep-20250201132604-lfwhm
-      - ARK_API_KEY=9727f906-23a1-4f66-902f-d6e1d5d45950
-      - MONGO_USER=root
-      - MONGO_PASSWORD=root
-    depends_on:
-      - redis
-      - mysql
-      - consul
-    volumes:
-      - ./app/llm/conf/dev:/opt/youthcamp-2025-mall-be/llm/conf/dev
-
-  checkout:
-    build:
-      context: .
-      dockerfile: ./deploy/Dockerfile.svc
-      args:
-        - SVC=checkout
-    environment:
-      - MYSQL_USER=root
-      - MYSQL_PASSWORD=root
-      - MYSQL_HOST=mysql
-      - GO_ENV=dev
-      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://jaeger-all-in-one:4317
-      - OTEL_EXPORTER_OTLP_INSECURE=true
-    depends_on:
-      - redis
-      - mysql
-      - consul
-    volumes:
-      - ./app/checkout/conf/dev:/opt/youthcamp-2025-mall-be/checkout/conf/dev
-
-  payment:
-    build:
-      context: .
-      dockerfile: ./deploy/Dockerfile.svc
-      args:
-        - SVC=payment
-    environment:
-      - MYSQL_USER=root
-      - MYSQL_PASSWORD=root
-      - MYSQL_HOST=mysql
-      - GO_ENV=dev
-      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://jaeger-all-in-one:4317
-      - OTEL_EXPORTER_OTLP_INSECURE=true
-    depends_on:
-      - redis
-      - mysql
-      - consul
-    volumes:
-      - ./app/payment/conf/dev:/opt/youthcamp-2025-mall-be/payment/conf/dev
-
-  email:
-    build:
-      context: .
-      dockerfile: ./deploy/Dockerfile.svc
-      args:
-        - SVC=email
-    environment:
-      - MYSQL_USER=root
-      - MYSQL_PASSWORD=root
-      - MYSQL_HOST=mysql
-      - GO_ENV=dev
-      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://jaeger-all-in-one:4317
-      - OTEL_EXPORTER_OTLP_INSECURE=true
-    depends_on:
-      - redis
-      - mysql
-      - consul
-    volumes:
-      - ./app/email/conf/dev:/opt/youthcamp-2025-mall-be/email/conf/dev
+#  gateway:
+#    build:
+#      context: .
+#      dockerfile: ./deploy/Dockerfile.gateway
+#    ports:
+#      - 8080:8080
+#    environment:
+#      - MYSQL_USER=root
+#      - MYSQL_PASSWORD=root
+#      - MYSQL_HOST=mysql
+#      - GO_ENV=dev
+#      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://jaeger-all-in-one:4317
+#      - OTEL_EXPORTER_OTLP_INSECURE=true
+#    depends_on:
+#      - redis
+#      - mysql
+#      - consul
+#    volumes:
+#      - ./app/gateway/conf/dev:/opt/youthcamp-2025-mall-be/gateway/conf/dev
+#
+#  user:
+#    build:
+#      context: .
+#      dockerfile: ./deploy/Dockerfile.svc
+#      args:
+#        - SVC=user
+#    environment:
+#      - MYSQL_USER=root
+#      - MYSQL_PASSWORD=root
+#      - MYSQL_HOST=mysql
+#      - GO_ENV=dev
+#      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://jaeger-all-in-one:4317
+#      - OTEL_EXPORTER_OTLP_INSECURE=true
+#    depends_on:
+#      - redis
+#      - mysql
+#      - consul
+#    volumes:
+#      - ./app/user/conf/dev:/opt/youthcamp-2025-mall-be/user/conf/dev
+#
+#  product:
+#    build:
+#      context: .
+#      dockerfile: ./deploy/Dockerfile.svc
+#      args:
+#        - SVC=product
+#    environment:
+#      - MYSQL_USER=root
+#      - MYSQL_PASSWORD=root
+#      - MYSQL_HOST=mysql
+#      - GO_ENV=dev
+#      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://jaeger-all-in-one:4317
+#      - OTEL_EXPORTER_OTLP_INSECURE=true
+#      - ARK_API_KEY=9727f906-23a1-4f66-902f-d6e1d5d45950
+#      - ARK_EMBEDDING_MODEL=ep-20250226100008-wwhh7
+#      - ES_PASSWORD=123123
+#    depends_on:
+#      - redis
+#      - mysql
+#      - consul
+#    volumes:
+#      - ./app/product/conf/dev:/opt/youthcamp-2025-mall-be/product/conf/dev
+#
+#  cart:
+#    build:
+#      context: .
+#      dockerfile: ./deploy/Dockerfile.svc
+#      args:
+#        - SVC=cart
+#    environment:
+#      - MYSQL_USER=root
+#      - MYSQL_PASSWORD=root
+#      - MYSQL_HOST=mysql
+#      - GO_ENV=dev
+#      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://jaeger-all-in-one:4317
+#      - OTEL_EXPORTER_OTLP_INSECURE=true
+#    depends_on:
+#      - redis
+#      - mysql
+#      - consul
+#    volumes:
+#      - ./app/cart/conf/dev:/opt/youthcamp-2025-mall-be/cart/conf/dev
+#
+#  order:
+#    build:
+#      context: .
+#      dockerfile: ./deploy/Dockerfile.svc
+#      args:
+#        - SVC=order
+#    environment:
+#      - MYSQL_USER=root
+#      - MYSQL_PASSWORD=root
+#      - MYSQL_HOST=mysql
+#      - GO_ENV=dev
+#      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://jaeger-all-in-one:4317
+#      - OTEL_EXPORTER_OTLP_INSECURE=true
+#      - RABBITMQ_USER=guest
+#      - RABBITMQ_PASSWORD=guest
+#    depends_on:
+#      - redis
+#      - mysql
+#      - consul
+#    volumes:
+#      - ./app/order/conf/dev:/opt/youthcamp-2025-mall-be/order/conf/dev
+#
+#  llm:
+#    build:
+#      context: .
+#      dockerfile: ./deploy/Dockerfile.svc
+#      args:
+#        - SVC=llm
+#    environment:
+#      - MYSQL_USER=root
+#      - MYSQL_PASSWORD=root
+#      - MYSQL_HOST=mysql
+#      - GO_ENV=dev
+#      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://jaeger-all-in-one:4317
+#      - OTEL_EXPORTER_OTLP_INSECURE=true
+#      - ARK_CHAT_MODEL=ep-20250201132604-lfwhm
+#      - ARK_API_KEY=9727f906-23a1-4f66-902f-d6e1d5d45950
+#      - MONGO_USER=root
+#      - MONGO_PASSWORD=root
+#    depends_on:
+#      - redis
+#      - mysql
+#      - consul
+#    volumes:
+#      - ./app/llm/conf/dev:/opt/youthcamp-2025-mall-be/llm/conf/dev
+#
+#  checkout:
+#    build:
+#      context: .
+#      dockerfile: ./deploy/Dockerfile.svc
+#      args:
+#        - SVC=checkout
+#    environment:
+#      - MYSQL_USER=root
+#      - MYSQL_PASSWORD=root
+#      - MYSQL_HOST=mysql
+#      - GO_ENV=dev
+#      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://jaeger-all-in-one:4317
+#      - OTEL_EXPORTER_OTLP_INSECURE=true
+#    depends_on:
+#      - redis
+#      - mysql
+#      - consul
+#    volumes:
+#      - ./app/checkout/conf/dev:/opt/youthcamp-2025-mall-be/checkout/conf/dev
+#
+#  payment:
+#    build:
+#      context: .
+#      dockerfile: ./deploy/Dockerfile.svc
+#      args:
+#        - SVC=payment
+#    environment:
+#      - MYSQL_USER=root
+#      - MYSQL_PASSWORD=root
+#      - MYSQL_HOST=mysql
+#      - GO_ENV=dev
+#      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://jaeger-all-in-one:4317
+#      - OTEL_EXPORTER_OTLP_INSECURE=true
+#    depends_on:
+#      - redis
+#      - mysql
+#      - consul
+#    volumes:
+#      - ./app/payment/conf/dev:/opt/youthcamp-2025-mall-be/payment/conf/dev
+#
+#  email:
+#    build:
+#      context: .
+#      dockerfile: ./deploy/Dockerfile.svc
+#      args:
+#        - SVC=email
+#    environment:
+#      - MYSQL_USER=root
+#      - MYSQL_PASSWORD=root
+#      - MYSQL_HOST=mysql
+#      - GO_ENV=dev
+#      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://jaeger-all-in-one:4317
+#      - OTEL_EXPORTER_OTLP_INSECURE=true
+#    depends_on:
+#      - redis
+#      - mysql
+#      - consul
+#    volumes:
+#      - ./app/email/conf/dev:/opt/youthcamp-2025-mall-be/email/conf/dev
 
 volumes:
   mysql-data:

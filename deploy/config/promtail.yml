@@ -35,7 +35,7 @@ scrape_configs:
           - localhost
         labels:
           app: cart
-          __path__: /logs/cart/cart.log
+          __path__: /logs/cart/kitex.log
   - job_name: product
     pipeline_stages:
       - json:
@@ -48,7 +48,7 @@ scrape_configs:
           - localhost
         labels:
           app: product
-          __path__: /logs/product/product.log
+          __path__: /logs/product/kitex.log
   - job_name: order
     pipeline_stages:
       - json:
@@ -61,7 +61,7 @@ scrape_configs:
           - localhost
         labels:
           app: order
-          __path__: /logs/order/order.log
+          __path__: /logs/order/kitex.log
   - job_name: checkout
     pipeline_stages:
       - json:
@@ -74,7 +74,7 @@ scrape_configs:
           - localhost
         labels:
           app: checkout
-          __path__: /logs/checkout/checkout.log
+          __path__: /logs/checkout/kitex.log
   - job_name: email
     pipeline_stages:
       - json:
@@ -87,7 +87,7 @@ scrape_configs:
           - localhost
         labels:
           app: email
-          __path__: /logs/email/email.log
+          __path__: /logs/email/kitex.log
   - job_name: payment
     pipeline_stages:
       - json:
@@ -100,7 +100,7 @@ scrape_configs:
           - localhost
         labels:
           app: payment
-          __path__: /logs/payment/payment.log
+          __path__: /logs/payment/kitex.log
   - job_name: user
     pipeline_stages:
       - json:
@@ -113,7 +113,7 @@ scrape_configs:
           - localhost
         labels:
           app: user
-          __path__: /logs/user/user.log
+          __path__: /logs/user/kitex.log
   - job_name: llm
     pipeline_stages:
       - json:
@@ -126,4 +126,4 @@ scrape_configs:
           - localhost
         labels:
           app: llm
-          __path__: /logs/llm/llm.log
+          __path__: /logs/llm/kitex.log

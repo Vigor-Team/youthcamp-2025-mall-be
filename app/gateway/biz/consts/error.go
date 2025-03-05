@@ -8,6 +8,8 @@ var (
 	ErrCreateRole         int32 = 10015
 	ErrGetPermission      int32 = 10016
 	ErrGetRole            int32 = 10017
+	ErrUnbindPermission   int32 = 10018
+	ErrUpdatePermission   int32 = 10019
 )
 
 var (

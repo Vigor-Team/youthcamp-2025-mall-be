@@ -2,13 +2,13 @@ package mallagent
 
 import (
 	"context"
+
 	"github.com/cloudwego/eino/compose"
 	"github.com/cloudwego/eino/flow/agent/react"
 	"github.com/cloudwego/eino/schema"
 )
 
 const (
-	InputToQuery   = "InputToQuery"
 	ChatTemplate   = "ChatTemplate"
 	ReactAgent     = "ReactAgent"
 	InputToHistory = "InputToHistory"

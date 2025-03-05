@@ -46,7 +46,7 @@ message GetProductResp {
 }
 
 message UpdateProductReq {
-  uint32 productId = 1 [(api.path) = "productId"];
+  uint32 productId = 1 [(api.body) = "product_id"];
   string name = 2 [(api.body) = "name"];
   string spuName = 3 [(api.body) = "spu_name"];
   string description = 4 [(api.body) = "description"];
@@ -102,7 +102,7 @@ service ProductService {
   }
 
   rpc UpdateProduct(UpdateProductReq) returns (common.Empty) {
-    option (api.put) = "/api/v1/products/:productId";
+    option (api.put) = "/api/v1/products";
   }
 
   rpc DeleteProduct(ProductIDReq) returns (common.Empty) {

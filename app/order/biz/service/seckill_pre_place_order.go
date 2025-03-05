@@ -2,6 +2,9 @@ package service
 
 import (
 	"context"
+	"strconv"
+	"time"
+
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/biz/consts"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/biz/dal/mq"
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/app/order/biz/dal/redis"
@@ -10,8 +13,6 @@ import (
 	"github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen/order"
 	"github.com/cloudwego/kitex/pkg/kerrors"
 	"github.com/cloudwego/kitex/pkg/klog"
-	"strconv"
-	"time"
 )
 
 type SeckillPrePlaceOrderService struct {
@@ -34,12 +35,7 @@ func (s *SeckillPrePlaceOrderService) Run(req *order.SeckillPrePlaceOrderReq) (r
 
 	// todo rate limit
 
-	seckillScript, err := script.GetPreSeckillScript()
-	if err != nil {
-		klog.CtxErrorf(s.ctx, "get pre seckill script failed: %v", err)
-		return nil, kerrors.NewBizStatusError(errno.ErrInternal, "get pre seckill script failed")
-	}
-
+	seckillScript := script.GetPreSeckillScript()
 	preOrderId, err := redis.NextId(s.ctx, "pre_order")
 	if err != nil {
 		klog.CtxErrorf(s.ctx, "redis.NextId.err:%v", err)
