@@ -2,7 +2,7 @@ kitex:
   service: "product"
   address: ":8882"
   metrics_port: ":9992"
-  log_level: info
+  log_level: debug
   log_file_name: "log/kitex.log"
   log_max_size: 10
   log_max_age: 3
@@ -10,15 +10,19 @@ kitex:
 
 registry:
   registry_address:
-    - 127.0.0.1:8500
+    - mall-consul.ns-9zxles8h.svc.cluster.local:8500
   username: ""
   password: ""
 
 mysql:
   dsn: "%s:%s@tcp(%s:3306)/product?charset=utf8mb4&parseTime=True&loc=Local"
 
+es:
+  address: "http://mall-es.ns-9zxles8h.svc.cluster.local:9200"
+  username: "elastic"
+
 redis:
-  address: "127.0.0.1:6379"
-  username: ""
-  password: ""
+  address: "mall-redis-redis.ns-9zxles8h.svc:6379"
+  username: "default"
+  password: "ffnrlj65"
   db: 0

@@ -1,6 +1,6 @@
 FROM golang:1.23.6 AS builder
 
-WORKDIR /usr/src/youthcamp-2025-mall-be
+WORKDIR /usr/src/mall
 
 ENV GOPROXY=https://goproxy.cn,direct
   
@@ -14,15 +14,15 @@ RUN cd app/gateway/ && go mod download && go mod verify
 
 COPY app/gateway app/gateway
 
-RUN cd app/gateway/ && CGO_ENABLED=0 go build -v -o /opt/youthcamp-2025-mall-be/gateway/server
+RUN cd app/gateway/ && CGO_ENABLED=0 go build -v -o /opt/mall/gateway/server
 
 FROM busybox
 
-COPY --from=builder /opt/youthcamp-2025-mall-be/gateway/server /opt/youthcamp-2025-mall-be/gateway/server
+COPY --from=builder /opt/mall/gateway/server /opt/mall/gateway/server
 
-COPY app/gateway/conf /opt/youthcamp-2025-mall-be/gateway/conf
+COPY app/gateway/conf /opt/mall/gateway/conf
 
-WORKDIR /opt/youthcamp-2025-mall-be/gateway
+WORKDIR /opt/mall/gateway
 
 EXPOSE 8080
 

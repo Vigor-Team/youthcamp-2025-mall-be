@@ -10,7 +10,7 @@ kitex:
 
 registry:
   registry_address:
-    - 127.0.0.1:8500
+    - mall-consul.ns-9zxles8h.svc.cluster.local:8500
   username: ""
   password: ""
 
@@ -18,7 +18,10 @@ mysql:
   dsn: "%s:%s@tcp(%s:3306)/order?charset=utf8mb4&parseTime=True&loc=Local"
 
 redis:
-  address: "127.0.0.1:6379"
-  username: ""
-  password: ""
+  address: "mall-redis-redis.ns-9zxles8h.svc:6379"
+  username: "default"
+  password: "ffnrlj65"
   db: 0
+
+mq:
+  address: "mall-rabbitmq.ns-9zxles8h.svc.cluster.local:5672"

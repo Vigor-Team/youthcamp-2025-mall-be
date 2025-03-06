@@ -73,15 +73,15 @@ clean: ## clern up all the tmp files
 
 .PHONY: build-all
 build-all:
-	docker build --no-cache -f ./deploy/k8s/Dockerfile.gateway -t gateway:${v} .
-	docker build --no-cache -f ./deploy/k8s/Dockerfile.svc -t user:${v} --build-arg SVC=user .
-	docker build --no-cache -f ./deploy/k8s/Dockerfile.svc -t checkout:${v} --build-arg SVC=checkout .
-	docker build --no-cache -f ./deploy/k8s/Dockerfile.svc -t email:${v} --build-arg SVC=email .
-	docker build --no-cache -f ./deploy/k8s/Dockerfile.svc -t cart:${v} --build-arg SVC=cart .
-	docker build --no-cache -f ./deploy/k8s/Dockerfile.svc -t payment:${v} --build-arg SVC=payment .
-	docker build --no-cache -f ./deploy/k8s/Dockerfile.svc -t product:${v} --build-arg SVC=product .
-	docker build --no-cache -f ./deploy/k8s/Dockerfile.svc -t order:${v} --build-arg SVC=order .
-	docker build --no-cache -f ./deploy/k8s/Dockerfile.svc -t llm:${v} --build-arg SVC=llm .
+	docker build --no-cache -f ./deploy/Dockerfile.gateway -t gateway:${v} .
+	docker build --no-cache -f ./deploy/Dockerfile.svc -t user:${v} --build-arg SVC=user .
+	docker build --no-cache -f ./deploy/Dockerfile.svc -t checkout:${v} --build-arg SVC=checkout .
+	docker build --no-cache -f ./deploy/Dockerfile.svc -t email:${v} --build-arg SVC=email .
+	docker build --no-cache -f ./deploy/Dockerfile.svc -t cart:${v} --build-arg SVC=cart .
+	docker build --no-cache -f ./deploy/Dockerfile.svc -t payment:${v} --build-arg SVC=payment .
+	docker build --no-cache -f ./deploy/Dockerfile.svc -t product:${v} --build-arg SVC=product .
+	docker build --no-cache -f ./deploy/Dockerfile.svc -t order:${v} --build-arg SVC=order .
+	docker build --no-cache -f ./deploy/Dockerfile.svc -t llm:${v} --build-arg SVC=llm .
 
 .PHONY: gen-user
 gen-user:
@@ -89,3 +89,26 @@ gen-user:
 	@cd app/user && cwgo server --type RPC --service user --module github.com/Vigor-Team/youthcamp-2025-mall-be/app/user --pass "-use github.com/Vigor-Team/youthcamp-2025-mall-be/rpc_gen/kitex_gen" -I ../../idl --idl ../../idl/user.proto
 
 
+.PHONY: docker-tag
+docker-tag:
+	@docker tag gateway:v1.1.2 whitea0029/youthcamp-mall:gateway
+	@docker tag user:v1.1.2 whitea0029/youthcamp-mall:user
+	@docker tag checkout:v1.1.2 whitea0029/youthcamp-mall:checkout
+	@docker tag email:v1.1.2 whitea0029/youthcamp-mall:email
+	@docker tag cart:v1.1.2 whitea0029/youthcamp-mall:cart
+	@docker tag payment:v1.1.2 whitea0029/youthcamp-mall:payment
+	@docker tag product:v1.1.2 whitea0029/youthcamp-mall:product
+	@docker tag order:v1.1.2 whitea0029/youthcamp-mall:order
+	@docker tag llm:v1.1.2 whitea0029/youthcamp-mall:llm
+
+.PHONY: docker-push
+docker-push:
+	@docker push whitea0029/youthcamp-mall:gateway
+	@docker push whitea0029/youthcamp-mall:user
+	@docker push whitea0029/youthcamp-mall:checkout
+	@docker push whitea0029/youthcamp-mall:email
+	@docker push whitea0029/youthcamp-mall:cart
+	@docker push whitea0029/youthcamp-mall:payment
+	@docker push whitea0029/youthcamp-mall:product
+	@docker push whitea0029/youthcamp-mall:order
+	@docker push whitea0029/youthcamp-mall:llm
