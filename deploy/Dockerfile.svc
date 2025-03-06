@@ -2,7 +2,7 @@ FROM golang:1.23 AS builder
 
 ARG SVC
 
-WORKDIR /usr/src/youthcamp-2025-mall-be
+WORKDIR /usr/src/mall
 
 # Set the GOPROXY environment variable to use the goproxy.io proxy (for China)
 ENV GOPROXY=https://goproxy.cn,direct
@@ -17,16 +17,16 @@ RUN cd app/${SVC}/ && go mod download && go mod verify
 
 COPY app/${SVC} app/${SVC}
 
-RUN cd app/${SVC}/ && CGO_ENABLED=0 go build -v -o /opt/youthcamp-2025-mall-be/${SVC}/server
+RUN cd app/${SVC}/ && CGO_ENABLED=0 go build -v -o /opt/mall/${SVC}/server
 
 FROM busybox
 
 ARG SVC
 
-COPY --from=builder /opt/youthcamp-2025-mall-be/${SVC}/server /opt/youthcamp-2025-mall-be/${SVC}/server
+COPY --from=builder /opt/mall/${SVC}/server /opt/mall/${SVC}/server
 
-COPY app/${SVC}/conf /opt/youthcamp-2025-mall-be/${SVC}/conf
+COPY app/${SVC}/conf /opt/mall/${SVC}/conf
 
-WORKDIR /opt/youthcamp-2025-mall-be/${SVC}
+WORKDIR /opt/mall/${SVC}
 
 CMD ["./server"]

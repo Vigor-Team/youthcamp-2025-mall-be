@@ -1,6 +1,7 @@
 kitex:
-  service: "chat"
+  service: "llm"
   address: ":8888"
+  metrics_port: ":9998"
   log_level: info
   log_file_name: "log/kitex.log"
   log_max_size: 10
@@ -9,15 +10,18 @@ kitex:
 
 registry:
   registry_address:
-    - 127.0.0.1:2379
+    - mall-consul.ns-9zxles8h.svc.cluster.local:8500
   username: ""
   password: ""
 
 mysql:
-  dsn: "gorm:gorm@tcp(127.0.0.1:3306)/gorm?charset=utf8mb4&parseTime=True&loc=Local"
+  dsn: "%s:%s@tcp(%s:3306)/chat?charset=utf8mb4&parseTime=True&loc=Local"
+
+mongodb:
+  uri: "mongodb://%s:%s@mall-mongo-mongodb.ns-9zxles8h.svc:27017"
 
 redis:
-  address: "127.0.0.1:6379"
-  username: ""
-  password: ""
+  address: "mall-redis-redis.ns-9zxles8h.svc:6379"
+  username: "default"
+  password: "ffnrlj65"
   db: 0

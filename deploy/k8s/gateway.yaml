@@ -23,7 +23,7 @@ spec:
             - containerPort: 8080
           volumeMounts:
             - name: gateway-config
-              mountPath: /opt/youthcamp-2025-mall-be/gateway/conf/dev
+              mountPath: /opt/mall/gateway/conf/dev
           env:
             - name: MYSQL_USER
               value: "root"
@@ -45,7 +45,7 @@ spec:
       volumes:
         - name: gateway-config
           configMap:
-            name: youthcamp-2025-mall-be-config
+            name: mall-config
             items:
               - key: gateway-app-config
                 path: conf.yaml
